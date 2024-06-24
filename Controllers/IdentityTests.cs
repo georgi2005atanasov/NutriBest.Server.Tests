@@ -413,8 +413,8 @@ namespace NutriBest.Server.Tests.Controllers
             var resetModel = new RegisterServiceModel
             {
                 Email = "test@example.com",
-                Password = "newpassword123",
-                ConfirmPassword = "newpassword123",
+                Password = "newpassword1234",
+                ConfirmPassword = "newpassword1234",
                 UserName = "exceptionUserName1"
             };
 
