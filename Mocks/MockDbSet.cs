@@ -1,7 +1,7 @@
 ﻿namespace NutriBest.Server.Tests.Mocks
 {
-    using Microsoft.EntityFrameworkCore;
     using Moq;
+    using Microsoft.EntityFrameworkCore;
 
     public static class MockDbSet
     {
