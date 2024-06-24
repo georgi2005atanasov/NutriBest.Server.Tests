@@ -873,7 +873,6 @@ namespace NutriBest.Server.Tests.Controllers
                 var jwtToken = (JwtSecurityToken)validatedToken;
                 Assert.NotNull(jwtToken);
 
-                // Validate claims
                 var userNameClaim = principal.FindFirst(ClaimTypes.Name)?.Value;
                 Assert.Equal("unique11", userNameClaim);
 
