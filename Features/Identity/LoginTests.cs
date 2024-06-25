@@ -17,10 +17,8 @@
     {
         private readonly IdentityTestsFixture fixture;
 
-        public LoginTests(IdentityTestsFixture fixture)
-        {
-            this.fixture = fixture;
-        }
+        public LoginTests(IdentityTestsFixture fixture) 
+            => this.fixture = fixture;
 
         [Fact]
         public void LoginEndpoint_ShouldHave_HttpPostAndRouteAttributes()

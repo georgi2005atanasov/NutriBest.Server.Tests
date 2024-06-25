@@ -8,10 +8,8 @@
     {
         private readonly IdentityTestsFixture fixture;
 
-        public IdentityServiceTests(IdentityTestsFixture fixture)
-        {
-            this.fixture = fixture;
-        }
+        public IdentityServiceTests(IdentityTestsFixture fixture) 
+            => this.fixture = fixture;
 
         [Fact]
         public async Task AllRoles_ShouldReturnTheCurrentRoles()

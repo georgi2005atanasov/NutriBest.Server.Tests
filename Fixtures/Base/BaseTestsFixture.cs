@@ -18,19 +18,22 @@
         public NutriBestDbContext DbContext { get; protected set; }
         public ServiceProvider ServiceProvider { get; protected set; }
         public Mock<ICurrentUserService> CurrentUserServiceMock { get; private set; }
+        public ServiceCollection Services { get; private set; }
 
         public BaseTestsFixture()
         {
-            var services = new ServiceCollection();
-            services.AddDbContext<NutriBestDbContext>(options =>
+            Services = new ServiceCollection();
+            Services.AddDbContext<NutriBestDbContext>(options =>
                 options.UseInMemoryDatabase(Guid.NewGuid().ToString()));
 
-            services.AddIdentity();
+            Services.AddIdentity();
+
+            Services.AddLogging();
 
             CurrentUserServiceMock = new Mock<ICurrentUserService>();
-            services.AddTransient(_ => CurrentUserServiceMock.Object);
+            Services.AddTransient(_ => CurrentUserServiceMock.Object);
 
-            ServiceProvider = services.BuildServiceProvider();
+            ServiceProvider = Services.BuildServiceProvider();
             DbContext = ServiceProvider.GetRequiredService<NutriBestDbContext>();
         }
         

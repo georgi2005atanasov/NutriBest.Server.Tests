@@ -8,10 +8,8 @@
     {
         private readonly IdentityTestsFixture fixture;
 
-        public IdentityControllerTests(IdentityTestsFixture fixture)
-        {
-            this.fixture = fixture;
-        }
+        public IdentityControllerTests(IdentityTestsFixture fixture) 
+            => this.fixture = fixture;
 
         [Fact]
         public void IdentityController_ShouldInherit_ApiController()

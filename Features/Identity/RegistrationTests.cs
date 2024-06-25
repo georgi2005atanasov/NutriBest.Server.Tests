@@ -13,10 +13,8 @@
     {
         private readonly IdentityTestsFixture fixture;
 
-        public RegistrationTests(IdentityTestsFixture fixture)
-        {
-            this.fixture = fixture;
-        }
+        public RegistrationTests(IdentityTestsFixture fixture) 
+            => this.fixture = fixture;
 
         [Fact]
         public void Register_EndpointShouldHave_HttpPostAndRouteAttributes()

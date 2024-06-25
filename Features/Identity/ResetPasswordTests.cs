@@ -15,10 +15,8 @@
     {
         private readonly IdentityTestsFixture fixture;
 
-        public ResetPasswordTests(IdentityTestsFixture fixture)
-        {
-            this.fixture = fixture;
-        }
+        public ResetPasswordTests(IdentityTestsFixture fixture) 
+            => this.fixture = fixture;
 
         [Fact]
         public void ResetPasswordEndpoint_ShouldHave_HttpPutAndRouteAttributes()
