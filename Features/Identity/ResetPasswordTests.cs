@@ -1,4 +1,4 @@
-﻿namespace NutriBest.Server.Tests.Controllers.Identity
+﻿namespace NutriBest.Server.Tests.Features.Identity
 {
     using Moq;
     using Microsoft.AspNetCore.Identity;
@@ -8,6 +8,7 @@
     using NutriBest.Server.Features.Identity.Models;
     using NutriBest.Server.Tests.Utilities;
     using NutriBest.Server.Shared.Responses;
+    using NutriBest.Server.Tests.Fixtures;
     using System.Reflection;
 
     public class ResetPasswordTests : IClassFixture<IdentityTestsFixture>
@@ -66,8 +67,6 @@
 
             // Act
             await fixture.IdentityController.Register(registerModel);
-
-            var userManager = fixture.ServiceProvider.GetService(typeof(UserManager<User>));
 
             var token = await fixture.UserManager
                 .GeneratePasswordResetTokenAsync(await fixture.UserManager
@@ -182,6 +181,5 @@
             var failResponse = Assert.IsType<FailResponse>(badRequestResult.Value);
             Assert.Equal("Something went wrong!", failResponse.Message);
         }
-
     }
 }

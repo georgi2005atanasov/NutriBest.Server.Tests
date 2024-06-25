@@ -1,4 +1,4 @@
-﻿namespace NutriBest.Server.Tests.Controllers.Identity
+﻿namespace NutriBest.Server.Tests.Features.Identity
 {
     using Moq;
     using Microsoft.AspNetCore.Mvc;
@@ -7,6 +7,7 @@
     using NutriBest.Server.Tests.Utilities;
     using NutriBest.Server.Shared.Responses;
     using Microsoft.AspNetCore.Authorization;
+    using NutriBest.Server.Tests.Fixtures;
     using System.Reflection;
 
     public class RolesTests : IClassFixture<IdentityTestsFixture>
@@ -68,7 +69,7 @@
         }
 
         [Fact]
-        public async void RolesEndpoint_ShouldReturnAllRolesWithoutAdministrator()
+        public async Task RolesEndpoint_ShouldReturnAllRolesWithoutAdministrator()
         {
             // Act
             var result = await fixture.IdentityController.Roles();

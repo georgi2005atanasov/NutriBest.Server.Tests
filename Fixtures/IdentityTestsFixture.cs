@@ -1,5 +1,4 @@
-﻿
-namespace NutriBest.Server.Tests.Controllers.Identity
+﻿namespace NutriBest.Server.Tests.Fixtures
 {
     using Moq;
     using Microsoft.AspNetCore.Identity;
@@ -21,6 +20,7 @@ namespace NutriBest.Server.Tests.Controllers.Identity
         public IdentityController IdentityController { get; private set; }
         public UserManager<User> UserManager { get; private set; }
         public RoleManager<IdentityRole> RoleManager { get; private set; }
+        public IIdentityService IdentityService { get; set; }
         public Mock<IEmailService> EmailServiceMock { get; private set; }
         public Mock<INotificationService> NotificationServiceMock { get; private set; }
         public Mock<ICurrentUserService> CurrentUserServiceMock { get; private set; }
@@ -65,10 +65,10 @@ namespace NutriBest.Server.Tests.Controllers.Identity
 
             SeedData(RoleManager);
 
-            var identityService = ServiceProvider.GetRequiredService<IIdentityService>();
+            IdentityService = ServiceProvider.GetRequiredService<IIdentityService>();
 
             IdentityController = new IdentityController(
-                identityService,
+                IdentityService,
                 UserManager,
                 CurrentUserServiceMock.Object,
                 EmailServiceMock.Object,

@@ -1,12 +1,13 @@
-﻿namespace NutriBest.Server.Tests.Controllers.Identity
+﻿namespace NutriBest.Server.Tests.Features.Identity
 {
     using Moq;
     using Microsoft.AspNetCore.Mvc;
     using NutriBest.Server.Features.Identity;
     using NutriBest.Server.Features.Identity.Models;
     using NutriBest.Server.Tests.Utilities;
-    using System.Reflection;
     using NutriBest.Server.Shared.Responses;
+    using NutriBest.Server.Tests.Fixtures;
+    using System.Reflection;
 
     public class RegistrationTests : IClassFixture<IdentityTestsFixture>
     {
