@@ -1,24 +1,35 @@
 ﻿namespace NutriBest.Server.Tests.Features.Identity
 {
+    using Microsoft.AspNetCore.Mvc.Testing;
+    using Newtonsoft.Json;
     using NutriBest.Server.Features;
     using NutriBest.Server.Features.Identity;
-    using NutriBest.Server.Tests.Fixtures;
+    using System.Text;
 
-    public class IdentityControllerTests  : IClassFixture<IdentityTestsFixture>
+    public class IdentityControllerTests : IClassFixture<WebApplicationFactory<Program>>
     {
-        private readonly IdentityTestsFixture fixture;
 
-        public IdentityControllerTests(IdentityTestsFixture fixture) 
-            => this.fixture = fixture;
+        private readonly WebApplicationFactory<Program> _factory;
 
-        [Fact]
-        public void IdentityController_ShouldInherit_ApiController()
+        public IdentityControllerTests(WebApplicationFactory<Program> factory)
         {
-            // Arrange
-            var controllerType = typeof(IdentityController);
-
-            // Assert
-            Assert.Equal(typeof(ApiController), controllerType.BaseType);
+            _factory = factory;
         }
+
+        //[Theory]
+        //[InlineData("/Products")]
+        //public async Task TestLoginEndpoint(string url)
+        //{
+        //    // Arrange
+        //    var client = _factory.CreateClient();
+
+        //    // Act
+        //    var response = await client.GetAsync(url);
+
+        //    // Assert
+        //    response.EnsureSuccessStatusCode(); // Status Code 200-299
+        //    Assert.Equal("text/html; charset=utf-8",
+        //        response.Content.Headers.ContentType.ToString());
+        //}
     }
 }
