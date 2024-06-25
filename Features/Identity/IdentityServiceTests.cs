@@ -1,18 +1,8 @@
 ﻿namespace NutriBest.Server.Tests.Features.Identity
 {
-    using Moq;
-    using Microsoft.AspNetCore.Mvc;
-    using NutriBest.Server.Features.Identity;
     using NutriBest.Server.Features.Identity.Models;
-    using NutriBest.Server.Tests.Utilities;
-    using NutriBest.Server.Shared.Responses;
-    using System.IdentityModel.Tokens.Jwt;
-    using System.Text;
-    using Microsoft.IdentityModel.Tokens;
-    using System.Security.Claims;
     using NutriBest.Server.Tests.Fixtures;
     using System.Reflection;
-    using Microsoft.AspNetCore.Identity;
 
     public class IdentityServiceTests : IClassFixture<IdentityTestsFixture>
     {
@@ -126,13 +116,14 @@
         public async Task CreateUser_ShouldReturnErrors_ForAlreadyExistingUser()
         {
             // Act
-            var result = await fixture.IdentityService.CreateUser("unique35",
-                "unique35@abv.bg",
+            var result = await fixture.IdentityService.CreateUser("unique350",
+                "unique350@abv.bg",
                 "12345Pesho");
 
             // Assert
-            await Assert.ThrowsAsync<InvalidOperationException>(async () => await fixture.IdentityService.CreateUser("unique35",
-                "unique35@abv.bg",
+            await Assert.ThrowsAsync<InvalidOperationException>
+                (async () => await fixture.IdentityService.CreateUser("unique350",
+                "unique350@abv.bg",
                 "12345Pesho"));
         }
 
@@ -140,7 +131,7 @@
         public async Task FindUserById_ShouldReturnModel_WhenUserExists()
         {
             // Arrange
-            var result = await fixture.IdentityService.CreateUser("unique36",
+            await fixture.IdentityService.CreateUser("unique36",
                 "unique35@abv.bg",
                 "12345Pesho");
 

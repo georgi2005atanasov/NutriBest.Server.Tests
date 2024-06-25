@@ -1,29 +1,29 @@
 ﻿namespace NutriBest.Server.Tests.Fixtures
 {
-    using Moq;
+    using NutriBest.Server.Tests.Fixtures.Base;
     using Microsoft.AspNetCore.Identity;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Options;
+    using Moq;
+    using NutriBest.Server.Data;
     using NutriBest.Server.Data.Models;
     using NutriBest.Server.Features.Email;
     using NutriBest.Server.Features.Identity;
     using NutriBest.Server.Features.Notifications;
     using NutriBest.Server.Infrastructure.Services;
-    using NutriBest.Server.Data;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.DependencyInjection;
-    using Infrastructure.Extensions;
-    using Microsoft.Extensions.Options;
+    using NutriBest.Server.Infrastructure.Extensions;
 
-    public class IdentityTestsFixture : IDisposable
+    public class IdentityTestsFixture : BaseTestsFixture
     {
-        public NutriBestDbContext DbContext { get; private set; }
-        public ServiceProvider ServiceProvider { get; private set; }
+        //public NutriBestDbContext DbContext { get; private set; }
+        //public ServiceProvider ServiceProvider { get; private set; }
         public IdentityController IdentityController { get; private set; }
         public UserManager<User> UserManager { get; private set; }
         public RoleManager<IdentityRole> RoleManager { get; private set; }
         public IIdentityService IdentityService { get; set; }
         public Mock<IEmailService> EmailServiceMock { get; private set; }
         public Mock<INotificationService> NotificationServiceMock { get; private set; }
-        public Mock<ICurrentUserService> CurrentUserServiceMock { get; private set; }
 
         public IdentityTestsFixture()
         {
@@ -37,12 +37,12 @@
 
             NotificationServiceMock = new Mock<INotificationService>();
             EmailServiceMock = new Mock<IEmailService>();
-            CurrentUserServiceMock = new Mock<ICurrentUserService>();
 
             var appSettings = new ApplicationSettings
             {
                 Secret = "your-secret-key-here"
             };
+
             services.Configure<ApplicationSettings>(opts => opts.Secret = appSettings.Secret);
 
             services.AddTransient(_ => NotificationServiceMock.Object);
@@ -59,7 +59,6 @@
 
             ServiceProvider = services.BuildServiceProvider();
 
-            DbContext = ServiceProvider.GetRequiredService<NutriBestDbContext>();
             UserManager = ServiceProvider.GetRequiredService<UserManager<User>>();
             RoleManager = ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
@@ -86,12 +85,6 @@
                     roleManager.CreateAsync(new IdentityRole(role)).Wait();
                 }
             }
-        }
-
-        public void Dispose()
-        {
-            DbContext.Database.EnsureDeleted();
-            ServiceProvider.Dispose();
         }
     }
 }
