@@ -2,47 +2,88 @@
 {
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc.Testing;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Options;
+    using Microsoft.IdentityModel.Tokens;
     using Moq;
+    using NutriBest.Server.Data;
     using NutriBest.Server.Features.Identity;
     using NutriBest.Server.Features.Identity.Models;
     using NutriBest.Server.Features.Notifications;
     using NutriBest.Server.Shared.Responses;
+    using System.IdentityModel.Tokens.Jwt;
+    using System.Net.Http.Json;
+    using System.Security.Claims;
+    using System.Text;
     using Xunit;
-    public class IdentityControllerTests : IClassFixture<WebApplicationFactory<Startup>>
+    public class IdentityControllerTests : IClassFixture<CustomWebApplicationFactory<Startup>>
     {
-        private readonly HttpClient _client;
+        private readonly ClientHelper clientHelper;
+        private readonly CustomWebApplicationFactory<Startup> factory;
+        private readonly ApplicationSettings appSettings;
 
-        public IdentityControllerTests(WebApplicationFactory<Startup> factory)
+        public IdentityControllerTests(CustomWebApplicationFactory<Startup> factory)
         {
-            _client = factory.CreateClient();
+            clientHelper = new ClientHelper(factory);
+            this.factory = factory;
+            using (var scope = factory.Services.CreateScope())
+            {
+                var scopedServices = scope.ServiceProvider;
+                //_userManager = scopedServices.GetRequiredService<UserManager<User>>();
+                var options = scopedServices.GetRequiredService<IOptions<ApplicationSettings>>();
+                appSettings = options.Value;
+            }
         }
+
 
         [Fact]
-        public async Task Register_ShouldReturnBadRequest_WhenUserNameContainsWhiteSpace()
+        public async Task LoginEndpoint_ShouldReturnValidToken()
         {
-            var response = await _client.GetAsync("/api/values");
-            response.EnsureSuccessStatusCode();
+            using (var scope = factory.Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<NutriBestDbContext>();
 
-            var content = await response.Content.ReadAsStringAsync();
+                // Seed additional data if necessary
+                //dbContext..Add(new YourEntity { /* properties */ });
+                //dbContext.SaveChanges();
+            }
+
+            var loginModel = new //LoginServiceModel
+            {
+                UserName = "user",
+                Password = "Password123!"
+            };
+
+            var client = clientHelper.GetAnonymousClientAsync();
+
+            // Act
+            var response = await client.PostAsJsonAsync("/Identity/Login", loginModel);
+            response.EnsureSuccessStatusCode();
+            var token = await response.Content.ReadAsStringAsync();
+            ValidateToken(token);
         }
 
+        private void ValidateToken(string token)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+            var validationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ClockSkew = TimeSpan.Zero
+            };
 
-        //[Fact]
-        //public void Register_ShouldReturnBadRequest_WhenUserNameContainsWhiteSpace()
-        //{
-        //    MyMvc
-        //        .Controller<IdentityController>()
-        //        .Calling(c => c.Register(new RegisterServiceModel
-        //        {
-        //            UserName = "test user", // Username with white space
-        //            Email = "testuser@example.com",
-        //            Password = "Password123!",
-        //            ConfirmPassword = "Password123!"
-        //        }))
-        //        .ShouldReturn()
-        //        .BadRequest(result => result
-        //            .WithModelOfType<FailResponse>()
-        //            .Passing(model => model.Key == "UserName" && model.Message == "Username must not contain white spaces!"));
-        
+            SecurityToken validatedToken;
+            var principal = tokenHandler.ValidateToken(token, validationParameters, out validatedToken);
+
+            Assert.NotNull(principal);
+            Assert.IsType<JwtSecurityToken>(validatedToken);
+            var jwtToken = (JwtSecurityToken)validatedToken;
+            var claimToCheck = jwtToken.Claims.FirstOrDefault(c => c.Type == "role");
+            Assert.Equal("User", claimToCheck.Value);
+        }
     }
 }

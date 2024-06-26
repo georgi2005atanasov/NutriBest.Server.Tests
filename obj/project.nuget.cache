@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "/5kvsqW3fCf7jHDcHJumX8bamfetXlKJcZk4eHWa+TLSClXjxX5NNSDC6I/AgaH4OzqsZTfvyz543441v8lUGQ==",
+  "dgSpecHash": "bjV0aM+iLQViwK0adW9hnN25KTtZujzr5fVGqxFUxcDN/5+5tDJLfOoNgMU3vG+uhAxvMrQpA9FCWjY6KSKaZg==",
   "success": true,
   "projectFilePath": "C:\\Users\\Georgi\\source\\repos\\NutriBest.Server.Tests\\NutriBest.Server.Tests.csproj",
   "expectedPackageFiles": [
@@ -26,6 +26,7 @@
     "C:\\Users\\Georgi\\.nuget\\packages\\microsoft.entityframeworkcore.abstractions\\6.0.5\\microsoft.entityframeworkcore.abstractions.6.0.5.nupkg.sha512",
     "C:\\Users\\Georgi\\.nuget\\packages\\microsoft.entityframeworkcore.analyzers\\6.0.5\\microsoft.entityframeworkcore.analyzers.6.0.5.nupkg.sha512",
     "C:\\Users\\Georgi\\.nuget\\packages\\microsoft.entityframeworkcore.design\\6.0.5\\microsoft.entityframeworkcore.design.6.0.5.nupkg.sha512",
+    "C:\\Users\\Georgi\\.nuget\\packages\\microsoft.entityframeworkcore.inmemory\\6.0.5\\microsoft.entityframeworkcore.inmemory.6.0.5.nupkg.sha512",
     "C:\\Users\\Georgi\\.nuget\\packages\\microsoft.entityframeworkcore.relational\\6.0.5\\microsoft.entityframeworkcore.relational.6.0.5.nupkg.sha512",
     "C:\\Users\\Georgi\\.nuget\\packages\\microsoft.entityframeworkcore.sqlserver\\6.0.5\\microsoft.entityframeworkcore.sqlserver.6.0.5.nupkg.sha512",
     "C:\\Users\\Georgi\\.nuget\\packages\\microsoft.entityframeworkcore.tools\\6.0.5\\microsoft.entityframeworkcore.tools.6.0.5.nupkg.sha512",

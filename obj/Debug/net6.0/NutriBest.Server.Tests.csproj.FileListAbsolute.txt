@@ -444,6 +444,13 @@ C:\Users\Georgi\source\repos\NutriBest.Server.Tests\bin\Debug\net6.0\System.IO.P
 C:\Users\Georgi\source\repos\NutriBest.Server.Tests\bin\Debug\net6.0\refs\Microsoft.Extensions.Configuration.Abstractions.dll
 C:\Users\Georgi\source\repos\NutriBest.Server.Tests\bin\Debug\net6.0\refs\System.Text.Encodings.Web.dll
 C:\Users\Georgi\source\repos\NutriBest.Server.Tests\bin\Debug\net6.0\refs\System.Text.Json.dll
+C:\Users\Georgi\source\repos\NutriBest.Server.Tests\bin\Debug\net6.0\MvcTestingAppManifest.json
+C:\Users\Georgi\source\repos\NutriBest.Server.Tests\bin\Debug\net6.0\Microsoft.AspNetCore.Mvc.Testing.dll
+C:\Users\Georgi\source\repos\NutriBest.Server.Tests\bin\Debug\net6.0\Microsoft.Extensions.Configuration.EnvironmentVariables.dll
+C:\Users\Georgi\source\repos\NutriBest.Server.Tests\bin\Debug\net6.0\Microsoft.Extensions.Configuration.UserSecrets.dll
+C:\Users\Georgi\source\repos\NutriBest.Server.Tests\bin\Debug\net6.0\Microsoft.Extensions.Hosting.dll
+C:\Users\Georgi\source\repos\NutriBest.Server.Tests\obj\Debug\net6.0\MvcTestingAppManifest.json
+C:\Users\Georgi\source\repos\NutriBest.Server.Tests\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.InMemory.dll
 C:\Users\Georgi\source\repos\NutriBest.Server.Tests\bin\Debug\net6.0\refs\Microsoft.Extensions.Caching.Abstractions.dll
 C:\Users\Georgi\source\repos\NutriBest.Server.Tests\bin\Debug\net6.0\refs\Microsoft.Extensions.Caching.Memory.dll
 C:\Users\Georgi\source\repos\NutriBest.Server.Tests\bin\Debug\net6.0\refs\Microsoft.Extensions.DependencyInjection.Abstractions.dll
@@ -452,9 +459,3 @@ C:\Users\Georgi\source\repos\NutriBest.Server.Tests\bin\Debug\net6.0\refs\Micros
 C:\Users\Georgi\source\repos\NutriBest.Server.Tests\bin\Debug\net6.0\refs\Microsoft.Extensions.Logging.dll
 C:\Users\Georgi\source\repos\NutriBest.Server.Tests\bin\Debug\net6.0\refs\Microsoft.Extensions.Options.dll
 C:\Users\Georgi\source\repos\NutriBest.Server.Tests\bin\Debug\net6.0\refs\Microsoft.Extensions.Primitives.dll
-C:\Users\Georgi\source\repos\NutriBest.Server.Tests\bin\Debug\net6.0\MvcTestingAppManifest.json
-C:\Users\Georgi\source\repos\NutriBest.Server.Tests\bin\Debug\net6.0\Microsoft.AspNetCore.Mvc.Testing.dll
-C:\Users\Georgi\source\repos\NutriBest.Server.Tests\bin\Debug\net6.0\Microsoft.Extensions.Configuration.EnvironmentVariables.dll
-C:\Users\Georgi\source\repos\NutriBest.Server.Tests\bin\Debug\net6.0\Microsoft.Extensions.Configuration.UserSecrets.dll
-C:\Users\Georgi\source\repos\NutriBest.Server.Tests\bin\Debug\net6.0\Microsoft.Extensions.Hosting.dll
-C:\Users\Georgi\source\repos\NutriBest.Server.Tests\obj\Debug\net6.0\MvcTestingAppManifest.json
