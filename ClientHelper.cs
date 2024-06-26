@@ -1,5 +1,6 @@
 ﻿namespace NutriBest.Server.Tests
 {
+    using NutriBest.Server.Features.Identity.Models;
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Net.Http.Json;
@@ -7,36 +8,36 @@
 
     public class ClientHelper
     {
-        private readonly CustomWebApplicationFactory<Startup> factory;
+        private readonly CustomWebApplicationFactoryFixture fixture;
 
-        public ClientHelper(CustomWebApplicationFactory<Startup> factory)
+        public ClientHelper(CustomWebApplicationFactoryFixture fixture)
         {
-            this.factory = factory;
+            this.fixture = fixture;
         }
 
         public HttpClient GetAnonymousClientAsync()
         {
-            return factory.CreateClient();
+            return fixture.Factory.CreateClient();
         }
 
         public async Task<HttpClient> GetEmployeeClientAsync()
         {
-            return await GetAuthenticatedClientAsync("employee", "password");
+            return await GetAuthenticatedClientAsync("employee", "Password123!");
         }
 
         public async Task<HttpClient> GetOtherUserClientAsync()
         {
-            return await GetAuthenticatedClientAsync("otheruser", "password");
+            return await GetAuthenticatedClientAsync("user", "Password123!");
         }
 
         public async Task<HttpClient> GetAdministratorClientAsync()
         {
-            return await GetAuthenticatedClientAsync("admin", "password");
+            return await GetAuthenticatedClientAsync("admin", "Password123!");
         }
 
-        private async Task<HttpClient> GetAuthenticatedClientAsync(string username, string password)
+        public async Task<HttpClient> GetAuthenticatedClientAsync(string username, string password)
         {
-            var client = factory.CreateClient();
+            var client = fixture.Factory.CreateClient();
             var token = await GetJwtTokenAsync(client, username, password);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             return client;
@@ -44,12 +45,11 @@
 
         private async Task<string> GetJwtTokenAsync(HttpClient client, string username, string password)
         {
-            var loginModel = new /*LogiModel*/ { Username = username, Password = password };
-            var response = await client.PostAsJsonAsync("/api/auth/login", loginModel);
+            var loginModel = new LoginServiceModel { UserName = username, Password = password };
+            var response = await client.PostAsJsonAsync("/Identity/Login", loginModel);
             response.EnsureSuccessStatusCode();
-            //var loginResponse = await response.Content.ReadFromJsonAsync<LoginResponse>();
-            return "";
-            //return loginResponse.Token;
+            var token = await response.Content.ReadAsStringAsync();
+            return token ?? "";
         }
     }
 

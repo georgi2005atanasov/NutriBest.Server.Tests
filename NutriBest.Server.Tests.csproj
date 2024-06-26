@@ -29,7 +29,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Fixtures\" />
     <Folder Include="Mocks\" />
     <Folder Include="Services\" />
   </ItemGroup>

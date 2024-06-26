@@ -5,22 +5,39 @@
     using Microsoft.AspNetCore.Mvc.Testing;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.DependencyInjection.Extensions;
     using NutriBest.Server.Data;
     using NutriBest.Server.Data.Models;
     using System;
     using System.Threading.Tasks;
-    using Infrastructure.Extensions;
+    using Moq;
+    using NutriBest.Server.Features.Notifications;
+    using NutriBest.Server.Features.Email;
+    using Xunit;
 
     public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
     {
+        public Mock<INotificationService>? NotificationServiceMock { get; private set; }
+
+        public Mock<IEmailService>? EmailServiceMock { get; private set; }
+
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             builder.ConfigureServices(services =>
             {
+                NotificationServiceMock = new Mock<INotificationService>();
+                EmailServiceMock = new Mock<IEmailService>();
+                services.AddTransient(_ => NotificationServiceMock.Object);
+                services.AddTransient(_ => EmailServiceMock.Object);
+
+                var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<NutriBestDbContext>));
+                if (descriptor != null)
+                {
+                    services.Remove(descriptor);
+                }
+
                 services.AddDbContext<NutriBestDbContext>(options =>
                 {
-                    options.UseInMemoryDatabase("InMemoryDbForTesting");
+                    options.UseInMemoryDatabase(new Guid().ToString());
                 });
 
                 var serviceProvider = services.BuildServiceProvider();
@@ -83,6 +100,5 @@
                 }
             }
         }
-
     }
 }
