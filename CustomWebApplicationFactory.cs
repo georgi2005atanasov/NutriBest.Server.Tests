@@ -13,9 +13,12 @@
     using NutriBest.Server.Features.Notifications;
     using NutriBest.Server.Features.Email;
     using Xunit;
+    using Microsoft.Extensions.DependencyInjection.Extensions;
 
     public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
     {
+        private static readonly object _lock = new object();
+
         public Mock<INotificationService>? NotificationServiceMock { get; private set; }
 
         public Mock<IEmailService>? EmailServiceMock { get; private set; }
@@ -29,15 +32,16 @@
                 services.AddTransient(_ => NotificationServiceMock.Object);
                 services.AddTransient(_ => EmailServiceMock.Object);
 
-                var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<NutriBestDbContext>));
-                if (descriptor != null)
-                {
-                    services.Remove(descriptor);
-                }
+                //var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<NutriBestDbContext>));
+                //if (descriptor != null)
+                //{
+                //    services.Remove(descriptor);
+                //}
+                services.RemoveAll<DbContextOptions<NutriBestDbContext>>();
 
                 services.AddDbContext<NutriBestDbContext>(options =>
                 {
-                    options.UseInMemoryDatabase(new Guid().ToString());
+                    options.UseInMemoryDatabase("InMemoryDb");
                 });
 
                 var serviceProvider = services.BuildServiceProvider();
@@ -53,12 +57,12 @@
                     db.Database.EnsureCreated();
 
                     // Seed the database with users and roles
-                    SeedDatabase(userManager, roleManager).GetAwaiter().GetResult();
+                    SeedDatabase(userManager, roleManager);
                 }
             });
         }
 
-        private async Task SeedDatabase(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+        public void SeedDatabase(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
             var roles = new[]
             {
@@ -69,19 +73,23 @@
 
             foreach (var role in roles)
             {
-                if (!await roleManager.RoleExistsAsync(role.Name))
+                if (!roleManager.RoleExistsAsync(role.Name).GetAwaiter().GetResult())
                 {
-                    await roleManager.CreateAsync(role);
+                    roleManager.CreateAsync(role).GetAwaiter().GetResult();
                 }
             }
 
-            var adminUser = new User { UserName = "admin", Email = "admin@example.com" };
-            var employeeUser = new User { UserName = "employee", Email = "employee@example.com" };
-            var otherUser = new User { UserName = "user", Email = "user@example.com" };
+            if (userManager.FindByNameAsync("admin").GetAwaiter().GetResult() == null)
+            {
+                var adminUser = new User { UserName = "admin", Email = "admin@example.com" };
+                var employeeUser = new User { UserName = "employee", Email = "employee@example.com" };
+                var otherUser = new User { UserName = "user", Email = "user@example.com" };
 
-            await CreateUserWithRole(userManager, adminUser, "Password123!", "Administrator");
-            await CreateUserWithRole(userManager, employeeUser, "Password123!", "Employee");
-            await CreateUserWithRole(userManager, otherUser, "Password123!", "User");
+                CreateUserWithRole(userManager, adminUser, "Password123!", "Administrator").GetAwaiter().GetResult();
+                CreateUserWithRole(userManager, employeeUser, "Password123!", "Employee").GetAwaiter().GetResult();
+                CreateUserWithRole(userManager, otherUser, "Password123!", "User").GetAwaiter().GetResult();
+            }
+
         }
 
         private async Task CreateUserWithRole(UserManager<User> userManager, User user, string password, string role)

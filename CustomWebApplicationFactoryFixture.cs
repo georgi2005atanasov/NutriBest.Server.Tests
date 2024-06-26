@@ -1,4 +1,9 @@
-﻿namespace NutriBest.Server.Tests
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
+using NutriBest.Server.Data;
+using NutriBest.Server.Data.Models;
+
+namespace NutriBest.Server.Tests
 {
     public class CustomWebApplicationFactoryFixture : IDisposable
     {

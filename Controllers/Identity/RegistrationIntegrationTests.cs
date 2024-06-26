@@ -21,14 +21,6 @@
             clientHelper = new ClientHelper(fixture);
         }
 
-        //private readonly CustomWebApplicationFactory<Startup> factory;
-
-        //public RegistrationIntegrationTests(CustomWebApplicationFactory<Startup> factory)
-        //{
-        //    clientHelper = new ClientHelper(factory);
-        //    this.factory = factory;
-        //}
-
         [Theory]
         [InlineData("pesho", "pesho@example.com", "Pesho12345")]
         public async Task RegisterEndpoint_ShouldReturnOkResult(string userName,
@@ -61,9 +53,6 @@
 
             // Assert
             Assert.Equal("Successfully added new user!", result.Message);
-
-            // Reset mocks
-            //fixture.Factory.NotificationServiceMock.Reset();
         }
 
         [Theory]
