@@ -8,10 +8,9 @@
     using NutriBest.Server.Shared.Responses;
     using NutriBest.Server.Features.Identity.Models;
     using NutriBest.Server.Tests.Controllers.Identity.Data;
-    using Microsoft.Extensions.DependencyInjection;
 
     [Collection("Identity Controller Tests")]
-    public class RegistrationIntegrationTests
+    public class RegistrationIntegrationTests : IAsyncLifetime
     {
         private CustomWebApplicationFactoryFixture fixture;
         private ClientHelper clientHelper;
@@ -41,7 +40,7 @@
                                                       It.IsAny<string>()))
                 .Returns(Task.CompletedTask);
 
-            var client = clientHelper.GetAnonymousClientAsync();
+            var client = clientHelper.GetAnonymousClient();
 
             // Act
             var response = await client.PostAsJsonAsync("/Identity/Register", registerModel);
@@ -70,7 +69,7 @@
                 ConfirmPassword = password
             };
 
-            var client = clientHelper.GetAnonymousClientAsync();
+            var client = clientHelper.GetAnonymousClient();
 
             // Act
             var response = await client.PostAsJsonAsync("/Identity/Register", registerModel);
@@ -100,7 +99,7 @@
                 ConfirmPassword = confirmPassword
             };
 
-            var client = clientHelper.GetAnonymousClientAsync();
+            var client = clientHelper.GetAnonymousClient();
 
             // Act
             var response = await client.PostAsJsonAsync("/Identity/Register", registerModel);
@@ -130,7 +129,7 @@
                 ConfirmPassword = confirmPassword
             };
 
-            var client = clientHelper.GetAnonymousClientAsync();
+            var client = clientHelper.GetAnonymousClient();
 
             // Act
             var response = await client.PostAsJsonAsync("/Identity/Register", registerModel);
@@ -161,7 +160,7 @@
             };
 
             // Act
-            var client = clientHelper.GetAnonymousClientAsync();
+            var client = clientHelper.GetAnonymousClient();
             var response = await client.PostAsJsonAsync("/Identity/Register", registerModel);
 
             // Assert
@@ -186,7 +185,7 @@
                 .Setup(x => x.SendNotificationToAdmin(It.IsAny<string>(), It.IsAny<string>()))
                 .Throws<Exception>();
 
-            var client = clientHelper.GetAnonymousClientAsync();
+            var client = clientHelper.GetAnonymousClient();
 
             // Act
             var response = await client.PostAsJsonAsync("/Identity/Register", registerModel);
@@ -198,6 +197,12 @@
 
             // Assert
             Assert.Equal("Something went wrong!", result.Message);
+        }
+
+        public async Task InitializeAsync()
+        {
+            await fixture.ResetDatabaseAsync();
+
         }
 
         public Task DisposeAsync()

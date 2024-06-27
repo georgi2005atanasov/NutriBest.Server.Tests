@@ -15,7 +15,7 @@
             this.fixture = fixture;
         }
 
-        public HttpClient GetAnonymousClientAsync()
+        public HttpClient GetAnonymousClient()
         {
             return fixture.Factory.CreateClient();
         }

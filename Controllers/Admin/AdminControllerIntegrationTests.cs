@@ -1,48 +1,90 @@
 ﻿namespace NutriBest.Server.Tests.Controllers.Admin
 {
-    using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Options;
-    using NutriBest.Server.Features.Admin.Models;
-    using System.Text.Json;
     using Xunit;
+    using System.Net;
+    using System.Text.Json;
+    using NutriBest.Server.Features.Admin.Models;
 
     [Collection("Admin Controller Tests")]
-    public class AdminControllerIntegrationTests
+    public class AdminControllerIntegrationTests : IAsyncLifetime
     {
-        private readonly ClientHelper clientHelper;
+        private ClientHelper clientHelper;
 
-        private readonly CustomWebApplicationFactoryFixture fixture;
-
-        private readonly ApplicationSettings appSettings;
+        private CustomWebApplicationFactoryFixture fixture;
 
         public AdminControllerIntegrationTests(CustomWebApplicationFactoryFixture fixture)
         {
             clientHelper = new ClientHelper(fixture);
             this.fixture = fixture;
-            using (var scope = fixture.Factory.Services.CreateScope())
-            {
-                var scopedServices = scope.ServiceProvider;
-                var options = scopedServices.GetRequiredService<IOptions<ApplicationSettings>>();
-                appSettings = options.Value;
-            }
         }
 
         [Fact]
         public async Task AllUsersEndpoint_ShouldReturnAllUsers()
         {
-            await fixture.ResetDatabaseAsync();
-
+            //Arrange
             var client = await clientHelper.GetAdministratorClientAsync();
 
+            // Act
             var allUsers = await client.GetAsync("/Admin/AllUsers");
-            //
             var data = await allUsers.Content.ReadAsStringAsync();
+
+            // Assert
             var allUsersModel = JsonSerializer.Deserialize<IEnumerable<UserServiceModel>>(data, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true // This option allows matching property names ignoring case
             }) ?? new List<UserServiceModel>();
 
             Assert.Equal(3, allUsersModel.Count());
+        }
+
+        [Fact]
+        public async Task AllUsersEndpoint_ShouldReturnUnauthorizedForEmployees()
+        {
+            // Arrange
+            var client = await clientHelper.GetEmployeeClientAsync();
+
+            // Act
+            var allUsers = await client.GetAsync("/Admin/AllUsers");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Forbidden, allUsers.StatusCode);
+        }
+
+        [Fact]
+        public async Task AllUsersEndpoint_ShouldReturnUnauthorizedForUsers()
+        {
+            // Arrange
+            var client = await clientHelper.GetOtherUserClientAsync();
+
+            // Act
+            var allUsers = await client.GetAsync("/Admin/AllUsers");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Forbidden, allUsers.StatusCode);
+        }
+
+        [Fact]
+        public async Task AllUsersEndpoint_ShouldReturnUnauthorizedForAnonymous()
+        {
+            // Arrange
+            var client = clientHelper.GetAnonymousClient();
+
+            // Act
+            var allUsers = await client.GetAsync("/Admin/AllUsers");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Unauthorized, allUsers.StatusCode);
+        }
+
+        public async Task InitializeAsync()
+        {
+            await fixture.ResetDatabaseAsync();
+
+        }
+
+        public Task DisposeAsync()
+        {
+            return Task.CompletedTask;
         }
     }
 }

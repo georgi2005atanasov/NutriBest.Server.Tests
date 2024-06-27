@@ -1,22 +1,20 @@
 ﻿namespace NutriBest.Server.Tests.Controllers.Identity
 {
     using Xunit;
+    using System.Net;
     using System.Text.Json;
-    using System.Net.Http.Json;
-    using NutriBest.Server.Data.Models;
-    using Microsoft.AspNetCore.Identity;
-    using NutriBest.Server.Shared.Responses;
-    using Microsoft.Extensions.DependencyInjection;
     using NutriBest.Server.Features.Identity.Models;
 
     [Collection("Identity Controller Tests")]
-    public class RolesIntegrationTests
+    public class RolesIntegrationTests : IAsyncLifetime
     {
         private ClientHelper clientHelper;
+        private CustomWebApplicationFactoryFixture fixture;
 
         public RolesIntegrationTests(CustomWebApplicationFactoryFixture fixture)
         {
             clientHelper = new ClientHelper(fixture);
+            this.fixture = fixture;
         }
 
         [Fact]
@@ -38,6 +36,55 @@
 
             Assert.Equal(2, rolesResult.Roles.Count);
             Assert.DoesNotContain("Administrator", rolesResult.Roles);
+        }
+
+        [Fact]
+        public async Task GrantUser_ShouldReturnForbidden_ForEmployees()
+        {
+            // Arrange
+            var client = await clientHelper.GetEmployeeClientAsync();
+
+            // Act
+            var response = await client.GetAsync("/Identity/Roles");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task GrantUser_ShouldReturnForbidden_ForUsers()
+        {
+            // Arrange
+            var client = await clientHelper.GetOtherUserClientAsync();
+
+            // Act
+            var response = await client.GetAsync("/Identity/Roles");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task RolesEndpoint_ShouldReturnUnauthorized_ForAnonymous()
+        {
+            // Arrange
+            var client = clientHelper.GetAnonymousClient();
+
+            // Act
+            var response = await client.GetAsync("/Identity/Roles");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        }
+
+        public async Task InitializeAsync()
+        {
+            await fixture.ResetDatabaseAsync();
+        }
+
+        public Task DisposeAsync()
+        {
+            return Task.CompletedTask;
         }
     }
 }

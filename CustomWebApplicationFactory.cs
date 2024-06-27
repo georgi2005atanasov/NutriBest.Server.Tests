@@ -77,9 +77,9 @@
 
             if (userManager.FindByNameAsync("admin").GetAwaiter().GetResult() == null)
             {
-                var adminUser = new User { UserName = "admin", Email = "admin@example.com" };
-                var employeeUser = new User { UserName = "employee", Email = "employee@example.com" };
-                var otherUser = new User { UserName = "user", Email = "user@example.com" };
+                var adminUser = new User { UserName = "admin", NormalizedUserName = "ADMIN", Email = "admin@example.com" };
+                var employeeUser = new User { UserName = "employee", NormalizedUserName = "EMPLOYEE", Email = "employee@example.com" };
+                var otherUser = new User { UserName = "user", NormalizedUserName = "USER",  Email = "user@example.com" };
 
                 CreateUserWithRole(userManager, adminUser, "Password123!", "Administrator").GetAwaiter().GetResult();
                 CreateUserWithRole(userManager, employeeUser, "Password123!", "Employee").GetAwaiter().GetResult();

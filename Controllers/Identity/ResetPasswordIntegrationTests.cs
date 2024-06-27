@@ -3,10 +3,10 @@
     using Xunit;
     using System.Text.Json;
     using System.Net.Http.Json;
-    using NutriBest.Server.Data.Models;
     using Microsoft.AspNetCore.Identity;
-    using NutriBest.Server.Shared.Responses;
     using Microsoft.Extensions.DependencyInjection;
+    using NutriBest.Server.Data.Models;
+    using NutriBest.Server.Shared.Responses;
     using NutriBest.Server.Features.Identity.Models;
 
     [Collection("Identity Controller Tests")]
@@ -14,11 +14,11 @@
     {
         private ClientHelper clientHelper;
 
+        private CustomWebApplicationFactoryFixture fixture;
+
         private UserManager<User>? userManager;
 
         private IServiceScope? scope;
-
-        private CustomWebApplicationFactoryFixture fixture;
 
         public ResetPasswordIntegrationTests(CustomWebApplicationFactoryFixture fixture)
         {
@@ -30,15 +30,24 @@
         public async Task ResetPassword_ShouldReturnSuccess()
         {
             //Arrange
-            var client = clientHelper.GetAnonymousClientAsync();
-            var user = await userManager!.FindByNameAsync("user");
-            var token = await userManager.GeneratePasswordResetTokenAsync(user);
+            var registerModel = new RegisterServiceModel
+            {
+                UserName = "pesho69",
+                Email = "pesho69@example.com",
+                Password = "Pesho12345",
+                ConfirmPassword = "Pesho12345"
+            };
 
             // Act
-            Assert.NotNull(token);
+            var client = clientHelper.GetAnonymousClient();
+            await client.PostAsJsonAsync("/Identity/Register", registerModel);
+
+            var user = await userManager!.FindByNameAsync("pesho69");
+            var token = await userManager.GeneratePasswordResetTokenAsync(user);
+
             var response = await client.PutAsJsonAsync("/Identity/ResetPassword", new ResetPasswordServiceModel
             {
-                Email = user.Email,
+                Email = "pesho69@example.com",
                 NewPassword = "Pesho12345",
                 ConfirmPassword = "Pesho12345",
                 Token = token
@@ -59,7 +68,7 @@
         public async Task ResetPassword_ShouldReturnFailResponse_WithDifferentPasswords()
         {
             //Arrange
-            var client = clientHelper.GetAnonymousClientAsync();
+            var client = clientHelper.GetAnonymousClient();
 
             // Act
             var user = await userManager!.FindByNameAsync("user");
@@ -89,7 +98,7 @@
         public async Task ResetPassword_ShouldReturnSuccess_WithUnexistingUser()
         {
             //Arrange
-            var client = clientHelper.GetAnonymousClientAsync();
+            var client = clientHelper.GetAnonymousClient();
 
             // Act
             var user = await userManager!.FindByNameAsync("user");

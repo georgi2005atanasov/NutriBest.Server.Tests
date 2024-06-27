@@ -1,26 +1,26 @@
 ﻿namespace NutriBest.Server.Tests.Controllers.Identity
 {
-    using Moq;
     using Xunit;
+    using Moq;
     using System.Net;
     using System.Text;
     using System.Text.Json;
+    using System.IdentityModel.Tokens.Jwt;
     using System.Net.Http.Json;
     using Microsoft.Extensions.Options;
     using Microsoft.IdentityModel.Tokens;
-    using System.IdentityModel.Tokens.Jwt;
-    using NutriBest.Server.Shared.Responses;
     using Microsoft.Extensions.DependencyInjection;
+    using NutriBest.Server.Shared.Responses;
     using NutriBest.Server.Features.Identity.Models;
 
     [Collection("Identity Controller Tests")]
-    public class LoginIntegrationTesting
+    public class LoginIntegrationTesting : IAsyncLifetime
     {
-        private readonly ClientHelper clientHelper;
+        private ClientHelper clientHelper;
 
-        private readonly CustomWebApplicationFactoryFixture fixture;
+        private CustomWebApplicationFactoryFixture fixture;
 
-        private readonly ApplicationSettings appSettings;
+        private ApplicationSettings appSettings;
 
         public LoginIntegrationTesting(CustomWebApplicationFactoryFixture fixture)
         {
@@ -49,7 +49,7 @@
                 .Returns(Task.CompletedTask);
 
             // Act
-            var client = clientHelper.GetAnonymousClientAsync();
+            var client = clientHelper.GetAnonymousClient();
             var response = await client.PostAsJsonAsync("/Identity/Login", loginModel);
 
             // Assert
@@ -72,7 +72,7 @@
             };
 
             // Act
-            var client = clientHelper.GetAnonymousClientAsync();
+            var client = clientHelper.GetAnonymousClient();
             var response = await client.PostAsJsonAsync("/Identity/Login", loginModel);
 
             // Assert
@@ -100,7 +100,7 @@
             };
 
             // Act
-            var client = clientHelper.GetAnonymousClientAsync();
+            var client = clientHelper.GetAnonymousClient();
             await client.PostAsJsonAsync("/Identity/Register", registerModel);
 
             client = await clientHelper.GetAuthenticatedClientAsync(userName, password);
@@ -127,7 +127,7 @@
                 .Setup(x => x.SendNotificationToAdmin("success", $"'{userName}' Has Just Logged In!"))
                 .Throws<Exception>();
 
-            var client = clientHelper.GetAnonymousClientAsync();
+            var client = clientHelper.GetAnonymousClient();
 
             // Act
             var response = await client.PostAsJsonAsync("/Identity/Login", loginModel);
@@ -139,9 +139,6 @@
 
             // Assert
             Assert.Equal("Something went wrong!", result.Message);
-
-            // Reset mocks
-            //factory.NotificationServiceMock.Reset();
         }
 
         private void ValidateToken(string token)
@@ -165,6 +162,17 @@
             var jwtToken = (JwtSecurityToken)validatedToken;
             var claimToCheck = jwtToken.Claims.FirstOrDefault(c => c.Type == "role");
             Assert.Equal("User", claimToCheck != null ? claimToCheck.Value : "");
+        }
+
+        public async Task InitializeAsync()
+        {
+            await fixture.ResetDatabaseAsync();
+
+        }
+
+        public Task DisposeAsync()
+        {
+            return Task.CompletedTask;
         }
     }
 }
