@@ -18,5 +18,10 @@ namespace NutriBest.Server.Tests
         {
             Factory.Dispose();
         }
+
+        public Task ResetDatabaseAsync()
+        {
+            return Factory.ResetDatabaseAsync();
+        }
     }
 }

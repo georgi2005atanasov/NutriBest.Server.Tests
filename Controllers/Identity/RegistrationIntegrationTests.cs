@@ -8,12 +8,13 @@
     using NutriBest.Server.Shared.Responses;
     using NutriBest.Server.Features.Identity.Models;
     using NutriBest.Server.Tests.Controllers.Identity.Data;
+    using Microsoft.Extensions.DependencyInjection;
 
     [Collection("Identity Controller Tests")]
     public class RegistrationIntegrationTests
     {
-        private readonly CustomWebApplicationFactoryFixture fixture;
-        private readonly ClientHelper clientHelper;
+        private CustomWebApplicationFactoryFixture fixture;
+        private ClientHelper clientHelper;
 
         public RegistrationIntegrationTests(CustomWebApplicationFactoryFixture fixture)
         {
@@ -60,6 +61,7 @@
         public async Task RegisterEndpoint_ShouldSendNotification(string userName,
             string email, string password)
         {
+            // Arrange
             var registerModel = new RegisterServiceModel
             {
                 UserName = userName,
@@ -196,6 +198,11 @@
 
             // Assert
             Assert.Equal("Something went wrong!", result.Message);
+        }
+
+        public Task DisposeAsync()
+        {
+            return Task.CompletedTask;
         }
     }
 }

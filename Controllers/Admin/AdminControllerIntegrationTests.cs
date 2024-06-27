@@ -22,7 +22,6 @@
             using (var scope = fixture.Factory.Services.CreateScope())
             {
                 var scopedServices = scope.ServiceProvider;
-                //_userManager = scopedServices.GetRequiredService<UserManager<User>>();
                 var options = scopedServices.GetRequiredService<IOptions<ApplicationSettings>>();
                 appSettings = options.Value;
             }
@@ -31,6 +30,8 @@
         [Fact]
         public async Task AllUsersEndpoint_ShouldReturnAllUsers()
         {
+            await fixture.ResetDatabaseAsync();
+
             var client = await clientHelper.GetAdministratorClientAsync();
 
             var allUsers = await client.GetAsync("/Admin/AllUsers");

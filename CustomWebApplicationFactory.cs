@@ -12,16 +12,17 @@
     using Moq;
     using NutriBest.Server.Features.Notifications;
     using NutriBest.Server.Features.Email;
-    using Xunit;
     using Microsoft.Extensions.DependencyInjection.Extensions;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
 
     public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
     {
-        private static readonly object _lock = new object();
-
         public Mock<INotificationService>? NotificationServiceMock { get; private set; }
 
         public Mock<IEmailService>? EmailServiceMock { get; private set; }
+
+        public Mock<UserManager<User>>? UserManagerMock { get; set; }
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
@@ -29,16 +30,11 @@
             {
                 NotificationServiceMock = new Mock<INotificationService>();
                 EmailServiceMock = new Mock<IEmailService>();
+
                 services.AddTransient(_ => NotificationServiceMock.Object);
                 services.AddTransient(_ => EmailServiceMock.Object);
 
-                //var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<NutriBestDbContext>));
-                //if (descriptor != null)
-                //{
-                //    services.Remove(descriptor);
-                //}
                 services.RemoveAll<DbContextOptions<NutriBestDbContext>>();
-
                 services.AddDbContext<NutriBestDbContext>(options =>
                 {
                     options.UseInMemoryDatabase("InMemoryDb");
@@ -66,9 +62,9 @@
         {
             var roles = new[]
             {
-                new IdentityRole { Name = "Employee" },
-                new IdentityRole { Name = "User" },
-                new IdentityRole { Name = "Administrator" }
+                new IdentityRole { Name = "Employee", NormalizedName= "EMPLOYEE" },
+                new IdentityRole { Name = "User", NormalizedName = "USER" },
+                new IdentityRole { Name = "Administrator", NormalizedName = "ADMINISTRATOR" }
             };
 
             foreach (var role in roles)
@@ -107,6 +103,18 @@
                     throw new Exception($"Error creating user {user.UserName}: {string.Join(", ", result.Errors.Select(e => e.Description))}");
                 }
             }
+        }
+
+        public async Task ResetDatabaseAsync()
+        {
+            using var scope = Services.CreateScope();
+            var scopedServices = scope.ServiceProvider;
+            var db = scopedServices.GetRequiredService<NutriBestDbContext>();
+            var userManager = scopedServices.GetRequiredService<UserManager<User>>();
+            var roleManager = scopedServices.GetRequiredService<RoleManager<IdentityRole>>();
+            await db.Database.EnsureDeletedAsync();
+            await db.Database.EnsureCreatedAsync();
+            SeedDatabase(userManager, roleManager);
         }
     }
 }
