@@ -17,6 +17,9 @@
     using Microsoft.Extensions.Options;
     using Microsoft.Extensions.Configuration;
     using NutriBest.Server.Features.Home;
+    using System.Globalization;
+    using NutriBest.Server.Infrastructure.Extensions;
+    using Newtonsoft.Json;
 
     public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
     {
@@ -74,39 +77,24 @@
                     db.Database.EnsureCreated();
 
                     // Seed the database with users and roles
-                    SeedDatabase(userManager, roleManager);
+                    db.SeedDatabase(scope);
+                    SeedTestUsers(userManager, roleManager, db);
                 }
             });
         }
 
-        public void SeedDatabase(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+        public void SeedTestUsers(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, NutriBestDbContext db)
         {
-            var roles = new[]
+            if (userManager.FindByNameAsync("employee").GetAwaiter().GetResult() == null)
             {
-                new IdentityRole { Name = "Employee", NormalizedName= "EMPLOYEE" },
-                new IdentityRole { Name = "User", NormalizedName = "USER" },
-                new IdentityRole { Name = "Administrator", NormalizedName = "ADMINISTRATOR" }
-            };
-
-            foreach (var role in roles)
-            {
-                if (!roleManager.RoleExistsAsync(role.Name).GetAwaiter().GetResult())
-                {
-                    roleManager.CreateAsync(role).GetAwaiter().GetResult();
-                }
-            }
-
-            if (userManager.FindByNameAsync("admin").GetAwaiter().GetResult() == null)
-            {
-                var adminUser = new User { UserName = "admin", NormalizedUserName = "ADMIN", Email = "admin@example.com" };
+                //var adminUser = new User { UserName = "admin", NormalizedUserName = "ADMIN", Email = "admin@example.com" };
                 var employeeUser = new User { UserName = "employee", NormalizedUserName = "EMPLOYEE", Email = "employee@example.com" };
                 var otherUser = new User { UserName = "user", NormalizedUserName = "USER", Email = "user@example.com" };
 
-                CreateUserWithRole(userManager, adminUser, "Password123!", "Administrator").GetAwaiter().GetResult();
+                //CreateUserWithRole(userManager, adminUser, "Password123!", "Administrator").GetAwaiter().GetResult();
                 CreateUserWithRole(userManager, employeeUser, "Password123!", "Employee").GetAwaiter().GetResult();
                 CreateUserWithRole(userManager, otherUser, "Password123!", "User").GetAwaiter().GetResult();
             }
-
         }
 
         private async Task CreateUserWithRole(UserManager<User> userManager, User user, string password, string role)
@@ -135,7 +123,8 @@
             var roleManager = scopedServices.GetRequiredService<RoleManager<IdentityRole>>();
             await db.Database.EnsureDeletedAsync();
             await db.Database.EnsureCreatedAsync();
-            SeedDatabase(userManager, roleManager);
+            db.SeedDatabase(scope);
+            SeedTestUsers(userManager, roleManager, db);
         }
     }
 }

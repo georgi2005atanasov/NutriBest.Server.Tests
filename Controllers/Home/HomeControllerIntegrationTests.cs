@@ -30,10 +30,12 @@
 
             var result = JsonSerializer.Deserialize<ContactUsInfoServiceModel>(data, new JsonSerializerOptions
             {
-                PropertyNameCaseInsensitive = true // This option allows matching property names ignoring case
+                PropertyNameCaseInsensitive = true
             }) ?? new ContactUsInfoServiceModel();
 
-            Assert.NotNull(result);
+            Assert.Equal("", result.Address);
+            Assert.Equal("+359884138832", result.PhoneNumber);
+            Assert.Equal("admin@example.com", result.Email);
         }
 
         public async Task InitializeAsync()
