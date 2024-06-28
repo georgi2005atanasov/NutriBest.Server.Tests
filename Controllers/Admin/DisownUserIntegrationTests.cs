@@ -9,7 +9,7 @@
     using NutriBest.Server.Shared.Responses;
 
     [Collection("Admin Controller Tests")]
-    public class GrantUserIntegrationTests : IAsyncLifetime
+    public class DisownUserIntegrationTests : IAsyncLifetime
     {
         private ClientHelper clientHelper;
 
@@ -19,22 +19,22 @@
 
         private IServiceScope? scope;
 
-        public GrantUserIntegrationTests(CustomWebApplicationFactoryFixture fixture)
+        public DisownUserIntegrationTests(CustomWebApplicationFactoryFixture fixture)
         {
             clientHelper = new ClientHelper(fixture);
             this.fixture = fixture;
         }
 
         [Fact]
-        public async Task GrantUser_ShouldReturnSuccessResponse()
+        public async Task DisownUser_ShouldReturnSuccessResponse()
         {
             // Arrange
             var client = await clientHelper.GetAdministratorClientAsync();
             var user = await userManager!.FindByNameAsync("user");
-            var roleToAdd = "Employee";
+            var roleToRemove = "User";
 
             // Act
-            var response = await client.PatchAsync($"/Admin/Grant/{user.Id}?role={roleToAdd}", null);
+            var response = await client.PatchAsync($"/Admin/Disown/{user.Id}?role={roleToRemove}", null);
             var data = await response.Content.ReadAsStringAsync();
 
             var result = JsonSerializer.Deserialize<SuccessResponse>(data, new JsonSerializerOptions
@@ -43,22 +43,22 @@
             }) ?? new SuccessResponse();
 
             // Assert
-            Assert.Equal($"Successfully added role '{roleToAdd}' to 'user'!", result.Message);
+            Assert.Equal($"Successfully removed role '{roleToRemove}' from '{user.UserName}'!", result.Message);
 
             // reset the user role in order to not mess up
             // the other other tests
-            await client.PatchAsync($"/Admin/Disown/{user.Id}?role={roleToAdd}", null);
+            await client.PatchAsync($"/Admin/Grant/{user.Id}?role={roleToRemove}", null);
         }
 
         [Fact]
-        public async Task GrantUser_ShouldReturnFailResponse_WithUnexistingUserPassed()
+        public async Task DisownUser_ShouldReturnFailResponse_WithUnexistingUserPassed()
         {
             // Arrange
             var client = await clientHelper.GetAdministratorClientAsync();
-            var roleToAdd = "Employee";
+            var roleToAdd = "User";
 
             // Act
-            var response = await client.PatchAsync($"/Admin/Grant/invalidId?role={roleToAdd}", null);
+            var response = await client.PatchAsync($"/Admin/Disown/invalidId?role={roleToAdd}", null);
             var data = await response.Content.ReadAsStringAsync();
 
             var result = JsonSerializer.Deserialize<FailResponse>(data, new JsonSerializerOptions
@@ -71,7 +71,7 @@
         }
 
         [Fact]
-        public async Task GrantUser_ShouldReturnFailResponse_WithInvalidRolePassed()
+        public async Task DisownUser_ShouldReturnFailResponse_WithInvalidRolePassed()
         {
             // Arrange
             var client = await clientHelper.GetAdministratorClientAsync();
@@ -79,7 +79,7 @@
             var roleToAdd = "InvalidRole";
 
             // Act
-            var response = await client.PatchAsync($"/Admin/Grant/{user.Id}?role={roleToAdd}", null);
+            var response = await client.PatchAsync($"/Admin/Disown/{user.Id}?role={roleToAdd}", null);
             var data = await response.Content.ReadAsStringAsync();
 
             var result = JsonSerializer.Deserialize<FailResponse>(data, new JsonSerializerOptions
@@ -92,15 +92,15 @@
         }
 
         [Fact]
-        public async Task GrantUser_ShouldReturnFailResponse_ForUserInTheSameRole()
+        public async Task DisownUser_ShouldReturnFailResponse_ForUserWithoutTheRole()
         {
             // Arrange
             var client = await clientHelper.GetAdministratorClientAsync();
             var user = await userManager!.FindByNameAsync("user");
-            var roleToAdd = "User";
+            var roleToAdd = "Employee";
 
             // Act
-            var response = await client.PatchAsync($"/Admin/Grant/{user.Id}?role={roleToAdd}", null);
+            var response = await client.PatchAsync($"/Admin/Disown/{user.Id}?role={roleToAdd}", null);
             var data = await response.Content.ReadAsStringAsync();
 
             var result = JsonSerializer.Deserialize<FailResponse>(data, new JsonSerializerOptions
@@ -109,11 +109,11 @@
             }) ?? new FailResponse();
 
             // Assert
-            Assert.Equal($"'{user.UserName}' is already in the role of '{roleToAdd}'!", result.Message);
+            Assert.Equal($"The user does not have this role!", result.Message);
         }
 
         [Fact]
-        public async Task GrantUser_ShouldReturnUnauthorized_ForEmployees()
+        public async Task DisownUser_ShouldReturnUnauthorized_ForEmployees()
         {
             // Arrange
             var client = clientHelper.GetAnonymousClient();
@@ -121,14 +121,14 @@
             var roleToAdd = "Employee";
 
             // Act
-            var response = await client.PatchAsync($"/Admin/Grant/{user.Id}?role={roleToAdd}", null);
+            var response = await client.PatchAsync($"/Admin/Disown/{user.Id}?role={roleToAdd}", null);
 
             // Assert
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         }
 
         [Fact]
-        public async Task GrantUser_ShouldReturnForbidden_ForUsers()
+        public async Task DisownUser_ShouldReturnForbidden_ForUsers()
         {
             // Arrange
             var client = await clientHelper.GetOtherUserClientAsync();
@@ -136,14 +136,14 @@
             var roleToAdd = "Employee";
 
             // Act
-            var response = await client.PatchAsync($"/Admin/Grant/{user.Id}?role={roleToAdd}", null);
+            var response = await client.PatchAsync($"/Admin/Disown/{user.Id}?role={roleToAdd}", null);
 
             // Assert
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         }
 
         [Fact]
-        public async Task GrantUser_ShouldReturnUnauthorized_ForAnonymous()
+        public async Task DisownUser_ShouldReturnUnauthorized_ForAnonymous()
         {
             // Arrange
             var client = clientHelper.GetAnonymousClient();
@@ -151,7 +151,7 @@
             var roleToAdd = "Employee";
 
             // Act
-            var response = await client.PatchAsync($"/Admin/Grant/{user.Id}?role={roleToAdd}", null);
+            var response = await client.PatchAsync($"/Admin/Disown/{user.Id}?role={roleToAdd}", null);
 
             // Assert
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
