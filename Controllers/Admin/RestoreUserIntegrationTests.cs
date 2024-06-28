@@ -119,6 +119,8 @@
 
         public async Task InitializeAsync()
         {
+            await fixture.ResetDatabaseAsync();
+
             await Task.Run(() =>
             {
                 scope = fixture.Factory.Services.CreateScope();

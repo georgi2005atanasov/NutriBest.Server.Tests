@@ -49,10 +49,6 @@
             Assert.Equal($"Successfully removed role '{roleToRemove}' from '{user.UserName}'!", result.Message);
             var userRoles = await userManager.GetRolesAsync(user);
             Assert.False(userRoles.Contains(roleToRemove));
-
-            // reset the user role in order to not mess up
-            // the other other tests
-            await client.PatchAsync($"/Admin/Grant/{user.Id}?role={roleToRemove}", null);
         }
 
         [Fact]
@@ -168,6 +164,8 @@
 
         public async Task InitializeAsync()
         {
+            await fixture.ResetDatabaseAsync();
+
             await Task.Run(() =>
             {
                 scope = fixture.Factory.Services.CreateScope();

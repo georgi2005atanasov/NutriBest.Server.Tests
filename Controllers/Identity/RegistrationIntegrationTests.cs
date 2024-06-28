@@ -5,14 +5,13 @@
     using System.Net;
     using System.Text.Json;
     using System.Net.Http.Json;
+    using Microsoft.AspNetCore.Identity;
     using Microsoft.Extensions.DependencyInjection;
     using NutriBest.Server.Shared.Responses;
     using NutriBest.Server.Features.Identity.Models;
     using NutriBest.Server.Tests.Controllers.Identity.Data;
     using NutriBest.Server.Data;
-    using Microsoft.AspNetCore.Identity;
     using NutriBest.Server.Data.Models;
-    using Microsoft.EntityFrameworkCore;
 
     [Collection("Identity Controller Tests")]
     public class RegistrationIntegrationTests : IAsyncLifetime

@@ -15,6 +15,8 @@
     using Microsoft.Extensions.DependencyInjection.Extensions;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
+    using Microsoft.Extensions.Configuration;
+    using NutriBest.Server.Features.Home;
 
     public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
     {
@@ -24,13 +26,32 @@
 
         public Mock<UserManager<User>>? UserManagerMock { get; set; }
 
+        public IConfiguration Configuration { get; private set; }
+
+        public CustomWebApplicationFactory()
+        {
+            var builder = new ConfigurationBuilder()
+            .SetBasePath(AppContext.BaseDirectory)
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .AddJsonFile("appsettings.Development.json", optional: false, reloadOnChange: true)
+            .AddJsonFile("appsettings.Tests.json", optional: false, reloadOnChange: true);
+
+            Configuration = builder.Build();
+        }
+
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
+            builder.ConfigureAppConfiguration((context, config) =>
+            {
+                config.AddConfiguration(Configuration);
+            });
+
             builder.ConfigureServices(services =>
             {
                 NotificationServiceMock = new Mock<INotificationService>();
                 EmailServiceMock = new Mock<IEmailService>();
 
+                services.AddSingleton(Configuration);
                 services.AddTransient(_ => NotificationServiceMock.Object);
                 services.AddTransient(_ => EmailServiceMock.Object);
 
@@ -79,7 +100,7 @@
             {
                 var adminUser = new User { UserName = "admin", NormalizedUserName = "ADMIN", Email = "admin@example.com" };
                 var employeeUser = new User { UserName = "employee", NormalizedUserName = "EMPLOYEE", Email = "employee@example.com" };
-                var otherUser = new User { UserName = "user", NormalizedUserName = "USER",  Email = "user@example.com" };
+                var otherUser = new User { UserName = "user", NormalizedUserName = "USER", Email = "user@example.com" };
 
                 CreateUserWithRole(userManager, adminUser, "Password123!", "Administrator").GetAwaiter().GetResult();
                 CreateUserWithRole(userManager, employeeUser, "Password123!", "Employee").GetAwaiter().GetResult();

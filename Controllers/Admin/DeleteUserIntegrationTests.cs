@@ -43,10 +43,6 @@
             // Assert
             Assert.True(db!.Profiles.First(x => x.UserId == user.Id).IsDeleted);
             Assert.False(user.IsDeleted);
-
-            // Restore the deleted profile in
-            // order to not mess up the other tests
-            await client.PostAsync($"/Admin/Restore/{user.Id}", null);
         }
 
         [Fact]
@@ -116,6 +112,8 @@
 
         public async Task InitializeAsync()
         {
+            await fixture.ResetDatabaseAsync();
+
             await Task.Run(() =>
             {
                 scope = fixture.Factory.Services.CreateScope();

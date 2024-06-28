@@ -79,7 +79,6 @@
         public async Task InitializeAsync()
         {
             await fixture.ResetDatabaseAsync();
-
         }
 
         public Task DisposeAsync()
