@@ -44,9 +44,11 @@
 
             // Assert
             Assert.Equal($"Successfully added role '{roleToAdd}' to 'user'!", result.Message);
+            var userRoles = await userManager.GetRolesAsync(user);
+            Assert.True(userRoles.Contains("Employee"));
 
-            // reset the user role in order to not mess up
-            // the other other tests
+            // reset the user role in order to
+            // not mess up the other other tests
             await client.PatchAsync($"/Admin/Disown/{user.Id}?role={roleToAdd}", null);
         }
 
@@ -89,6 +91,8 @@
 
             // Assert
             Assert.Equal("Invalid role!", result.Message);
+            var userRoles = await userManager.GetRolesAsync(user);
+            Assert.False(userRoles.Contains("Employee"));
         }
 
         [Fact]

@@ -5,12 +5,15 @@
     using System.Text.Json;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.Extensions.DependencyInjection;
+    using NutriBest.Server.Data;
     using NutriBest.Server.Data.Models;
     using NutriBest.Server.Shared.Responses;
 
     [Collection("Admin Controller Tests")]
     public class DisownUserIntegrationTests : IAsyncLifetime
     {
+        private NutriBestDbContext? db;
+
         private ClientHelper clientHelper;
 
         private CustomWebApplicationFactoryFixture fixture;
@@ -44,6 +47,8 @@
 
             // Assert
             Assert.Equal($"Successfully removed role '{roleToRemove}' from '{user.UserName}'!", result.Message);
+            var userRoles = await userManager.GetRolesAsync(user);
+            Assert.False(userRoles.Contains(roleToRemove));
 
             // reset the user role in order to not mess up
             // the other other tests
@@ -76,10 +81,10 @@
             // Arrange
             var client = await clientHelper.GetAdministratorClientAsync();
             var user = await userManager!.FindByNameAsync("user");
-            var roleToAdd = "InvalidRole";
+            var roleToRemove = "InvalidRole";
 
             // Act
-            var response = await client.PatchAsync($"/Admin/Disown/{user.Id}?role={roleToAdd}", null);
+            var response = await client.PatchAsync($"/Admin/Disown/{user.Id}?role={roleToRemove}", null);
             var data = await response.Content.ReadAsStringAsync();
 
             var result = JsonSerializer.Deserialize<FailResponse>(data, new JsonSerializerOptions
@@ -89,6 +94,8 @@
 
             // Assert
             Assert.Equal("Invalid role!", result.Message);
+            var userRoles = await userManager.GetRolesAsync(user);
+            Assert.False(userRoles.Contains(roleToRemove));
         }
 
         [Fact]
@@ -97,10 +104,10 @@
             // Arrange
             var client = await clientHelper.GetAdministratorClientAsync();
             var user = await userManager!.FindByNameAsync("user");
-            var roleToAdd = "Employee";
+            var roleToRemove = "Employee";
 
             // Act
-            var response = await client.PatchAsync($"/Admin/Disown/{user.Id}?role={roleToAdd}", null);
+            var response = await client.PatchAsync($"/Admin/Disown/{user.Id}?role={roleToRemove}", null);
             var data = await response.Content.ReadAsStringAsync();
 
             var result = JsonSerializer.Deserialize<FailResponse>(data, new JsonSerializerOptions
@@ -110,6 +117,8 @@
 
             // Assert
             Assert.Equal($"The user does not have this role!", result.Message);
+            var userRoles = await userManager.GetRolesAsync(user);
+            Assert.False(userRoles.Contains(roleToRemove));
         }
 
         [Fact]
@@ -164,6 +173,7 @@
                 scope = fixture.Factory.Services.CreateScope();
                 var scopedServices = scope.ServiceProvider;
                 userManager = scopedServices.GetRequiredService<UserManager<User>>();
+                db = scopedServices.GetRequiredService<NutriBestDbContext>();
             });
         }
 

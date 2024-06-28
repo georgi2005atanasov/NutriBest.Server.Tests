@@ -1,19 +1,31 @@
 ﻿namespace NutriBest.Server.Tests.Controllers.Identity
 {
-    using Moq;
     using Xunit;
+    using Moq;
     using System.Net;
     using System.Text.Json;
     using System.Net.Http.Json;
+    using Microsoft.Extensions.DependencyInjection;
     using NutriBest.Server.Shared.Responses;
     using NutriBest.Server.Features.Identity.Models;
     using NutriBest.Server.Tests.Controllers.Identity.Data;
+    using NutriBest.Server.Data;
+    using Microsoft.AspNetCore.Identity;
+    using NutriBest.Server.Data.Models;
+    using Microsoft.EntityFrameworkCore;
 
     [Collection("Identity Controller Tests")]
     public class RegistrationIntegrationTests : IAsyncLifetime
     {
+        private NutriBestDbContext? db;
+
         private CustomWebApplicationFactoryFixture fixture;
+
+        private UserManager<User>? userManager;
+
         private ClientHelper clientHelper;
+
+        private IServiceScope? scope;
 
         public RegistrationIntegrationTests(CustomWebApplicationFactoryFixture fixture)
         {
@@ -53,6 +65,11 @@
 
             // Assert
             Assert.Equal("Successfully added new user!", result.Message);
+            Assert.Contains(userName, db!.Users.Select(x => x.UserName));
+            Assert.NotNull(db!.Profiles
+                            .Where(x => x.UserId == db
+                                                .Users
+                                                .First(x => x.UserName == userName).Id));
         }
 
         [Theory]
@@ -113,6 +130,7 @@
             // Assert
             Assert.Equal("Password", result.Key);
             Assert.Equal("Both passwords should match!", result.Message);
+            Assert.DoesNotContain(userName, db!.Users.Select(x => x.UserName));
         }
 
         [Theory]
@@ -143,6 +161,7 @@
             // Assert
             Assert.Equal("UserName", result.Key);
             Assert.Equal("Username must not contain white spaces!", result.Message);
+            Assert.DoesNotContain(userName, db!.Users.Select(x => x.UserName));
         }
 
         [Theory]
@@ -203,6 +222,13 @@
         {
             await fixture.ResetDatabaseAsync();
 
+            await Task.Run(() =>
+            {
+                scope = fixture.Factory.Services.CreateScope();
+                var scopedServices = scope.ServiceProvider;
+                db = scopedServices.GetRequiredService<NutriBestDbContext>();
+                userManager = scopedServices.GetRequiredService<UserManager<User>>();
+            });
         }
 
         public Task DisposeAsync()
