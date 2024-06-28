@@ -46,7 +46,8 @@
             }) ?? new SuccessResponse();
 
             // Assert
-            Assert.Equal($"Successfully removed role '{roleToRemove}' from '{user.UserName}'!", result.Message);
+            Assert.Equal($"Successfully removed role '{roleToRemove}' from '{user.UserName}'!", 
+                string.Format(result.Message, roleToRemove, user.UserName));
             var userRoles = await userManager.GetRolesAsync(user);
             Assert.False(userRoles.Contains(roleToRemove));
         }

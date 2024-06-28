@@ -1,25 +1,21 @@
 ﻿namespace NutriBest.Server.Tests
 {
-    using Microsoft.AspNetCore.Hosting;
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.AspNetCore.Mvc.Testing;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.DependencyInjection;
-    using NutriBest.Server.Data;
-    using NutriBest.Server.Data.Models;
     using System;
     using System.Threading.Tasks;
-    using Moq;
-    using NutriBest.Server.Features.Notifications;
-    using NutriBest.Server.Features.Email;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Mvc.Testing;
+    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.DependencyInjection.Extensions;
     using Microsoft.Extensions.Logging;
-    using Microsoft.Extensions.Options;
     using Microsoft.Extensions.Configuration;
-    using NutriBest.Server.Features.Home;
-    using System.Globalization;
+    using Moq;
+    using NutriBest.Server.Data;
+    using NutriBest.Server.Data.Models;
+    using NutriBest.Server.Features.Notifications;
+    using NutriBest.Server.Features.Email;
     using NutriBest.Server.Infrastructure.Extensions;
-    using Newtonsoft.Json;
 
     public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
     {
@@ -77,21 +73,51 @@
                     db.Database.EnsureCreated();
 
                     // Seed the database with users and roles
-                    db.SeedDatabase(scope);
-                    SeedTestUsers(userManager, roleManager, db);
+                    SeedTestUsersWithRoles(userManager, roleManager, db);
                 }
             });
         }
 
-        public void SeedTestUsers(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, NutriBestDbContext db)
+        public void SeedTestUsersWithRoles(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, NutriBestDbContext db)
         {
+            var roles = new[]
+            {
+                new IdentityRole { Name = "Employee", NormalizedName= "EMPLOYEE" },
+                new IdentityRole { Name = "User", NormalizedName = "USER" },
+                new IdentityRole { Name = "Administrator", NormalizedName = "ADMINISTRATOR" }
+            };
+
+            foreach (var role in roles)
+            {
+                if (!roleManager.RoleExistsAsync(role.Name).GetAwaiter().GetResult())
+                {
+                    roleManager.CreateAsync(role).GetAwaiter().GetResult();
+                }
+            }
+
             if (userManager.FindByNameAsync("employee").GetAwaiter().GetResult() == null)
             {
-                //var adminUser = new User { UserName = "admin", NormalizedUserName = "ADMIN", Email = "admin@example.com" };
-                var employeeUser = new User { UserName = "employee", NormalizedUserName = "EMPLOYEE", Email = "employee@example.com" };
-                var otherUser = new User { UserName = "user", NormalizedUserName = "USER", Email = "user@example.com" };
+                var adminUser = new User
+                {
+                    UserName = Configuration.GetValue<string>("Admin:UserName"),
+                    NormalizedUserName = "ADMIN",
+                    Email = Configuration.GetValue<string>("Admin:Email"),
+                    PhoneNumber = Configuration.GetValue<string>("Admin:PhoneNumber")
+                };
+                var employeeUser = new User 
+                { 
+                    UserName = "employee", 
+                    NormalizedUserName = "EMPLOYEE", 
+                    Email = "employee@example.com" 
+                };
+                var otherUser = new User 
+                { 
+                    UserName = "user", 
+                    NormalizedUserName = "USER",
+                    Email = "user@example.com",
+                };
 
-                //CreateUserWithRole(userManager, adminUser, "Password123!", "Administrator").GetAwaiter().GetResult();
+                CreateUserWithRole(userManager, adminUser, "Password123!", "Administrator").GetAwaiter().GetResult();
                 CreateUserWithRole(userManager, employeeUser, "Password123!", "Employee").GetAwaiter().GetResult();
                 CreateUserWithRole(userManager, otherUser, "Password123!", "User").GetAwaiter().GetResult();
             }
@@ -123,8 +149,7 @@
             var roleManager = scopedServices.GetRequiredService<RoleManager<IdentityRole>>();
             await db.Database.EnsureDeletedAsync();
             await db.Database.EnsureCreatedAsync();
-            db.SeedDatabase(scope);
-            SeedTestUsers(userManager, roleManager, db);
+            SeedTestUsersWithRoles(userManager, roleManager, db);
         }
     }
 }

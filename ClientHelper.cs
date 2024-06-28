@@ -1,5 +1,7 @@
 ﻿namespace NutriBest.Server.Tests
 {
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
     using NutriBest.Server.Features.Identity.Models;
     using System.Net.Http;
     using System.Net.Http.Headers;
@@ -8,11 +10,15 @@
 
     public class ClientHelper
     {
-        private readonly CustomWebApplicationFactoryFixture fixture;
+        private CustomWebApplicationFactoryFixture fixture;
+
+        private IConfiguration config;
 
         public ClientHelper(CustomWebApplicationFactoryFixture fixture)
         {
             this.fixture = fixture;
+            var scope = fixture.Factory.Services.CreateScope();
+            config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
         }
 
         public HttpClient GetAnonymousClient()
@@ -32,7 +38,7 @@
 
         public async Task<HttpClient> GetAdministratorClientAsync()
         {
-            return await GetAuthenticatedClientAsync("admin", "Password123!");
+            return await GetAuthenticatedClientAsync(config.GetValue<string>("Admin:UserName"), config.GetValue<string>("Admin:Password"));
         }
 
         public async Task<HttpClient> GetAuthenticatedClientAsync(string username, string password)

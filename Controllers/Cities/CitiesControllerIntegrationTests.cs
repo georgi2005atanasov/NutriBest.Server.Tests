@@ -4,8 +4,8 @@
     using System.Text.Json;
     using Microsoft.Extensions.DependencyInjection;
     using NutriBest.Server.Data;
-    using NutriBest.Server.Features.Home.Models;
     using NutriBest.Server.Features.Cities.Models;
+    using NutriBest.Server.Infrastructure.Extensions;
 
     [Collection("Home Controller Tests")]
     public class CitiesControllerIntegrationTests : IAsyncLifetime
@@ -59,6 +59,7 @@
             await fixture.ResetDatabaseAsync();
             scope = fixture.Factory.Services.CreateScope();
             db = scope.ServiceProvider.GetRequiredService<NutriBestDbContext>();
+            db.SeedDatabase(scope);
         }
 
         public Task DisposeAsync()

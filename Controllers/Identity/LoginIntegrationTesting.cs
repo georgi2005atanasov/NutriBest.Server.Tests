@@ -80,7 +80,7 @@
         }
 
         [Theory]
-        [InlineData("gosho2", "gosho2@example.com", "Pesho12345", "Pesho12345")]
+        [InlineData("gosho29", "gosho29@example.com", "Pesho12345", "Pesho12345")]
         public async Task LoginEndpoint_ShouldReturnUnauthorized_WhenUserIsDeleted(string userName,
             string email, string password, string confirmPassword)
         {
@@ -101,7 +101,7 @@
 
             // Act
             var client = clientHelper.GetAnonymousClient();
-            await client.PostAsJsonAsync("/Identity/Register", registerModel);
+            var res = await client.PostAsJsonAsync("/Identity/Register", registerModel);
 
             client = await clientHelper.GetAuthenticatedClientAsync(userName, password);
             await client.DeleteAsync("/Profile");
