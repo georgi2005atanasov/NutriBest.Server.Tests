@@ -15,7 +15,6 @@
     using NutriBest.Server.Data.Models;
     using NutriBest.Server.Features.Notifications;
     using NutriBest.Server.Features.Email;
-    using NutriBest.Server.Infrastructure.Extensions;
 
     public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
     {
