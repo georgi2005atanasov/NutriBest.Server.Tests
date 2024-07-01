@@ -67,7 +67,7 @@
                     var db = scopedServices.GetRequiredService<NutriBestDbContext>();
                     var userManager = scopedServices.GetRequiredService<UserManager<User>>();
                     var roleManager = scopedServices.GetRequiredService<RoleManager<IdentityRole>>();
-
+                    
                     // Ensure the database is created
                     db.Database.EnsureCreated();
 
@@ -103,15 +103,15 @@
                     Email = Configuration.GetValue<string>("Admin:Email"),
                     PhoneNumber = Configuration.GetValue<string>("Admin:PhoneNumber")
                 };
-                var employeeUser = new User 
-                { 
-                    UserName = "employee", 
-                    NormalizedUserName = "EMPLOYEE", 
-                    Email = "employee@example.com" 
+                var employeeUser = new User
+                {
+                    UserName = "employee",
+                    NormalizedUserName = "EMPLOYEE",
+                    Email = "employee@example.com"
                 };
-                var otherUser = new User 
-                { 
-                    UserName = "user", 
+                var otherUser = new User
+                {
+                    UserName = "user",
                     NormalizedUserName = "USER",
                     Email = "user@example.com",
                 };

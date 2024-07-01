@@ -25,15 +25,15 @@
             Configuration = builder.Build();
 
             InitializeServices();
-            PromoCodeService = new PromoCodeService(DbContext);
-            EmailService = new EmailService(DbContext, Configuration, PromoCodeService, NotificationServiceMock.Object);
+            PromoCodeService = new PromoCodeService(DbContext!);
+            EmailService = new EmailService(DbContext!, Configuration, PromoCodeService, NotificationServiceMock!.Object);
         }
 
         public override void InitializeServices()
         {
             base.InitializeServices();
-            PromoCodeService = new PromoCodeService(DbContext);
-            EmailService = new EmailService(DbContext, Configuration, PromoCodeService, NotificationServiceMock.Object);
+            PromoCodeService = new PromoCodeService(DbContext!);
+            EmailService = new EmailService(DbContext!, Configuration, PromoCodeService, NotificationServiceMock!.Object);
         }
     }
 }

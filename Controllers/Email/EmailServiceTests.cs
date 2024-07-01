@@ -24,12 +24,12 @@
         public EmailServiceTests(EmailFixture fixture)
         {
             this.fixture = fixture;
-            this.db = fixture.DbContext;
+            this.db = fixture.DbContext!;
             this.emailService = fixture.EmailService;
             this.promoCodeService = fixture.PromoCodeService;
-            this.notificationServiceMock = fixture.NotificationServiceMock;
-            this.identityService = fixture.IdentityService;
-            this.newsletterService = fixture.NewsletterService;
+            this.notificationServiceMock = fixture.NotificationServiceMock!;
+            this.identityService = fixture.IdentityService!;
+            this.newsletterService = fixture.NewsletterService!;
         }
 
         public void Dispose()
@@ -41,12 +41,12 @@
         internal void InitializeTestServices()
         {
             fixture.InitializeServices();
-            this.db = fixture.DbContext;
+            this.db = fixture.DbContext!;
             this.emailService = fixture.EmailService;
             this.promoCodeService = fixture.PromoCodeService;
-            this.notificationServiceMock = fixture.NotificationServiceMock;
-            this.identityService = fixture.IdentityService;
-            this.newsletterService = fixture.NewsletterService;
+            this.notificationServiceMock = fixture.NotificationServiceMock!;
+            this.identityService = fixture.IdentityService!;
+            this.newsletterService = fixture.NewsletterService!;
         }
 
         [Fact]

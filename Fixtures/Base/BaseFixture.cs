@@ -16,25 +16,25 @@
 
     public class BaseFixture
     {
-        public NutriBestDbContext DbContext { get; private set; }
+        public NutriBestDbContext? DbContext { get; private set; }
 
-        public ServiceProvider ServiceProvider { get; protected set; }
+        public ServiceProvider? ServiceProvider { get; protected set; }
 
-        public UserManager<User> UserManager { get; private set; }
+        public UserManager<User>? UserManager { get; private set; }
 
-        public RoleManager<IdentityRole> RoleManager { get; private set; }
+        public RoleManager<IdentityRole>? RoleManager { get; private set; }
 
-        public IIdentityService IdentityService { get; private set; }
+        public IIdentityService? IdentityService { get; private set; }
 
-        public IdentityController IdentityController { get; private set; }
+        public IdentityController? IdentityController { get; private set; }
 
-        public INewsletterService NewsletterService { get; private set; }
+        public INewsletterService? NewsletterService { get; private set; }
 
-        public Mock<IEmailService> EmailServiceMock { get; private set; }
+        public Mock<IEmailService>? EmailServiceMock { get; private set; }
 
-        public Mock<INotificationService> NotificationServiceMock { get; private set; }
+        public Mock<INotificationService>? NotificationServiceMock { get; private set; }
 
-        public Mock<IOptions<ApplicationSettings>> ApplicationSettings { get; set; }
+        public Mock<IOptions<ApplicationSettings>>? ApplicationSettings { get; set; }
 
         public Mock<ICurrentUserService> CurrentUserServiceMock { get; private set; } = new Mock<ICurrentUserService>();
 
