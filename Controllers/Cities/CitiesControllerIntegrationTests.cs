@@ -59,7 +59,8 @@
             await fixture.ResetDatabaseAsync();
             scope = fixture.Factory.Services.CreateScope();
             db = scope.ServiceProvider.GetRequiredService<NutriBestDbContext>();
-            db.SeedDatabase(scope);
+            db.SeedBgCities();
+            db.SeedDeCities();
         }
 
         public Task DisposeAsync()
