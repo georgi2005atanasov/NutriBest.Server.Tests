@@ -2,19 +2,15 @@
 
 namespace NutriBest.Server.Tests.Controllers.Brands
 {
-    using Xunit;
     using System.Net;
+    using System.Text.Json;
+    using Xunit;
     using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.AspNetCore.Http;
-    using Moq;
     using NutriBest.Server.Data;
+    using NutriBest.Server.Shared.Responses;
     using NutriBest.Server.Features.Brands.Models;
     using Infrastructure.Extensions;
-    using NutriBest.Server.Features.Products.Models;
-    using NutriBest.Server.Features.Promotions.Models;
     using static ErrorMessages.BrandsController;
-    using System.Text.Json;
-    using NutriBest.Server.Shared.Responses;
 
     [Collection("Brands Controller Tests")]
     public class RemoveBrandIntegrationTests : IAsyncLifetime
@@ -34,12 +30,11 @@ namespace NutriBest.Server.Tests.Controllers.Brands
         }
 
         [Theory]
-        [InlineData("Goshoolu", 5, "The Gosho Brand")]
-        public async Task RemoveBrand_ShouldBeExecuted_ForAdmin(string name,
-            int index, string description)
+        [InlineData("The Gosho Brand")]
+        public async Task RemoveBrand_ShouldBeExecuted_ForAdmin(string description)
         {
             // Arrange
-            var uniqueName = $"{name}{index}";
+            var uniqueName = Guid.NewGuid().ToString();
 
             var client = await clientHelper.GetAdministratorClientAsync();
             var brandModel = new CreateBrandServiceModel
@@ -60,15 +55,15 @@ namespace NutriBest.Server.Tests.Controllers.Brands
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.True(!db!.Brands.Any(x => x.Name == uniqueName));
         }
 
         [Theory]
-        [InlineData("Goshoolu", 6, "The Gosho Brand")]
-        public async Task RemoveBrand_ShouldBeExecuted_ForEmployee(string name,
-            int index ,string description)
+        [InlineData("The Gosho Brand")]
+        public async Task RemoveBrand_ShouldBeExecuted_ForEmployee(string description)
         {
             // Arrange
-            var uniqueName = $"{name}{index}";
+            var uniqueName = Guid.NewGuid().ToString();
 
             var client = await clientHelper.GetEmployeeClientAsync();
             var brandModel = new CreateBrandServiceModel
@@ -76,6 +71,7 @@ namespace NutriBest.Server.Tests.Controllers.Brands
                 Description = description,
                 Name = uniqueName
             };
+
             // Convert the brand model to form-data content
             var formData = new MultipartFormDataContent
             {
@@ -89,15 +85,15 @@ namespace NutriBest.Server.Tests.Controllers.Brands
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.True(!db!.Brands.Any(x => x.Name == uniqueName));
         }
 
         [Theory]
-        [InlineData("Goshoolu", 7, "The Gosho Brand")]
-        public async Task RemoveBrand_ShouldBeExecuted_AndAlsoShouldDeleteProduct(string name,
-            int index, string description)
+        [InlineData("The Gosho Brand")]
+        public async Task RemoveBrand_ShouldBeExecuted_AndAlsoShouldDeleteProduct(string description)
         {
             // Arrange
-            var uniqueName = $"{name}{index}";
+            var uniqueName = Guid.NewGuid().ToString();
 
             var client = await clientHelper.GetEmployeeClientAsync();
             var brandModel = new CreateBrandServiceModel
@@ -114,7 +110,8 @@ namespace NutriBest.Server.Tests.Controllers.Brands
             await client.PostAsync("/Brands", formData);
             await SeedingHelper.SeedProduct(clientHelper, productName: "product300", uniqueName);
 
-            Assert.NotEmpty(db!.Products);
+            Assert.True(db!.Products
+                        .Any(x => x.Brand != null && x.Brand.Name == uniqueName));
 
             // Act
             var response = await client.DeleteAsync($"/Brands/{uniqueName}");
@@ -125,12 +122,11 @@ namespace NutriBest.Server.Tests.Controllers.Brands
         }
 
         [Theory]
-        [InlineData("Goshoolu", 9, "The Gosho Brand")]
-        public async Task RemoveBrand_ShouldBeExecuted_AndAlsoShouldDeletePromotion(string name,
-            int index, string description)
+        [InlineData("The Gosho Brand")]
+        public async Task RemoveBrand_ShouldBeExecuted_AndAlsoShouldDeletePromotion(string description)
         {
             // Arrange
-            var uniqueName = $"{name}{index}";
+            var uniqueName = Guid.NewGuid().ToString();
 
             var client = await clientHelper.GetEmployeeClientAsync();
             var brandModel = new CreateBrandServiceModel
@@ -147,7 +143,8 @@ namespace NutriBest.Server.Tests.Controllers.Brands
             await client.PostAsync("/Brands", formData);
             await SeedingHelper.SeedPromotion(clientHelper, uniqueName);
 
-            Assert.NotEmpty(db!.Promotions);
+            Assert.True(db!.Promotions
+                        .Any(x => x.Brand == uniqueName));
 
             // Act
             var response = await client.DeleteAsync($"/Brands/{uniqueName}");
@@ -158,12 +155,11 @@ namespace NutriBest.Server.Tests.Controllers.Brands
         }
 
         [Theory]
-        [InlineData("Goshoolu", 10, "The Gosho Brand")]
-        public async Task RemoveBrand_ShouldBeExecuted_AndAlsoShouldDeleteProductAndPromotion(string name,
-            int index, string description)
+        [InlineData("The Gosho Brand")]
+        public async Task RemoveBrand_ShouldBeExecuted_AndAlsoShouldDeleteProductAndPromotion(string description)
         {
             // Arrange
-            var uniqueName = $"{name}{index}";
+            var uniqueName = Guid.NewGuid().ToString();
 
             var client = await clientHelper.GetEmployeeClientAsync();
             var brandModel = new CreateBrandServiceModel
@@ -181,8 +177,10 @@ namespace NutriBest.Server.Tests.Controllers.Brands
             await SeedingHelper.SeedProduct(clientHelper, productName: "product301", uniqueName);
             await SeedingHelper.SeedPromotion(clientHelper, uniqueName);
 
-            Assert.NotEmpty(db!.Products);
-            Assert.NotEmpty(db!.Promotions);
+            Assert.True(db!.Products
+                        .Any(x => x.Brand != null && x.Brand.Name == uniqueName));
+            Assert.True(db!.Promotions
+                        .Any(x => x.Brand == uniqueName));
 
             // Act
             var response = await client.DeleteAsync($"/Brands/{uniqueName}");

@@ -1,4 +1,4 @@
-﻿namespace NutriBest.Server.Tests.Controllers.Brands
+﻿namespace NutriBest.Server.Tests.Controllers.Flavours
 {
     using Xunit;
     using System.Text.Json;
@@ -6,9 +6,10 @@
     using NutriBest.Server.Data;
     using NutriBest.Server.Features.Brands.Models;
     using Infrastructure.Extensions;
+    using NutriBest.Server.Features.Flavours.Models;
 
     [Collection("Brands Controller Tests")]
-    public class ProductsByBrandIntegrationTests : IAsyncLifetime
+    public class ProductsByFlavourIntegrationTests : IAsyncLifetime
     {
         private NutriBestDbContext? db;
 
@@ -18,7 +19,7 @@
 
         private IServiceScope? scope;
 
-        public ProductsByBrandIntegrationTests(CustomWebApplicationFactoryFixture fixture)
+        public ProductsByFlavourIntegrationTests(CustomWebApplicationFactoryFixture fixture)
         {
             clientHelper = new ClientHelper(fixture);
             this.fixture = fixture;
@@ -34,17 +35,17 @@
             await SeedingHelper.SeedProduct(clientHelper, "product12", "Klean Athlete"); // Ensure It exists!!!
 
             // Act
-            var response = await client.GetAsync("/Products/ByBrandCount");
+            var response = await client.GetAsync("/Products/ByFlavourCount");
             var data = await response.Content.ReadAsStringAsync();
 
             // Assert
-            var result = JsonSerializer.Deserialize<List<BrandCountServiceModel>>(data, new JsonSerializerOptions
+            var result = JsonSerializer.Deserialize<List<FlavourCountServiceModel>>(data, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true // This option allows matching property names ignoring case
-            }) ?? new List<BrandCountServiceModel>();
+            }) ?? new List<FlavourCountServiceModel>();
 
             Assert.Equal(3, result
-                            .First(x => x.Name == "Klean Athlete") // Ensure It exists!!!
+                            .First(x => x.Name == "Coconut") // Ensure It exists!!!
                             .Count);
         }
 
@@ -53,10 +54,10 @@
             await fixture.ResetDatabaseAsync();
             scope = fixture.Factory.Services.CreateScope();
             db = scope.ServiceProvider.GetRequiredService<NutriBestDbContext>();
+            db.SeedFlavours();
             db.SeedBrands();
             db.SeedCategories();
             db.SeedPackages();
-            db.SeedFlavours();
         }
 
         public Task DisposeAsync()

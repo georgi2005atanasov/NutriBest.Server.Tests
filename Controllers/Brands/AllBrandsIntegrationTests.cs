@@ -8,7 +8,7 @@
     using Infrastructure.Extensions;
 
     [Collection("Brands Controller Tests")]
-    public class AllEndpointIntegrationTests : IAsyncLifetime
+    public class AllBrandsIntegrationTests : IAsyncLifetime
     {
         private NutriBestDbContext? db;
 
@@ -18,14 +18,14 @@
 
         private IServiceScope? scope;
 
-        public AllEndpointIntegrationTests(CustomWebApplicationFactoryFixture fixture)
+        public AllBrandsIntegrationTests(CustomWebApplicationFactoryFixture fixture)
         {
             clientHelper = new ClientHelper(fixture);
             this.fixture = fixture;
         }
 
         [Fact]
-        public async Task AllEndpoint_ShouldReturnAllBrands()
+        public async Task AllBrandsEndpoint_ShouldReturnAllBrands()
         {
             // Arrange
             var client = await clientHelper.GetAdministratorClientAsync();
@@ -49,7 +49,7 @@
             await fixture.ResetDatabaseAsync();
             scope = fixture.Factory.Services.CreateScope();
             db = scope.ServiceProvider.GetRequiredService<NutriBestDbContext>();
-            db.SeedDatabase(scope);
+            db.SeedBrands();
         }
 
         public Task DisposeAsync()
