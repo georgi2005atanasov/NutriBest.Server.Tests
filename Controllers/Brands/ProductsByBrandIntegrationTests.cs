@@ -28,10 +28,35 @@
         public async Task ProductsByBrand_ShouldBeExecuted()
         {
             // Arrange
+
             var client = clientHelper.GetAnonymousClient();
-            await SeedingHelper.SeedProduct(clientHelper, "product10", "Klean Athlete"); // Ensure It exists!!!
-            await SeedingHelper.SeedProduct(clientHelper, "product11", "Klean Athlete"); // Ensure It exists!!!
-            await SeedingHelper.SeedProduct(clientHelper, "product12", "Klean Athlete"); // Ensure It exists!!!
+            await SeedingHelper.SeedProduct(clientHelper,
+                "product10",
+                            new List<string>
+                {
+                    "Creatines"
+                },
+                "100",
+                "Klean Athlete",
+                "[{ \"flavour\": \"Coconut\", \"grams\": 500, \"quantity\": 100, \"price\": \"99.99\"}]");
+            await SeedingHelper.SeedProduct(clientHelper,
+                "product11",
+                new List<string>
+                {
+                    "Creatines"
+                },
+                "100",
+                "Klean Athlete",
+                "[{ \"flavour\": \"Coconut\", \"grams\": 500, \"quantity\": 100, \"price\": \"99.99\"}]");
+            await SeedingHelper.SeedProduct(clientHelper,
+                "product12",
+                new List<string>
+                {
+                    "Creatines"
+                },
+                "100",
+                "Klean Athlete",
+                "[{ \"flavour\": \"Coconut\", \"grams\": 500, \"quantity\": 100, \"price\": \"99.99\"}]");
 
             // Act
             var response = await client.GetAsync("/Products/ByBrandCount");

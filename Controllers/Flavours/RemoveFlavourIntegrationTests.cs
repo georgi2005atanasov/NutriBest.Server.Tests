@@ -90,8 +90,15 @@ namespace NutriBest.Server.Tests.Controllers.Flavours
             var flavourName = "Coconut"; // ENSURE IT EXISTS
             var client = await clientHelper.GetEmployeeClientAsync();
 
-            // ENSURE 'Klean Athlete' BRAND EXISTS!
-            await SeedingHelper.SeedProduct(clientHelper, "product9", "Klean Athlete");
+            await SeedingHelper.SeedProduct(clientHelper,
+                "product41",
+                            new List<string>
+                {
+                    "Creatines"
+                },
+                "100",
+                "Klean Athlete",
+                "[{ \"flavour\": \"Coconut\", \"grams\": 500, \"quantity\": 100, \"price\": \"99.99\"}]");
 
             Assert.True(db!.ProductsPackagesFlavours
                         .Any(x => x.Flavour!.FlavourName == "Coconut"));

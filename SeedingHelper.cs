@@ -4,25 +4,26 @@
     using Moq;
     using NutriBest.Server.Features.Products.Models;
     using NutriBest.Server.Features.Promotions.Models;
+    using NutriBest.Server.Features.ShippingDiscounts.Models;
 
     public static class SeedingHelper
     {
         public static async Task SeedProduct(ClientHelper clientHelper,
             string productName,
-            string brandName)
+            List<string> categories,
+            string price,
+            string brandName,
+            string productSpecs)
         {
             var productModel = new CreateProductRequestModel
             {
                 Name = productName,
                 Description = "this is product 1",
                 Image = new Mock<IFormFile>().Object,
-                Categories = new List<string>
-                {
-                    "Creatines"
-                },
+                Categories = categories,
                 Brand = brandName,
-                Price = "100",
-                ProductSpecs = "[{ \"flavour\": \"Coconut\", \"grams\": 500, \"quantity\": 100, \"price\": \"99.99\"}]"
+                Price = price,
+                ProductSpecs = productSpecs
             };
 
             var formData = new MultipartFormDataContent
@@ -76,6 +77,14 @@
             var client = await clientHelper.GetAdministratorClientAsync();
             var response = await client.PostAsync("/Promotions", formData);
             var data = await response.Content.ReadAsStringAsync();
+        }
+
+        public static async Task SeedShippingDiscount(string countryName)
+        {
+            var model = new CreateShippingDiscountServiceModel
+            {
+
+            };
         }
     }
 }

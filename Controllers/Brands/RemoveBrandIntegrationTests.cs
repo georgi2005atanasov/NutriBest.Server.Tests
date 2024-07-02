@@ -108,7 +108,15 @@ namespace NutriBest.Server.Tests.Controllers.Brands
                 { new StringContent(brandModel.Name), "Name" }
             };
             await client.PostAsync("/Brands", formData);
-            await SeedingHelper.SeedProduct(clientHelper, productName: "product300", uniqueName);
+            await SeedingHelper.SeedProduct(clientHelper,
+                "product10",
+                            new List<string>
+                {
+                    "Creatines"
+                },
+                "300",
+                uniqueName,
+                "[{ \"flavour\": \"Coconut\", \"grams\": 500, \"quantity\": 100, \"price\": \"99.99\"}]");
 
             Assert.True(db!.Products
                         .Any(x => x.Brand != null && x.Brand.Name == uniqueName));
@@ -174,7 +182,15 @@ namespace NutriBest.Server.Tests.Controllers.Brands
                 { new StringContent(brandModel.Name), "Name" }
             };
             await client.PostAsync("/Brands", formData);
-            await SeedingHelper.SeedProduct(clientHelper, productName: "product301", uniqueName);
+            await SeedingHelper.SeedProduct(clientHelper,
+                "product10",
+                            new List<string>
+                {
+                    "Creatines"
+                },
+                "301",
+                uniqueName,
+                "[{ \"flavour\": \"Coconut\", \"grams\": 500, \"quantity\": 100, \"price\": \"99.99\"}]");
             await SeedingHelper.SeedPromotion(clientHelper, uniqueName);
 
             Assert.True(db!.Products

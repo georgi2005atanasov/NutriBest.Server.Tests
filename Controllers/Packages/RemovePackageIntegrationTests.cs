@@ -96,9 +96,15 @@ namespace NutriBest.Server.Tests.Controllers.Packages
                 Grams = grams
             };
 
-            await SeedingHelper.SeedProduct(clientHelper, 
-                "removePackageProducts", 
-                "Klean Athlete"); // ENSURE "Klean Athlete" EXISTS!!!
+            await SeedingHelper.SeedProduct(clientHelper,
+                "product40",
+                            new List<string>
+                {
+                    "Creatines"
+                },
+                "100",
+                "Klean Athlete",
+                "[{ \"flavour\": \"Coconut\", \"grams\": 500, \"quantity\": 100, \"price\": \"99.99\"}]");
 
             Assert.True(db!.ProductsPackagesFlavours
                 .Any(x => x.Package!.Grams == grams));
