@@ -1,5 +1,6 @@
 ﻿namespace NutriBest.Server.Tests
 {
+    using System.Net.Http.Json;
     using Microsoft.AspNetCore.Http;
     using Moq;
     using NutriBest.Server.Features.Products.Models;
@@ -54,7 +55,8 @@
             var data = await response.Content.ReadAsStringAsync();
         }
 
-        public static async Task SeedPromotion(ClientHelper clientHelper, string name)
+        public static async Task SeedPromotion(ClientHelper clientHelper, 
+            string name)
         {
             var promotionModel = new CreatePromotionServiceModel
             {
@@ -79,12 +81,26 @@
             var data = await response.Content.ReadAsStringAsync();
         }
 
-        public static async Task SeedShippingDiscount(string countryName)
+        public static async Task SeedShippingDiscount(ClientHelper clientHelper,
+            string countryName,
+            string description,
+            string discountPercentage,
+            DateTime? endDate,
+            string minPrice
+            )
         {
-            var model = new CreateShippingDiscountServiceModel
+            var shippingModel = new CreateShippingDiscountServiceModel
             {
-
+                CountryName = countryName,
+                Description = description,
+                DiscountPercentage = discountPercentage,
+                EndDate = endDate,
+                MinimumPrice = minPrice
             };
+
+            var client = await clientHelper.GetAdministratorClientAsync();
+            var response = await client.PostAsJsonAsync("/ShippingDiscount", shippingModel);
+            var data = await response.Content.ReadAsStringAsync();
         }
     }
 }

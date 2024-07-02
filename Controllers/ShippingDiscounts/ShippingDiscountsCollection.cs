@@ -3,7 +3,7 @@
     using Xunit;
 
     [CollectionDefinition("Shipping Discounts Controller Tests")]
-    public class ShippingDiscountsCollection
+    public class ShippingDiscountsCollection : ICollectionFixture<CustomWebApplicationFactoryFixture>
     {
     }
 }
