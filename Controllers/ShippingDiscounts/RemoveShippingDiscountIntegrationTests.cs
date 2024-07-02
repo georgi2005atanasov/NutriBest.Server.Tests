@@ -1,18 +1,13 @@
-﻿using NutriBest.Server.Utilities.Messages;
-
-namespace NutriBest.Server.Tests.Controllers.ShippingDiscounts
+﻿namespace NutriBest.Server.Tests.Controllers.ShippingDiscounts
 {
     using System.Net;
     using System.Text.Json;
-    using System.Net.Http.Json;
     using Xunit;
     using Microsoft.Extensions.DependencyInjection;
     using NutriBest.Server.Data;
-    using NutriBest.Server.Features.ShippingDiscounts.Models;
-    using NutriBest.Server.Shared.Responses;
     using NutriBest.Server.Tests.Extensions;
+    using NutriBest.Server.Features.ShippingDiscounts.Models;
     using Infrastructure.Extensions;
-    using static ErrorMessages.ShippingDiscountController;
 
     [Collection("Shipping Discounts Controller Tests")]
     public class RemoveShippingDiscountIntegrationTests : IAsyncLifetime

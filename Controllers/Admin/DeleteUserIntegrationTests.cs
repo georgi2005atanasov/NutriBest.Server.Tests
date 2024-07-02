@@ -35,7 +35,6 @@
             var client = await clientHelper.GetAdministratorClientAsync();
             var user = await userManager!.FindByNameAsync("user");
 
-
             // Act
             var response = await client.DeleteAsync($"/Admin/DeleteUser/{user.Id}");
             var data = await response.Content.ReadAsStringAsync();
@@ -93,6 +92,7 @@
 
             // Assert
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            Assert.True(db!.Users.Any(x => x.UserName == "user"));
         }
 
         [Fact]
@@ -108,6 +108,7 @@
 
             // Assert
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.True(db!.Users.Any(x => x.UserName == "user"));
         }
 
         public async Task InitializeAsync()

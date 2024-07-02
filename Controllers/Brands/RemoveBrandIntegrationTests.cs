@@ -125,8 +125,8 @@ namespace NutriBest.Server.Tests.Controllers.Brands
             var response = await client.DeleteAsync($"/Brands/{uniqueName}");
 
             // Assert
-            Assert.Empty(db.Products);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Empty(db.Products);
         }
 
         [Theory]
@@ -158,8 +158,8 @@ namespace NutriBest.Server.Tests.Controllers.Brands
             var response = await client.DeleteAsync($"/Brands/{uniqueName}");
 
             // Assert
-            Assert.Empty(db.Promotions);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Empty(db.Promotions);
         }
 
         [Theory]
@@ -202,9 +202,9 @@ namespace NutriBest.Server.Tests.Controllers.Brands
             var response = await client.DeleteAsync($"/Brands/{uniqueName}");
 
             // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Empty(db.Products);
             Assert.Empty(db.Promotions);
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
 
         [Fact]
@@ -214,10 +214,11 @@ namespace NutriBest.Server.Tests.Controllers.Brands
             var client = await clientHelper.GetOtherUserClientAsync();
 
             // Act
-            var response = await client.DeleteAsync($"/Brands/NoNeedForName");
+            var response = await client.DeleteAsync($"/Brands/NutriBest");
 
             // Assert
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            Assert.True(db!.Brands.Any(x => x.Name == "NutriBest"));
         }
 
         [Fact]
@@ -227,10 +228,11 @@ namespace NutriBest.Server.Tests.Controllers.Brands
             var client = clientHelper.GetAnonymousClient();
 
             // Act
-            var response = await client.DeleteAsync($"/Brands/NoNeedForName");
+            var response = await client.DeleteAsync($"/Brands/NutriBest");
 
             // Assert
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.True(db!.Brands.Any(x => x.Name == "NutriBest"));
         }
 
         [Fact]

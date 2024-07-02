@@ -124,13 +124,15 @@
             // Arrange
             var client = clientHelper.GetAnonymousClient();
             var user = await userManager!.FindByNameAsync("employee");
-            var roleToAdd = "Employee";
+            var roleToRemove = "Employee";
 
             // Act
-            var response = await client.PatchAsync($"/Admin/Disown/{user.Id}?role={roleToAdd}", null);
+            var response = await client.PatchAsync($"/Admin/Disown/{user.Id}?role={roleToRemove}", null);
 
             // Assert
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            var userRoles = await userManager.GetRolesAsync(user);
+            Assert.True(userRoles.Contains(roleToRemove));
         }
 
         [Fact]
@@ -138,14 +140,16 @@
         {
             // Arrange
             var client = await clientHelper.GetOtherUserClientAsync();
-            var user = await userManager!.FindByNameAsync("user");
-            var roleToAdd = "Employee";
+            var user = await userManager!.FindByNameAsync("employee");
+            var roleToRemove = "Employee";
 
             // Act
-            var response = await client.PatchAsync($"/Admin/Disown/{user.Id}?role={roleToAdd}", null);
+            var response = await client.PatchAsync($"/Admin/Disown/{user.Id}?role={roleToRemove}", null);
 
             // Assert
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            var userRoles = await userManager.GetRolesAsync(user);
+            Assert.True(userRoles.Contains(roleToRemove));
         }
 
         [Fact]
@@ -153,14 +157,16 @@
         {
             // Arrange
             var client = clientHelper.GetAnonymousClient();
-            var user = await userManager!.FindByNameAsync("user");
-            var roleToAdd = "Employee";
+            var user = await userManager!.FindByNameAsync("employee");
+            var roleToRemove = "Employee";
 
             // Act
-            var response = await client.PatchAsync($"/Admin/Disown/{user.Id}?role={roleToAdd}", null);
+            var response = await client.PatchAsync($"/Admin/Disown/{user.Id}?role={roleToRemove}", null);
 
             // Assert
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            var userRoles = await userManager.GetRolesAsync(user);
+            Assert.True(userRoles.Contains(roleToRemove));
         }
 
         public async Task InitializeAsync()

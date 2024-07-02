@@ -1,11 +1,11 @@
 ﻿namespace NutriBest.Server.Tests.Controllers.ShippingDiscounts
 {
+    using System.Text.Json;
     using Xunit;
     using Microsoft.Extensions.DependencyInjection;
     using NutriBest.Server.Data;
-    using Infrastructure.Extensions;
-    using System.Text.Json;
     using NutriBest.Server.Features.ShippingDiscounts.Models;
+    using Infrastructure.Extensions;
 
     [Collection("Shipping Discounts Controller Tests")]
     public class AllShippingDiscountsIntegrationTests : IAsyncLifetime

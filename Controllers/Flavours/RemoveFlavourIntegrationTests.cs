@@ -164,10 +164,11 @@ namespace NutriBest.Server.Tests.Controllers.Flavours
             var client = await clientHelper.GetOtherUserClientAsync();
 
             // Act
-            var response = await client.DeleteAsync($"/Flavours/NoNeedForName");
+            var response = await client.DeleteAsync($"/Flavours/Coconut");
 
             // Assert
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            Assert.True(db!.Flavours.Any(x => x.FlavourName == "Coconut"));
         }
 
         [Fact]
@@ -177,10 +178,11 @@ namespace NutriBest.Server.Tests.Controllers.Flavours
             var client = clientHelper.GetAnonymousClient();
 
             // Act
-            var response = await client.DeleteAsync($"/Flavours/NoNeedForName");
+            var response = await client.DeleteAsync($"/Flavours/Coconut");
 
             // Assert
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.True(db!.Flavours.Any(x => x.FlavourName == "Coconut"));
         }
 
         public async Task InitializeAsync()

@@ -126,10 +126,11 @@ namespace NutriBest.Server.Tests.Controllers.Packages
             var client = clientHelper.GetAnonymousClient();
 
             // Act
-            var response = await client.DeleteAsync($"/Packages/99932");
+            var response = await client.DeleteAsync($"/Packages/500");
 
             // Assert
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.True(db!.Packages.Any(x => x.Grams == 500));
         }
 
         [Fact]
@@ -139,10 +140,11 @@ namespace NutriBest.Server.Tests.Controllers.Packages
             var client = await clientHelper.GetOtherUserClientAsync();
 
             // Act
-            var response = await client.DeleteAsync($"/Packages/99932");
+            var response = await client.DeleteAsync($"/Packages/500");
 
             // Assert
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            Assert.True(db!.Packages.Any(x => x.Grams == 500));
         }
 
         public async Task InitializeAsync()

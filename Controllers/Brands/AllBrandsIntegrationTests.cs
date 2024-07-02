@@ -40,7 +40,7 @@
                 PropertyNameCaseInsensitive = true
             }) ?? new List<BrandServiceModel>();
 
-            Assert.Equal(6, result.Count());
+            Assert.Equal(7, result.Count());
             Assert.Equal(result.OrderBy(x => x.Name), result);
         }
 
