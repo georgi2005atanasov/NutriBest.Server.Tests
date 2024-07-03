@@ -3,7 +3,7 @@
     using Xunit;
 
     [CollectionDefinition("Nutrition Facts Controller Tests")]
-    public class NutritionFactsControllerCollection
+    public class NutritionFactsControllerCollection : ICollectionFixture<CustomWebApplicationFactoryFixture>
     {
     }
 }

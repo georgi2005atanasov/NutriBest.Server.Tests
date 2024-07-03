@@ -47,7 +47,7 @@
 
             for (int i = 0; i < productModel.Categories.Count; i++)
             {
-                formData.Add(new StringContent(productModel.Categories[i]), $"Categories[0]");
+                formData.Add(new StringContent(productModel.Categories[i]), $"Categories[{i}]");
             }
 
             var client = await clientHelper.GetAdministratorClientAsync();
@@ -56,15 +56,20 @@
         }
 
         public static async Task SeedPromotion(ClientHelper clientHelper, 
-            string name)
+            string brandName,
+            string description,
+            string category,
+            DateTime startDate,
+            string discountPercentage
+            )
         {
             var promotionModel = new CreatePromotionServiceModel
             {
-                Brand = name,
-                Description = "Test Promo",
-                Category = "Creatines",
-                StartDate = DateTime.Now,
-                DiscountPercentage = "20"
+                Brand = brandName,
+                Description = description,
+                Category = category,
+                StartDate = startDate,
+                DiscountPercentage = discountPercentage
             };
 
             var formData = new MultipartFormDataContent
@@ -73,7 +78,8 @@
                 { new StringContent(promotionModel.DiscountPercentage), "DiscountPercentage" },
                 { new StringContent(promotionModel.Brand), "Brand" },
                 { new StringContent(promotionModel.StartDate.ToString("o")), "StartDate" },
-                { new StringContent(promotionModel.Description), "Description" }
+                { new StringContent(promotionModel.Description), "Description" },
+                { new StringContent(promotionModel.Category), "Category" },
             };
 
             var client = await clientHelper.GetAdministratorClientAsync();

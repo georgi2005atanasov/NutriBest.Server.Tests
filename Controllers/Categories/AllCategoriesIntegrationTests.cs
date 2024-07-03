@@ -1,14 +1,14 @@
-﻿namespace NutriBest.Server.Tests.Controllers.Flavours
+﻿namespace NutriBest.Server.Tests.Controllers.Categories
 {
     using Xunit;
+    using System.Text.Json;
     using Microsoft.Extensions.DependencyInjection;
     using NutriBest.Server.Data;
+    using NutriBest.Server.Features.Categories.Models;
     using Infrastructure.Extensions;
-    using NutriBest.Server.Features.Flavours.Models;
-    using System.Text.Json;
 
-    [Collection("Flavours Controller Tests")]
-    public class AllFlavoursIntegrationTests : IAsyncLifetime
+    [Collection("Categories Controller Tests")]
+    public class AllCategoriesIntegrationTests : IAsyncLifetime
     {
         private NutriBestDbContext? db;
 
@@ -18,38 +18,36 @@
 
         private IServiceScope? scope;
 
-        public AllFlavoursIntegrationTests(CustomWebApplicationFactoryFixture fixture)
+        public AllCategoriesIntegrationTests(CustomWebApplicationFactoryFixture fixture)
         {
             clientHelper = new ClientHelper(fixture);
             this.fixture = fixture;
         }
 
         [Fact]
-        public async Task AllFlavoursEndpoint_ShouldBeExecuted()
+        public async Task AllCategoriesEndpoint_ShouldBeExecuted()
         {
-            // Arrange
-            var client = await clientHelper.GetAdministratorClientAsync();
+            var client = clientHelper.GetAnonymousClient();
 
-            // Act
-            var response = await client.GetAsync("/Flavours");
+            var response = await client.GetAsync("/Categories");
             var data = await response.Content.ReadAsStringAsync();
 
             // Assert
-            var result = JsonSerializer.Deserialize<List<FlavourServiceModel>>(data, new JsonSerializerOptions
+            var result = JsonSerializer.Deserialize<IEnumerable<CategoryServiceModel>>(data, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
-            }) ?? new List<FlavourServiceModel>();
+            }) ?? new List<CategoryServiceModel>();
 
-            Assert.Equal(15, result.Count());
+            Assert.Equal(12, result.Count());
             Assert.Equal(result.OrderBy(x => x.Name), result);
         }
-        
+
         public async Task InitializeAsync()
         {
             await fixture.ResetDatabaseAsync();
             scope = fixture.Factory.Services.CreateScope();
             db = scope.ServiceProvider.GetRequiredService<NutriBestDbContext>();
-            db.SeedFlavours();
+            db.SeedCategories();
         }
 
         public Task DisposeAsync()
