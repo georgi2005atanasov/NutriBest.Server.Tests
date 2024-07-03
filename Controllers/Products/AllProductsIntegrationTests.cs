@@ -1,14 +1,12 @@
-﻿using NutriBest.Server.Utilities.Messages;
-
-namespace NutriBest.Server.Tests.Controllers.Products
+﻿namespace NutriBest.Server.Tests.Controllers.Products
 {
+    using System.Net;
     using System.Text.Json;
     using Xunit;
     using Microsoft.Extensions.DependencyInjection;
     using NutriBest.Server.Data;
     using NutriBest.Server.Features.Products.Models;
     using Infrastructure.Extensions;
-    using System.Net;
 
     [Collection("Products Controller Tests")]
     public class AllProductsIntegrationTests : IAsyncLifetime
@@ -33,7 +31,7 @@ namespace NutriBest.Server.Tests.Controllers.Products
             // Arrange
             var client = await clientHelper.GetOtherUserClientAsync();
 
-            await SeedProducts(clientHelper);
+            await SeedThreeProducts(clientHelper);
 
             Assert.Equal(3, db!.Products.Count());
 
@@ -53,7 +51,7 @@ namespace NutriBest.Server.Tests.Controllers.Products
             // Arrange
             var client = await clientHelper.GetOtherUserClientAsync();
 
-            await SeedProducts(clientHelper);
+            await SeedThreeProducts(clientHelper);
 
             Assert.Equal(3, db!.Products.Count());
 
@@ -81,7 +79,7 @@ namespace NutriBest.Server.Tests.Controllers.Products
             // Arrange
             var client = await clientHelper.GetOtherUserClientAsync();
 
-            await SeedProducts(clientHelper);
+            await SeedThreeProducts(clientHelper);
 
             Assert.Equal(3, db!.Products.Count());
 
@@ -109,7 +107,7 @@ namespace NutriBest.Server.Tests.Controllers.Products
             // Arrange
             var client = await clientHelper.GetOtherUserClientAsync();
 
-            await SeedProducts(clientHelper);
+            await SeedThreeProducts(clientHelper);
 
             Assert.Equal(3, db!.Products.Count());
 
@@ -137,7 +135,7 @@ namespace NutriBest.Server.Tests.Controllers.Products
             // Arrange
             var client = await clientHelper.GetOtherUserClientAsync();
 
-            await SeedProducts(clientHelper);
+            await SeedThreeProducts(clientHelper);
 
             Assert.Equal(3, db!.Products.Count());
 
@@ -168,7 +166,7 @@ namespace NutriBest.Server.Tests.Controllers.Products
             // Arrange
             var client = await clientHelper.GetOtherUserClientAsync();
 
-            await SeedProducts(clientHelper);
+            await SeedThreeProducts(clientHelper);
 
             Assert.Equal(3, db!.Products.Count());
 
@@ -191,7 +189,7 @@ namespace NutriBest.Server.Tests.Controllers.Products
             // Arrange
             var client = await clientHelper.GetOtherUserClientAsync();
 
-            await SeedProducts(clientHelper);
+            await SeedThreeProducts(clientHelper);
 
             Assert.Equal(3, db!.Products.Count());
 
@@ -225,7 +223,7 @@ namespace NutriBest.Server.Tests.Controllers.Products
             // Arrange
             var client = await clientHelper.GetOtherUserClientAsync();
 
-            await SeedProducts(clientHelper);
+            await SeedThreeProducts(clientHelper);
 
             Assert.Equal(3, db!.Products.Count());
 
@@ -248,7 +246,7 @@ namespace NutriBest.Server.Tests.Controllers.Products
             // Arrange
             var client = await clientHelper.GetAdministratorClientAsync();
 
-            await SeedProducts(clientHelper);
+            await SeedThreeProducts(clientHelper);
 
             Assert.Equal(3, db!.Products.Count());
 
@@ -267,12 +265,63 @@ namespace NutriBest.Server.Tests.Controllers.Products
         }
 
         [Fact]
+        public async Task AllProductsEndpoint_ShouldBeExecuted_WithValidPagination()
+        {
+            // Arrange
+            var client = await clientHelper.GetAdministratorClientAsync();
+
+            await SeedThreeProducts(clientHelper);
+            await SeedSevenProducts(clientHelper);
+
+            Assert.Equal(10, db!.Products.Count());
+
+            // Act
+            var response = await client.GetAsync("/Products?page=2");
+            var data = await response.Content.ReadAsStringAsync();
+
+            // Assert
+            var result = JsonSerializer.Deserialize<AllProductsServiceModel>(data, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            }) ?? new AllProductsServiceModel();
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(3, result.ProductsRows![0].Count);
+            Assert.True(result.ProductsRows![1].Count == 1);
+        }
+
+        [Fact]
+        public async Task AllProductsEndpoint_ShouldBeExecuted_WithValidPagination_ForTable()
+        {
+            // Arrange
+            var client = await clientHelper.GetAdministratorClientAsync();
+
+            await SeedThreeProducts(clientHelper);
+            await SeedSevenProducts(clientHelper);
+
+            Assert.Equal(10, db!.Products.Count());
+
+            // Act
+            var response = await client.GetAsync("/Products?page=2&productsView=table");
+            var data = await response.Content.ReadAsStringAsync();
+
+            // Assert
+            var result = JsonSerializer.Deserialize<AllProductsServiceModel>(data, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            }) ?? new AllProductsServiceModel();
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Empty(result.ProductsRows);
+        }
+
+        [Fact]
         public async Task AllProductsEndpoint_ShouldReturnBadRequest_ForUsersWithChosenProductsViewTable()
         {
             // Arrange
             var client = await clientHelper.GetOtherUserClientAsync();
 
-            await SeedProducts(clientHelper);
+            await SeedThreeProducts(clientHelper);
 
             Assert.Equal(3, db!.Products.Count());
 
@@ -287,7 +336,7 @@ namespace NutriBest.Server.Tests.Controllers.Products
             // Arrange
             var client = clientHelper.GetAnonymousClient();
 
-            await SeedProducts(clientHelper);
+            await SeedThreeProducts(clientHelper);
 
             Assert.Equal(3, db!.Products.Count());
 
@@ -296,6 +345,137 @@ namespace NutriBest.Server.Tests.Controllers.Products
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
+        [Theory]
+        [InlineData("10 16", 1)]
+        [InlineData("10 60", 2)]
+        [InlineData("10 100", 3)]
+        public async Task AllProductsEndpoint_ShouldBeExecuted_WithPriceRange(string priceRange,
+            int expectedCount)
+        {
+            // Arrange
+            var client = await clientHelper.GetOtherUserClientAsync();
+
+            await SeedThreeProducts(clientHelper);
+
+            Assert.Equal(3, db!.Products.Count());
+
+            // Act
+            var response = await client.GetAsync($"/Products?page=1&priceRange={priceRange}");
+            var data = await response.Content.ReadAsStringAsync();
+
+            // Assert
+            var result = JsonSerializer.Deserialize<AllProductsServiceModel>(data, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            }) ?? new AllProductsServiceModel();
+
+            Assert.Equal(expectedCount, result.Count);
+        }
+
+        [Theory]
+        [InlineData("250", 1)]
+        [InlineData("250 500", 2)]
+        [InlineData("1000 500 250", 3)]
+        [InlineData("1500", 0)]
+        public async Task AllProductsEndpoint_ShouldBeExecuted_WithGivenQuantities(string quantities,
+            int expectedCount)
+        {
+            // Arrange
+            var client = await clientHelper.GetOtherUserClientAsync();
+
+            await SeedThreeProducts(clientHelper);
+
+            Assert.Equal(3, db!.Products.Count());
+
+            // Act
+            var response = await client.GetAsync($"/Products?page=1&quantities={quantities}");
+            var data = await response.Content.ReadAsStringAsync();
+
+            // Assert
+            var result = JsonSerializer.Deserialize<AllProductsServiceModel>(data, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            }) ?? new AllProductsServiceModel();
+
+            Assert.Equal(expectedCount, result.Count);
+        }
+
+        [Theory]
+        [InlineData("Coconut", 1)]
+        [InlineData("Coconut andAlso Cookies and Cream", 2)]
+        [InlineData("Lemon Lime andAlso Cookies and Cream andAlso Coconut", 3)]
+        [InlineData("Banana andAlso Chocolate", 0)]
+        public async Task AllProductsEndpoint_ShouldBeExecuted_WithGivenFlavours(string flavours,
+            int expectedCount)
+        {
+            // Arrange
+            var client = await clientHelper.GetOtherUserClientAsync();
+
+            await SeedThreeProducts(clientHelper);
+
+            Assert.Equal(3, db!.Products.Count());
+
+            // Act
+            var response = await client.GetAsync($"/Products?page=1&flavours={flavours}");
+            var data = await response.Content.ReadAsStringAsync();
+
+            // Assert
+            var result = JsonSerializer.Deserialize<AllProductsServiceModel>(data, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            }) ?? new AllProductsServiceModel();
+
+            Assert.Equal(expectedCount, result.Count);
+        }
+
+        [Theory]
+        [MemberData(nameof(ProductFilterTestData.FilterCombinations), MemberType = typeof(ProductFilterTestData))]
+        public async Task AllProductsEndpoint_ShouldBeExecuted_WithMultipleFilters(
+        string? priceOrder,
+        string? alphaOrder,
+        string? brand,
+        string? categories,
+        string? search,
+        string? quantities,
+        string? priceRange,
+        int expectedCount)
+        {
+            // Arrange
+            var client = await clientHelper.GetOtherUserClientAsync();
+
+            await SeedSevenProducts(clientHelper);
+
+            Assert.Equal(7, db!.Products.Count());
+
+            // Act
+            var url = "/Products?page=1";
+
+            if (!string.IsNullOrEmpty(priceOrder))
+                url += $"&price={priceOrder}";
+            if (!string.IsNullOrEmpty(alphaOrder))
+                url += $"&alpha={alphaOrder}";
+            if (!string.IsNullOrEmpty(brand))
+                url += $"&brand={brand}";
+            if (!string.IsNullOrEmpty(categories))
+                url += $"&categories={categories}";
+            if (!string.IsNullOrEmpty(search))
+                url += $"&search={search}";
+            if (!string.IsNullOrEmpty(quantities))
+                url += $"&quantities={quantities}";
+            if (!string.IsNullOrEmpty(priceRange))
+                url += $"&priceRange={priceRange}";
+
+            var response = await client.GetAsync(url);
+            var data = await response.Content.ReadAsStringAsync();
+
+            // Assert
+            var result = JsonSerializer.Deserialize<AllProductsServiceModel>(data, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            }) ?? new AllProductsServiceModel();
+
+            Assert.Equal(expectedCount, result.Count);
+        }
 
         public async Task InitializeAsync()
         {
@@ -313,7 +493,7 @@ namespace NutriBest.Server.Tests.Controllers.Products
             return Task.CompletedTask;
         }
 
-        private static async Task SeedProducts(ClientHelper clientHelper)
+        private static async Task SeedThreeProducts(ClientHelper clientHelper)
         {
             await SeedingHelper.SeedProduct(clientHelper,
                 "product71",
@@ -323,7 +503,7 @@ namespace NutriBest.Server.Tests.Controllers.Products
                 },
                 "15",
                 "Klean Athlete",
-                "[{ \"flavour\": \"Coconut\", \"grams\": 500, \"quantity\": 100, \"price\": \"15.99\"}]");
+                "[{ \"flavour\": \"Coconut\", \"grams\": 1000, \"quantity\": 100, \"price\": \"15.99\"}]");
 
             await SeedingHelper.SeedProduct(clientHelper,
                 "product72",
@@ -333,7 +513,7 @@ namespace NutriBest.Server.Tests.Controllers.Products
                 },
                 "100",
                 "Klean Athlete",
-                "[{ \"flavour\": \"Cookies and Cream\", \"grams\": 500, \"quantity\": 100, \"price\": \"99.99\"}]");
+                "[{ \"flavour\": \"Cookies and Cream\", \"grams\": 250, \"quantity\": 100, \"price\": \"99.99\"}]");
 
             await SeedingHelper.SeedProduct(clientHelper,
                 "product73",
@@ -344,6 +524,79 @@ namespace NutriBest.Server.Tests.Controllers.Products
                 "10",
                 "Nordic Naturals",
                 "[{ \"flavour\": \"Lemon Lime\", \"grams\": 500, \"quantity\": 100, \"price\": \"50.99\"}]");
+        }
+
+        private static async Task SeedSevenProducts(ClientHelper clientHelper)
+        {
+            await SeedingHelper.SeedProduct(clientHelper,
+                "product80",
+                            new List<string>
+                {
+                    "Creatines"
+                },
+                "15",
+                "Klean Athlete",
+                "[{ \"flavour\": \"Coconut\", \"grams\": 1000, \"quantity\": 100, \"price\": \"15.99\"}]");
+
+            await SeedingHelper.SeedProduct(clientHelper,
+                "product81",
+                new List<string>
+                {
+                    "Vitamins"
+                },
+                "100",
+                "Klean Athlete",
+                "[{ \"flavour\": \"Cookies and Cream\", \"grams\": 250, \"quantity\": 100, \"price\": \"99.99\"}]");
+
+            await SeedingHelper.SeedProduct(clientHelper,
+                "product82",
+                            new List<string>
+                {
+                    "Proteins"
+                },
+                "10",
+                "Nordic Naturals",
+                "[{ \"flavour\": \"Lemon Lime\", \"grams\": 500, \"quantity\": 100, \"price\": \"50.99\"}]");
+
+            await SeedingHelper.SeedProduct(clientHelper,
+                "product74",
+                            new List<string>
+                {
+                    "Proteins"
+                },
+                "10",
+                "Muscle Tech",
+                "[{ \"flavour\": \"Banana\", \"grams\": 1500, \"quantity\": 100, \"price\": \"10.99\"}]");
+
+            await SeedingHelper.SeedProduct(clientHelper,
+                "product75",
+                            new List<string>
+                {
+                    "Amino Acids"
+                },
+                "10",
+                "Muscle Tech",
+                "[{ \"flavour\": \"Chocolate\", \"grams\": 1000, \"quantity\": 100, \"price\": \"150.99\"}]");
+
+            await SeedingHelper.SeedProduct(clientHelper,
+                "product76",
+                            new List<string>
+                {
+                    "Fish Oils"
+                },
+                "10",
+                "Optimim Nutrition",
+                "[{ \"flavour\": \"Chocolate\", \"grams\": 500, \"quantity\": 100, \"price\": \"500.99\"}]");
+
+            await SeedingHelper.SeedProduct(clientHelper,
+                "product77",
+                            new List<string>
+                {
+                    "Vitamins"
+                },
+                "10",
+                "NutriBest",
+                "[{ \"flavour\": \"Cafe Latte\", \"grams\": 2000, \"quantity\": 100, \"price\": \"2000.99\"}]");
         }
     }
 }
