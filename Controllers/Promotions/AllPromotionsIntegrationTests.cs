@@ -1,6 +1,5 @@
 ﻿namespace NutriBest.Server.Tests.Controllers.Promotions
 {
-    using System.Net;
     using System.Text.Json;
     using Xunit;
     using Microsoft.Extensions.DependencyInjection;

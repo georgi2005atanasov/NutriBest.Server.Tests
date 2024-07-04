@@ -16,6 +16,8 @@
             string brandName,
             string productSpecs)
         {
+            var client = await clientHelper.GetAdministratorClientAsync();
+
             var productModel = new CreateProductRequestModel
             {
                 Name = productName,
@@ -50,7 +52,6 @@
                 formData.Add(new StringContent(productModel.Categories[i]), $"Categories[{i}]");
             }
 
-            var client = await clientHelper.GetAdministratorClientAsync();
             var response = await client.PostAsync("/Products", formData);
             var data = await response.Content.ReadAsStringAsync();
         }
@@ -62,6 +63,8 @@
             DateTime startDate,
             string discountPercentage)
         {
+            var client = await clientHelper.GetAdministratorClientAsync();
+
             var promotionModel = new CreatePromotionServiceModel
             {
                 Brand = brandName,
@@ -81,7 +84,6 @@
                 { new StringContent(promotionModel.Category ?? ""), "Category" },
             };
 
-            var client = await clientHelper.GetAdministratorClientAsync();
             var response = await client.PostAsync("/Promotions", formData);
             var data = await response.Content.ReadAsStringAsync();
         }
@@ -94,6 +96,8 @@
             string minPrice
             )
         {
+            var client = await clientHelper.GetAdministratorClientAsync();
+
             var shippingModel = new CreateShippingDiscountServiceModel
             {
                 CountryName = countryName,
@@ -103,7 +107,6 @@
                 MinimumPrice = minPrice
             };
 
-            var client = await clientHelper.GetAdministratorClientAsync();
             var response = await client.PostAsJsonAsync("/ShippingDiscount", shippingModel);
             var data = await response.Content.ReadAsStringAsync();
         }
