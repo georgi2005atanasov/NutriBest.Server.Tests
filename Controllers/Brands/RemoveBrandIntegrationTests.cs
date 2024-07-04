@@ -149,7 +149,7 @@ namespace NutriBest.Server.Tests.Controllers.Brands
                 { new StringContent(brandModel.Name), "Name" }
             };
             await client.PostAsync("/Brands", formData);
-            await SeedingHelper.SeedPromotion(clientHelper, 
+            await SeedingHelper.SeedPromotionWithDiscountPercentage(clientHelper, 
                 uniqueName,
                 "Test Promo",
                 "Creatines",
@@ -196,7 +196,7 @@ namespace NutriBest.Server.Tests.Controllers.Brands
                 "301",
                 uniqueName,
                 "[{ \"flavour\": \"Coconut\", \"grams\": 500, \"quantity\": 100, \"price\": \"99.99\"}]");
-            await SeedingHelper.SeedPromotion(clientHelper, 
+            await SeedingHelper.SeedPromotionWithDiscountPercentage(clientHelper, 
                 uniqueName,
                 "Test Promo",
                 "Creatines",

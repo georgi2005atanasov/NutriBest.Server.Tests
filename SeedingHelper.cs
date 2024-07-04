@@ -55,13 +55,12 @@
             var data = await response.Content.ReadAsStringAsync();
         }
 
-        public static async Task SeedPromotion(ClientHelper clientHelper, 
-            string brandName,
+        public static async Task SeedPromotionWithDiscountPercentage(ClientHelper clientHelper, 
+            string? brandName,
             string description,
-            string category,
+            string? category,
             DateTime startDate,
-            string discountPercentage
-            )
+            string discountPercentage)
         {
             var promotionModel = new CreatePromotionServiceModel
             {
@@ -76,10 +75,10 @@
             {
                 { new StringContent(promotionModel.Description), "Description" },
                 { new StringContent(promotionModel.DiscountPercentage), "DiscountPercentage" },
-                { new StringContent(promotionModel.Brand), "Brand" },
+                { new StringContent(promotionModel.Brand ?? ""), "Brand" },
                 { new StringContent(promotionModel.StartDate.ToString("o")), "StartDate" },
                 { new StringContent(promotionModel.Description), "Description" },
-                { new StringContent(promotionModel.Category), "Category" },
+                { new StringContent(promotionModel.Category ?? ""), "Category" },
             };
 
             var client = await clientHelper.GetAdministratorClientAsync();

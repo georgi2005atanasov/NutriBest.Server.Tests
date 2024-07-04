@@ -173,14 +173,14 @@
 
             await client.PostAsync("/Categories", formData);
 
-            await SeedingHelper.SeedPromotion(clientHelper,
+            await SeedingHelper.SeedPromotionWithDiscountPercentage(clientHelper,
                 "NutriBest",
                 "TEST PROMO",
                 categoryName,
                 DateTime.Now,
                 "10");
 
-            await SeedingHelper.SeedPromotion(clientHelper,
+            await SeedingHelper.SeedPromotionWithDiscountPercentage(clientHelper,
                 "NutriBest",
                 "TEST PROMO2",
                 "Creatines",
@@ -233,7 +233,7 @@
                 "NutriBest",
                 "[{ \"flavour\": \"Coconut\", \"grams\": 500, \"quantity\": 100, \"price\": \"99.99\"}]");
 
-            await SeedingHelper.SeedPromotion(clientHelper,
+            await SeedingHelper.SeedPromotionWithDiscountPercentage(clientHelper,
                 "NutriBest",
                 "TEST PROMO",
                 categoryName,
