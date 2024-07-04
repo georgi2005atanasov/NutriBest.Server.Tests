@@ -108,5 +108,111 @@
             var response = await client.PostAsJsonAsync("/ShippingDiscount", shippingModel);
             var data = await response.Content.ReadAsStringAsync();
         }
+
+        public static async Task SeedThreeProducts(ClientHelper clientHelper)
+        {
+            await SeedingHelper.SeedProduct(clientHelper,
+                "product71",
+                            new List<string>
+                {
+                    "Creatines"
+                },
+                "15",
+                "Klean Athlete",
+                "[{ \"flavour\": \"Coconut\", \"grams\": 1000, \"quantity\": 100, \"price\": \"15.99\"}]");
+
+            await SeedingHelper.SeedProduct(clientHelper,
+                "product72",
+                new List<string>
+                {
+                    "Vitamins"
+                },
+                "100",
+                "Klean Athlete",
+                "[{ \"flavour\": \"Cookies and Cream\", \"grams\": 250, \"quantity\": 100, \"price\": \"99.99\"}]");
+
+            await SeedingHelper.SeedProduct(clientHelper,
+                "product73",
+                            new List<string>
+                {
+                    "Proteins"
+                },
+                "10",
+                "Nordic Naturals",
+                "[{ \"flavour\": \"Lemon Lime\", \"grams\": 500, \"quantity\": 100, \"price\": \"50.99\"}]");
+        }
+
+        public static async Task SeedSevenProducts(ClientHelper clientHelper)
+        {
+            await SeedingHelper.SeedProduct(clientHelper,
+                "product80",
+                            new List<string>
+                {
+                    "Creatines"
+                },
+                "15",
+                "Klean Athlete",
+                "[{ \"flavour\": \"Coconut\", \"grams\": 1000, \"quantity\": 100, \"price\": \"15.99\"}]");
+
+            await SeedingHelper.SeedProduct(clientHelper,
+                "product81",
+                new List<string>
+                {
+                    "Vitamins"
+                },
+                "100",
+                "Klean Athlete",
+                "[{ \"flavour\": \"Cookies and Cream\", \"grams\": 250, \"quantity\": 100, \"price\": \"99.99\"}]");
+
+            await SeedingHelper.SeedProduct(clientHelper,
+                "product82",
+                            new List<string>
+                {
+                    "Proteins"
+                },
+                "10",
+                "Nordic Naturals",
+                "[{ \"flavour\": \"Lemon Lime\", \"grams\": 500, \"quantity\": 100, \"price\": \"50.99\"}]");
+
+            await SeedingHelper.SeedProduct(clientHelper,
+                "product74",
+                            new List<string>
+                {
+                    "Proteins"
+                },
+                "10",
+                "Muscle Tech",
+                "[{ \"flavour\": \"Banana\", \"grams\": 1500, \"quantity\": 100, \"price\": \"10.99\"}]");
+
+            await SeedingHelper.SeedProduct(clientHelper,
+                "product75",
+                            new List<string>
+                {
+                    "Amino Acids"
+                },
+                "10",
+                "Muscle Tech",
+                "[{ \"flavour\": \"Chocolate\", \"grams\": 1000, \"quantity\": 100, \"price\": \"150.99\"}]");
+
+            await SeedingHelper.SeedProduct(clientHelper,
+                "product76",
+                            new List<string>
+                {
+                    "Fish Oils"
+                },
+                "10",
+                "Optimim Nutrition",
+                "[{ \"flavour\": \"Chocolate\", \"grams\": 500, \"quantity\": 100, \"price\": \"500.99\"}]");
+
+            await SeedingHelper.SeedProduct(clientHelper,
+                "product77",
+                            new List<string>
+                {
+                    "Vitamins"
+                },
+                "10",
+                "NutriBest",
+                "[{ \"flavour\": \"Cafe Latte\", \"grams\": 2000, \"quantity\": 100, \"price\": \"2000.99\"}]");
+        }
     }
 }
