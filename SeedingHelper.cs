@@ -216,5 +216,50 @@
                 "NutriBest",
                 "[{ \"flavour\": \"Cafe Latte\", \"grams\": 2000, \"quantity\": 100, \"price\": \"2000.99\"}]");
         }
+
+        public static (MultipartFormDataContent formDataPercentDiscount,
+                        MultipartFormDataContent formDataAmountDiscount)
+                        GetTwoPromotions()
+        {
+            var promotionModelPercentDiscount = new CreatePromotionServiceModel
+            {
+                Brand = "NutriBest",
+                Description = "TEST PROMO",
+                Category = "Vitamins",
+                StartDate = DateTime.Now,
+                DiscountPercentage = "25",
+            };
+
+            var promotionModelAmountDiscount = new CreatePromotionServiceModel
+            {
+                Brand = "Klean Athlete",
+                Description = "TEST PROMO2",
+                Category = null,
+                StartDate = DateTime.Now,
+                DiscountAmount = "10",
+            };
+
+            var formDataPercentDiscount = new MultipartFormDataContent
+            {
+                { new StringContent(promotionModelPercentDiscount.Description), "Description" },
+                { new StringContent(promotionModelPercentDiscount.DiscountPercentage), "DiscountPercentage" },
+                { new StringContent(promotionModelPercentDiscount.Brand), "Brand" },
+                { new StringContent(promotionModelPercentDiscount.StartDate.ToString("o")), "StartDate" },
+                { new StringContent(promotionModelPercentDiscount.Description), "Description" },
+                { new StringContent(promotionModelPercentDiscount.Category), "Category" },
+            };
+
+            var formDataAmountDiscount = new MultipartFormDataContent
+            {
+                { new StringContent(promotionModelAmountDiscount.Description), "Description" },
+                { new StringContent(promotionModelAmountDiscount.DiscountAmount), "DiscountAmount" },
+                { new StringContent(promotionModelAmountDiscount.Brand), "Brand" },
+                { new StringContent(promotionModelAmountDiscount.StartDate.ToString("o")), "StartDate" },
+                { new StringContent(promotionModelAmountDiscount.Description), "Description" },
+                { new StringContent(promotionModelAmountDiscount.Category ?? ""), "Category" },
+            };
+
+            return (formDataPercentDiscount, formDataAmountDiscount);
+        }
     }
 }

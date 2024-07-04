@@ -4,8 +4,8 @@
     using Xunit;
     using Microsoft.Extensions.DependencyInjection;
     using NutriBest.Server.Data;
-    using Infrastructure.Extensions;
     using NutriBest.Server.Features.Promotions.Models;
+    using Infrastructure.Extensions;
 
     [Collection("Promotions Controller Tests")]
     public class AllPromotionsIntegrationTests : IAsyncLifetime

@@ -36,7 +36,7 @@ namespace NutriBest.Server.Tests.Controllers.Promotions
             // Arrange
             var client = await clientHelper.GetAdministratorClientAsync();
 
-            var (formDataPercentDiscount, formDataAmountDiscount) = GetTwoPromotions();
+            var (formDataPercentDiscount, formDataAmountDiscount) = SeedingHelper.GetTwoPromotions();
 
             // Act
             var firstResponse = await client.PostAsync("/Promotions", formDataPercentDiscount);
@@ -57,7 +57,7 @@ namespace NutriBest.Server.Tests.Controllers.Promotions
             // Arrange
             var client = await clientHelper.GetEmployeeClientAsync();
 
-            var (formDataPercentDiscount, formDataAmountDiscount) = GetTwoPromotions();
+            var (formDataPercentDiscount, formDataAmountDiscount) = SeedingHelper.GetTwoPromotions();
 
             // Act
             var firstResponse = await client.PostAsync("/Promotions", formDataPercentDiscount);
@@ -70,6 +70,46 @@ namespace NutriBest.Server.Tests.Controllers.Promotions
             Assert.Equal("1", dataFirstResponse);
             Assert.Equal(HttpStatusCode.OK, secondResponse.StatusCode);
             Assert.Equal("2", dataSecondResponse);
+        }
+
+        [Fact]
+        public async Task AllPromotionsEndpoint_ShouldBeExecuted_AndThePromotionsShouldAlsoBeApplied()
+        {
+            // Arrange
+            var client = await clientHelper.GetAdministratorClientAsync();
+
+            var (formDataPercentDiscount, formDataAmountDiscount) = SeedingHelper.GetTwoPromotions();
+            await SeedingHelper.SeedThreeProducts(clientHelper);
+
+            // Act
+            await client.PostAsync("/Promotions", formDataPercentDiscount);
+            // activate the promotion
+            await client.PutAsync("/Promotions/Status/1", null);
+
+            await client.PostAsync("/Promotions", formDataAmountDiscount);
+            // activate the promotion
+            await client.PutAsync("/Promotions/Status/2", null);
+
+            // Assert
+            Assert.Equal(2, db!.Products.Where(x => x.PromotionId == 2).Count());
+        }
+
+        [Fact]
+        public async Task AllPromotionsEndpoint_ShouldBeExecuted_AndThePromotionsShouldNotBeApplied()
+        {
+            // Arrange
+            var client = await clientHelper.GetAdministratorClientAsync();
+
+            var (formDataPercentDiscount, formDataAmountDiscount) = SeedingHelper.GetTwoPromotions();
+            await SeedingHelper.SeedThreeProducts(clientHelper);
+
+            // Act
+            await client.PostAsync("/Promotions", formDataPercentDiscount);
+
+            await client.PostAsync("/Promotions", formDataAmountDiscount);
+
+            // Assert
+            Assert.Equal(0, db!.Products.Where(x => x.PromotionId == 2).Count());
         }
 
         [Fact]
@@ -280,6 +320,7 @@ namespace NutriBest.Server.Tests.Controllers.Promotions
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             Assert.False(db!.Promotions.Any(x => x.Description == "TEST PROMO"));
+            Assert.Equal("EndDate", result.Key);
             Assert.Equal(LeastPromotionDurationRequired, result.Message);
         }
 
@@ -323,6 +364,7 @@ namespace NutriBest.Server.Tests.Controllers.Promotions
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             Assert.False(db!.Promotions.Any(x => x.Description == "TEST PROMO"));
+            Assert.Equal("StartDate", result.Key);
             Assert.Equal(StartDateMustBeBeforeEndDate, result.Message);
         }
 
@@ -411,7 +453,7 @@ namespace NutriBest.Server.Tests.Controllers.Promotions
             // Arrange
             var client = clientHelper.GetAnonymousClient();
 
-            var (formDataPercentDiscount, formDataAmountDiscount) = GetTwoPromotions();
+            var (formDataPercentDiscount, formDataAmountDiscount) = SeedingHelper.GetTwoPromotions();
 
             // Act
             var firstResponse = await client.PostAsync("/Promotions", formDataPercentDiscount);
@@ -428,7 +470,7 @@ namespace NutriBest.Server.Tests.Controllers.Promotions
             // Arrange
             var client = await clientHelper.GetOtherUserClientAsync();
 
-            var (formDataPercentDiscount, formDataAmountDiscount) = GetTwoPromotions();
+            var (formDataPercentDiscount, formDataAmountDiscount) = SeedingHelper.GetTwoPromotions();
 
             // Act
             var firstResponse = await client.PostAsync("/Promotions", formDataPercentDiscount);
@@ -453,51 +495,6 @@ namespace NutriBest.Server.Tests.Controllers.Promotions
         public Task DisposeAsync()
         {
             return Task.CompletedTask;
-        }
-
-        private static (MultipartFormDataContent formDataPercentDiscount, 
-                        MultipartFormDataContent formDataAmountDiscount) 
-                        GetTwoPromotions()
-        {
-            var promotionModelPercentDiscount = new CreatePromotionServiceModel
-            {
-                Brand = "NutriBest",
-                Description = "TEST PROMO",
-                Category = "Vitamins",
-                StartDate = DateTime.Now,
-                DiscountPercentage = "25"
-            };
-
-            var promotionModelAmountDiscount = new CreatePromotionServiceModel
-            {
-                Brand = "Klean Athlete",
-                Description = "TEST PROMO2",
-                Category = null,
-                StartDate = DateTime.Now,
-                DiscountAmount = "10",
-            };
-
-            var formDataPercentDiscount = new MultipartFormDataContent
-            {
-                { new StringContent(promotionModelPercentDiscount.Description), "Description" },
-                { new StringContent(promotionModelPercentDiscount.DiscountPercentage), "DiscountPercentage" },
-                { new StringContent(promotionModelPercentDiscount.Brand), "Brand" },
-                { new StringContent(promotionModelPercentDiscount.StartDate.ToString("o")), "StartDate" },
-                { new StringContent(promotionModelPercentDiscount.Description), "Description" },
-                { new StringContent(promotionModelPercentDiscount.Category), "Category" },
-            };
-
-            var formDataAmountDiscount = new MultipartFormDataContent
-            {
-                { new StringContent(promotionModelAmountDiscount.Description), "Description" },
-                { new StringContent(promotionModelAmountDiscount.DiscountAmount), "DiscountAmount" },
-                { new StringContent(promotionModelAmountDiscount.Brand), "Brand" },
-                { new StringContent(promotionModelAmountDiscount.StartDate.ToString("o")), "StartDate" },
-                { new StringContent(promotionModelAmountDiscount.Description), "Description" },
-                { new StringContent(promotionModelAmountDiscount.Category ?? ""), "Category" },
-            };
-
-            return (formDataPercentDiscount, formDataAmountDiscount);
         }
     }
 }

@@ -477,6 +477,36 @@
             Assert.Equal(expectedCount, result.Count);
         }
 
+        [Fact]
+        public async Task AllProductsEndpoint_ShouldReturnProductsWithPromotions_RegardlessOfTheAppliedPriceRange()
+        {
+            // Arrange
+            var client = await clientHelper.GetAdministratorClientAsync();
+
+            await SeedingHelper.SeedSevenProducts(clientHelper);
+
+            var (formDataPercentDiscount, formDataAmountDiscount) = SeedingHelper.GetTwoPromotions();
+
+            // Act
+            await client.PostAsync("/Promotions", formDataPercentDiscount);
+            await client.PutAsync("/Promotions/Status/1", null);
+
+            await client.PostAsync("/Promotions", formDataAmountDiscount);
+            await client.PutAsync("/Promotions/Status/2", null);
+
+            var url = "/Products?page=1&priceRange=1 5";
+
+            var response = await client.GetAsync(url);
+            var data = await response.Content.ReadAsStringAsync();
+
+            // Assert
+            var result = JsonSerializer.Deserialize<AllProductsServiceModel>(data, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            }) ?? new AllProductsServiceModel();
+            Assert.Equal(3, result.Count);
+        }
+
         public async Task InitializeAsync()
         {
             await fixture.ResetDatabaseAsync();
