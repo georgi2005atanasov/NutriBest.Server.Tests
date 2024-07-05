@@ -70,7 +70,7 @@
             var client = await clientHelper.GetEmployeeClientAsync();
 
             // Act
-            var response = await client.GetAsync("/Images/1");
+            var response = await client.GetAsync("/Images/123");
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -130,7 +130,6 @@
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
-
 
         public async Task InitializeAsync()
         {

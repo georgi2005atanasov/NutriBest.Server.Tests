@@ -15,6 +15,7 @@
     using NutriBest.Server.Data.Models;
     using NutriBest.Server.Features.Notifications;
     using NutriBest.Server.Features.Email;
+    using Microsoft.Extensions.Caching.Memory;
 
     public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
     {
@@ -48,7 +49,7 @@
             {
                 NotificationServiceMock = new Mock<INotificationService>();
                 EmailServiceMock = new Mock<IEmailService>();
-
+                
                 services.AddSingleton(Configuration);
                 services.AddTransient(_ => NotificationServiceMock.Object);
                 services.AddTransient(_ => EmailServiceMock.Object);
@@ -67,7 +68,7 @@
                     var db = scopedServices.GetRequiredService<NutriBestDbContext>();
                     var userManager = scopedServices.GetRequiredService<UserManager<User>>();
                     var roleManager = scopedServices.GetRequiredService<RoleManager<IdentityRole>>();
-                    
+
                     // Ensure the database is created
                     db.Database.EnsureCreated();
 

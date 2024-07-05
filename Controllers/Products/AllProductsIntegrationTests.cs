@@ -504,7 +504,25 @@
             {
                 PropertyNameCaseInsensitive = true
             }) ?? new AllProductsServiceModel();
+
+            decimal product77 = (decimal)result
+                        .ProductsRows!
+                        .SelectMany(x => x)
+                        .First(x => x.Name == "product77").DiscountPercentage!;
+
             Assert.Equal(3, result.Count);
+            Assert.Equal(25.00m, Math.Round((decimal)result
+                        .ProductsRows!
+                        .SelectMany(x => x)
+                        .First(x => x.Name == "product77").DiscountPercentage!, 2));
+            Assert.Equal(62.54m, Math.Round((decimal)result
+                        .ProductsRows!
+                        .SelectMany(x => x)
+                        .First(x => x.Name == "product80").DiscountPercentage!, 2));
+            Assert.Equal(10.00m, Math.Round((decimal)result
+                        .ProductsRows!
+                        .SelectMany(x => x)
+                        .First(x => x.Name == "product81").DiscountPercentage!, 2));
         }
 
         public async Task InitializeAsync()
