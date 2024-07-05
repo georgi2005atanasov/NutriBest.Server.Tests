@@ -3,7 +3,6 @@
     using System.Net;
     using Xunit;
     using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.Caching.Memory;
     using Microsoft.Extensions.DependencyInjection;
     using NutriBest.Server.Data;
     using Infrastructure.Extensions;

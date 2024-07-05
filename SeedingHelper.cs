@@ -58,7 +58,7 @@
             var data = await response.Content.ReadAsStringAsync();
         }
 
-        public static async Task SeedPromotionWithDiscountPercentage(ClientHelper clientHelper, 
+        public static async Task SeedPromotionWithDiscountPercentage(ClientHelper clientHelper,
             string? brandName,
             string description,
             string? category,
@@ -147,13 +147,13 @@
         }
 
         public static async Task SeedPromoCode(ClientHelper clientHelper,
-            string description, 
-            string count, 
+            string description,
+            string count,
             string discountPercentage)
         {
-            var promoCodeModel = new PromoCodeServiceModel 
-            { 
-                Count  = count,
+            var promoCodeModel = new PromoCodeServiceModel
+            {
+                Count = count,
                 DiscountPercentage = discountPercentage,
                 Description = description
             };
@@ -170,7 +170,7 @@
             var client = await clientHelper.GetAdministratorClientAsync();
 
             var fakeImage = new Mock<IFormFile>();
-            
+
             var brandModel = new CreateBrandServiceModel
             {
                 Description = description,
@@ -193,6 +193,19 @@
 
             // Act
             await client.PostAsync("/Brands", formData);
+        }
+
+        public static async Task SeedSubscriber(ClientHelper clientHelper,
+            string email)
+        {
+            var client = await clientHelper.GetAdministratorClientAsync();
+            var formData = new MultipartFormDataContent
+            {
+                { new StringContent(email), "Email" }
+            };
+
+            var response = await client.PostAsync("/Newsletter", formData);
+            var data = await response.Content.ReadAsStringAsync();
         }
 
         public static async Task SeedSevenProducts(ClientHelper clientHelper)

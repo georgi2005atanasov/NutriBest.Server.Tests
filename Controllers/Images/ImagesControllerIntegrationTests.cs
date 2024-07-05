@@ -1,14 +1,13 @@
 ﻿namespace NutriBest.Server.Tests.Controllers.Images
 {
-    using System.Net.Http.Json;
+    using System.Net;
+    using System.Text.Json;
     using Xunit;
+    using Microsoft.Extensions.Caching.Memory;
     using Microsoft.Extensions.DependencyInjection;
     using NutriBest.Server.Data;
-    using Infrastructure.Extensions;
-    using System.Text.Json;
     using NutriBest.Server.Features.Images.Models;
-    using Microsoft.Extensions.Caching.Memory;
-    using System.Net;
+    using Infrastructure.Extensions;
 
     [Collection("Images Controller Tests")]
     public class ImagesControllerIntegrationTests : IAsyncLifetime
