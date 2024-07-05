@@ -38,7 +38,7 @@ namespace NutriBest.Server.Tests.Controllers.Brands
             var brandModel = new CreateBrandServiceModel
             {
                 Description = "The Gosho Brand",
-                Name = Guid.NewGuid().ToString(),
+                Name = Guid.NewGuid().ToString()
             };
 
             // Convert the brand model to form-data content

@@ -3,7 +3,7 @@
     using Xunit;
 
     [CollectionDefinition("Promo Codes Controller Tests")]
-    internal class PromoCodeCollection : ICollectionFixture<CustomWebApplicationFactoryFixture>
+    public class PromoCodeCollection : ICollectionFixture<CustomWebApplicationFactoryFixture>
     {
     }
 }

@@ -3,7 +3,9 @@
     using System.Net.Http.Json;
     using Microsoft.AspNetCore.Http;
     using Moq;
+    using NutriBest.Server.Features.Brands.Models;
     using NutriBest.Server.Features.Products.Models;
+    using NutriBest.Server.Features.PromoCodes.Models;
     using NutriBest.Server.Features.Promotions.Models;
     using NutriBest.Server.Features.ShippingDiscounts.Models;
 
@@ -142,6 +144,55 @@
                 "10",
                 "Nordic Naturals",
                 "[{ \"flavour\": \"Lemon Lime\", \"grams\": 500, \"quantity\": 100, \"price\": \"50.99\"}]");
+        }
+
+        public static async Task SeedPromoCode(ClientHelper clientHelper,
+            string description, 
+            string count, 
+            string discountPercentage)
+        {
+            var promoCodeModel = new PromoCodeServiceModel 
+            { 
+                Count  = count,
+                DiscountPercentage = discountPercentage,
+                Description = description
+            };
+
+            var client = await clientHelper.GetAdministratorClientAsync();
+
+            await client.PostAsJsonAsync("/PromoCode", promoCodeModel);
+        }
+
+        public static async Task SeedBrand(ClientHelper clientHelper,
+            string name,
+            string description)
+        {
+            var client = await clientHelper.GetAdministratorClientAsync();
+
+            var fakeImage = new Mock<IFormFile>();
+            
+            var brandModel = new CreateBrandServiceModel
+            {
+                Description = description,
+                Name = name,
+                Image = fakeImage.Object
+            };
+
+            // Convert the brand model to form-data content
+            var formData = new MultipartFormDataContent
+            {
+                { new StringContent(brandModel.Description), "Description" },
+                { new StringContent(brandModel.Name), "Name" }
+            };
+
+            using var ms = new MemoryStream();
+            await brandModel.Image.CopyToAsync(ms);
+            var fileContent = new ByteArrayContent(ms.ToArray());
+            fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/png");
+            formData.Add(fileContent, "Image", "FakeName123");
+
+            // Act
+            await client.PostAsync("/Brands", formData);
         }
 
         public static async Task SeedSevenProducts(ClientHelper clientHelper)
