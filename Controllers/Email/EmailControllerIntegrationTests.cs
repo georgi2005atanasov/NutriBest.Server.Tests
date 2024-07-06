@@ -2,7 +2,9 @@
 
 namespace NutriBest.Server.Tests.Controllers.Email
 {
+    using Microsoft.Extensions.DependencyInjection;
     using Moq;
+    using NutriBest.Server.Data;
     using NutriBest.Server.Features.Email.Models;
     using System.Net;
     using System.Net.Http.Json;
@@ -13,9 +15,13 @@ namespace NutriBest.Server.Tests.Controllers.Email
     [Collection("Email Controller Tests")]
     public class EmailControllerIntegrationTests : IAsyncLifetime
     {
+        private NutriBestDbContext? db;
+
         private ClientHelper clientHelper;
 
         private CustomWebApplicationFactoryFixture fixture;
+
+        private IServiceScope? scope;
 
         public EmailControllerIntegrationTests(CustomWebApplicationFactoryFixture fixture)
         {
@@ -301,6 +307,9 @@ namespace NutriBest.Server.Tests.Controllers.Email
             fixture.Factory.EmailServiceMock!
                 .Verify(x => x.SendPromoCode(model));
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.True(db!.PromoCodes
+                        .Where(x => x.IsSent)
+                        .Count() == db.Newsletter.Count());
         }
 
         [Fact]
@@ -602,6 +611,8 @@ namespace NutriBest.Server.Tests.Controllers.Email
         {
             await fixture.ResetDatabaseAsync();
             fixture.Factory.EmailServiceMock!.Reset();
+            scope = fixture.Factory.Services.CreateScope();
+            db = scope.ServiceProvider.GetRequiredService<NutriBestDbContext>();
         }
 
         public Task DisposeAsync()

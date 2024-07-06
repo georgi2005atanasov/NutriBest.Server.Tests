@@ -3,8 +3,8 @@
     using Xunit;
     using Microsoft.Extensions.DependencyInjection;
     using NutriBest.Server.Data;
-    using NutriBest.Server.Infrastructure.Extensions;
     using System.Net;
+    using System.Text.Json;
 
     [Collection("Newsletter Controller Tests")]
     public class RemoveSubscriberIntegrationTests : IAsyncLifetime
@@ -35,8 +35,14 @@
 
             // Act
             var response = await client.DeleteAsync("/Newsletter/Admin/RemoveFromNewsletter?email=user@example.com");
+            var data = await response.Content.ReadAsStringAsync();
 
             // Assert
+            using JsonDocument document = JsonDocument.Parse(data);
+            JsonElement root = document.RootElement;
+            bool succeeded = root.GetProperty("succeeded").GetBoolean();
+
+            Assert.True(succeeded);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Empty(db!.Newsletter
                          .Where(x => !x.IsDeleted));
@@ -54,10 +60,41 @@
 
             // Act
             var response = await client.DeleteAsync("/Newsletter/Admin/RemoveFromNewsletter?email=user@example.com");
+            var data = await response.Content.ReadAsStringAsync();
 
             // Assert
+            using JsonDocument document = JsonDocument.Parse(data);
+            JsonElement root = document.RootElement;
+            bool succeeded = root.GetProperty("succeeded").GetBoolean();
+
+            Assert.True(succeeded);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Empty(db!.Newsletter
+                         .Where(x => !x.IsDeleted));
+        }
+
+        [Fact]
+        public async Task RemoveSubscriber_ShouldReturnFalse_WhenSubscriberDoesNotExists()
+        {
+            // Arrange
+            var client = await clientHelper.GetEmployeeClientAsync();
+
+            await SeedingHelper.SeedSubscriber(clientHelper, "user@example.com");
+
+            Assert.NotEmpty(db!.Newsletter);
+
+            // Act
+            var response = await client.DeleteAsync("/Newsletter/Admin/RemoveFromNewsletter?email=user0@example.com");
+            var data = await response.Content.ReadAsStringAsync();
+
+            // Assert
+            using JsonDocument document = JsonDocument.Parse(data);
+            JsonElement root = document.RootElement;
+            bool succeeded = root.GetProperty("succeeded").GetBoolean();
+
+            Assert.False(succeeded);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.NotEmpty(db!.Newsletter
                          .Where(x => !x.IsDeleted));
         }
 

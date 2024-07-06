@@ -90,7 +90,6 @@
 
             NewsletterService = new NewsletterService(DbContext,
                 UserManager,
-                EmailServiceMock.Object,
                 NotificationServiceMock.Object);
 
             IdentityController = new IdentityController(IdentityService,
