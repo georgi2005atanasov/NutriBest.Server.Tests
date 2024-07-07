@@ -1,6 +1,6 @@
 ﻿using NutriBest.Server.Utilities.Messages;
 
-namespace NutriBest.Server.Tests.Controllers.UserOrders
+namespace NutriBest.Server.Tests.Controllers.GuestsOrders
 {
     using System.Net;
     using System.Text.Json;
@@ -13,13 +13,13 @@ namespace NutriBest.Server.Tests.Controllers.UserOrders
     using NutriBest.Server.Shared.Responses;
     using NutriBest.Server.Features.Carts.Models;
     using NutriBest.Server.Features.Invoices.Models;
-    using NutriBest.Server.Features.UsersOrders.Models;
+    using NutriBest.Server.Features.GuestsOrders.Models;
     using Infrastructure.Extensions;
     using static ErrorMessages.UsersOrdersController;
     using static ErrorMessages.OrderDetailsService;
 
-    [Collection("Users Orders Controller Tests")]
-    public class CreateUserOrderIntegrationTests : IAsyncLifetime
+    [Collection("Guests Orders Controller Tests")]
+    public class CreateGuestOrderIntegrationTests : IAsyncLifetime
     {
         private NutriBestDbContext? db;
 
@@ -29,17 +29,17 @@ namespace NutriBest.Server.Tests.Controllers.UserOrders
 
         private IServiceScope? scope;
 
-        public CreateUserOrderIntegrationTests(CustomWebApplicationFactoryFixture fixture)
+        public CreateGuestOrderIntegrationTests(CustomWebApplicationFactoryFixture fixture)
         {
             clientHelper = new ClientHelper(fixture);
             this.fixture = fixture;
         }
 
         [Fact]
-        public async Task CreateUserOrder_ShouldBeExecuted()
+        public async Task CreateGuestOrder_ShouldBeExecuted()
         {
             // Arrange
-            var client = await clientHelper.GetOtherUserClientAsync();
+            var client = clientHelper.GetAnonymousClient();
 
             await SeedingHelper.SeedSevenProducts(clientHelper);
 
@@ -52,16 +52,6 @@ namespace NutriBest.Server.Tests.Controllers.UserOrders
                 ProductId = 1
             };
 
-            var secondCartProductModel = new CartProductServiceModel
-            {
-                Flavour = "Lemon Lime",
-                Grams = 500,
-                Count = 9,
-                Price = 50.99m,
-                ProductId = 3
-            };
-
-            // Act
             // First product addition
             var firstResponse = await client.PostAsJsonAsync("/Cart/Add", firstCartProductModel);
             var cookieHeader = firstResponse.Headers.GetValues("Set-Cookie").FirstOrDefault();
@@ -70,32 +60,22 @@ namespace NutriBest.Server.Tests.Controllers.UserOrders
                 client.DefaultRequestHeaders.Add("Cookie", cookieHeader);
             }
 
-            // Second product addition
-            var secondResponse = await client.PostAsJsonAsync("/Cart/Add", secondCartProductModel);
-            var updatedCookieHeaderAfterSecond = secondResponse.Headers.GetValues("Set-Cookie").FirstOrDefault();
-            if (updatedCookieHeaderAfterSecond != null)
-            {
-                client.DefaultRequestHeaders.Remove("Cookie");
-                client.DefaultRequestHeaders.Add("Cookie", updatedCookieHeaderAfterSecond);
-            }
-
-            var orderModel = new UserOrderServiceModel
+            var orderModel = new GuestOrderServiceModel
             {
                 Country = "Bulgaria",
                 City = "Plovdiv",
                 Street = "Karlovska",
                 StreetNumber = "900",
                 PostalCode = "4000",
-                Email = "user@example.com",
+                Email = "TEST_EMAIL@example.com",
                 Name = "TEST USER!!!",
                 HasInvoice = false,
                 PaymentMethod = "CashOnDelivery",
-                PhoneNumber = "0884138832"
+                PhoneNumber = "0884138832",
             };
 
-            var orderResponse = await client.PostAsJsonAsync("/UsersOrders", orderModel);
-            orderResponse.EnsureSuccessStatusCode();
-
+            // Act
+            var orderResponse = await client.PostAsJsonAsync("/GuestsOrders", orderModel);
             var data = await orderResponse.Content.ReadAsStringAsync();
 
             // Assert
@@ -104,7 +84,7 @@ namespace NutriBest.Server.Tests.Controllers.UserOrders
             int id = root.GetProperty("id").GetInt32();
 
             Assert.Equal(1, id);
-            Assert.NotEmpty(db!.UsersOrders.Where(x => x.Id == 1));
+            Assert.NotEmpty(db!.GuestsOrders.Where(x => x.Id == 1));
             Assert.NotEmpty(db!.Orders.Where(x => x.Id == 1));
             Assert.NotEmpty(db!.OrdersDetails.Where(x => x.Id == 1));
 
@@ -116,14 +96,14 @@ namespace NutriBest.Server.Tests.Controllers.UserOrders
             .Include(x => x.Address)
                 .ThenInclude(address => address!.Country)
             .FirstAsync();
-            var userOrder = await db.UsersOrders
+            var userOrder = await db.GuestsOrders
                 .FirstAsync();
             var cart = await db.Carts
                 .Include(x => x.CartProducts)
                 .FirstAsync(x => x.Id == order.CartId);
 
-            Assert.Null(order.GuestOrderId);
-            Assert.Equal(1, order.UserOrderId);
+            Assert.Equal(1, order.GuestOrderId);
+            Assert.Null(order.UserOrderId);
 
             Assert.Equal("Karlovska", orderDetails.Address!.Street);
             Assert.Equal("900", orderDetails.Address!.StreetNumber);
@@ -131,17 +111,17 @@ namespace NutriBest.Server.Tests.Controllers.UserOrders
             Assert.Equal("Plovdiv", orderDetails.Address.City!.CityName);
             Assert.Equal("Bulgaria", orderDetails.Address.Country.CountryName);
 
-            Assert.Equal(2, cart.CartProducts.Count);
-            Assert.Equal(474.90m, cart.TotalProducts);
-            Assert.Equal(474.90m, cart.OriginalPrice);
+            Assert.Single(cart.CartProducts);
+            Assert.Equal(15.99m, cart.TotalProducts);
+            Assert.Equal(15.99m, cart.OriginalPrice);
             Assert.Equal(10, cart.ShippingPrice);
         }
 
         [Fact]
-        public async Task CreateUserOrder_ShouldBeExecuted_WithInvoice()
+        public async Task CreateGuestOrder_ShouldBeExecuted_WithInvoice()
         {
             // Arrange
-            var client = await clientHelper.GetOtherUserClientAsync();
+            var client = clientHelper.GetAnonymousClient();
 
             await SeedingHelper.SeedSevenProducts(clientHelper);
 
@@ -154,16 +134,6 @@ namespace NutriBest.Server.Tests.Controllers.UserOrders
                 ProductId = 1
             };
 
-            var secondCartProductModel = new CartProductServiceModel
-            {
-                Flavour = "Cafe Latte",
-                Grams = 2000,
-                Count = 9,
-                Price = 2000.99m,
-                ProductId = 7
-            };
-
-            // Act
             // First product addition
             var firstResponse = await client.PostAsJsonAsync("/Cart/Add", firstCartProductModel);
             var cookieHeader = firstResponse.Headers.GetValues("Set-Cookie").FirstOrDefault();
@@ -172,23 +142,14 @@ namespace NutriBest.Server.Tests.Controllers.UserOrders
                 client.DefaultRequestHeaders.Add("Cookie", cookieHeader);
             }
 
-            // Second product addition
-            var secondResponse = await client.PostAsJsonAsync("/Cart/Add", secondCartProductModel);
-            var updatedCookieHeaderAfterSecond = secondResponse.Headers.GetValues("Set-Cookie").FirstOrDefault();
-            if (updatedCookieHeaderAfterSecond != null)
-            {
-                client.DefaultRequestHeaders.Remove("Cookie");
-                client.DefaultRequestHeaders.Add("Cookie", updatedCookieHeaderAfterSecond);
-            }
-
-            var orderModel = new UserOrderServiceModel
+            var orderModel = new GuestOrderServiceModel
             {
                 Country = "Bulgaria",
                 City = "Plovdiv",
                 Street = "Karlovska",
                 StreetNumber = "900",
                 PostalCode = "4000",
-                Email = "user@example.com",
+                Email = "TEST_EMAIL@example.com",
                 Name = "TEST USER!!!",
                 HasInvoice = true,
                 Invoice = new InvoiceServiceModel
@@ -204,9 +165,8 @@ namespace NutriBest.Server.Tests.Controllers.UserOrders
                 PhoneNumber = "0884138832",
             };
 
-            var orderResponse = await client.PostAsJsonAsync("/UsersOrders", orderModel);
-            orderResponse.EnsureSuccessStatusCode();
-
+            // Act
+            var orderResponse = await client.PostAsJsonAsync("/GuestsOrders", orderModel);
             var data = await orderResponse.Content.ReadAsStringAsync();
 
             // Assert
@@ -215,10 +175,9 @@ namespace NutriBest.Server.Tests.Controllers.UserOrders
             int id = root.GetProperty("id").GetInt32();
 
             Assert.Equal(1, id);
-            Assert.NotEmpty(db!.UsersOrders.Where(x => x.Id == 1));
+            Assert.NotEmpty(db!.GuestsOrders.Where(x => x.Id == 1));
             Assert.NotEmpty(db!.Orders.Where(x => x.Id == 1));
             Assert.NotEmpty(db!.OrdersDetails.Where(x => x.Id == 1));
-            Assert.NotEmpty(db!.Invoices.Where(x => x.Id == 1));
 
             var order = await db.Orders
                 .FirstAsync();
@@ -228,16 +187,16 @@ namespace NutriBest.Server.Tests.Controllers.UserOrders
             .Include(x => x.Address)
                 .ThenInclude(address => address!.Country)
             .FirstAsync();
-            var userOrder = await db.UsersOrders
+            var userOrder = await db.GuestsOrders
                 .FirstAsync();
             var invoice = await db.Invoices
                 .FirstAsync();
             var cart = await db.Carts
-               .Include(x => x.CartProducts)
-               .FirstAsync(x => x.Id == order.CartId);
+                .Include(x => x.CartProducts)
+                .FirstAsync(x => x.Id == order.CartId);
 
-            Assert.Null(order.GuestOrderId);
-            Assert.Equal(1, order.UserOrderId);
+            Assert.Equal(1, order.GuestOrderId);
+            Assert.Null(order.UserOrderId);
 
             Assert.Equal("Karlovska", orderDetails.Address!.Street);
             Assert.Equal("900", orderDetails.Address!.StreetNumber);
@@ -253,45 +212,45 @@ namespace NutriBest.Server.Tests.Controllers.UserOrders
             Assert.Equal("TEST PERSON IN CHARGE", invoice.PersonInCharge);
             Assert.Equal("0884138850", invoice.PhoneNumber);
 
-            Assert.Equal(2, cart.CartProducts.Count);
-            Assert.Equal(18024.90m, cart.TotalProducts);
-            Assert.Equal(18024.90m, cart.OriginalPrice);
+            Assert.Single(cart.CartProducts);
+            Assert.Equal(15.99m, cart.TotalProducts);
+            Assert.Equal(15.99m, cart.OriginalPrice);
             Assert.Equal(10, cart.ShippingPrice);
         }
 
         [Fact]
-        public async Task CreateUserOrder_ShouldBeExecuted_AndNotificationShouldAlsoBeSent()
+        public async Task CreateGuestOrder_ShouldBeExecuted_AndNotificationShouldAlsoBeSent()
         {
             // Arrange
-            var client = await clientHelper.GetOtherUserClientAsync();
+            var client = clientHelper.GetAnonymousClient();
 
             await SeedingHelper.SeedSevenProducts(clientHelper);
 
             var firstCartProductModel = new CartProductServiceModel
             {
-                Flavour = "Coconut",
-                Grams = 1000,
-                Count = 1,
-                Price = 15.99m,
-                ProductId = 1
+                Flavour = "Banana",
+                Grams = 1500,
+                Count = 5,
+                Price = 10.99m,
+                ProductId = 4
             };
 
             // First product addition
-            var firstResponse = await client.PostAsJsonAsync("/Cart/Add", firstCartProductModel);
+            var firstResponse = await client.PostAsJsonAsync("/Cart/Set", firstCartProductModel);
             var cookieHeader = firstResponse.Headers.GetValues("Set-Cookie").FirstOrDefault();
             if (cookieHeader != null)
             {
                 client.DefaultRequestHeaders.Add("Cookie", cookieHeader);
             }
 
-            var orderModel = new UserOrderServiceModel
+            var orderModel = new GuestOrderServiceModel
             {
                 Country = "Bulgaria",
                 City = "Plovdiv",
                 Street = "Karlovska",
                 StreetNumber = "900",
                 PostalCode = "4000",
-                Email = "user@example.com",
+                Email = "TEST_EMAIL@example.com",
                 Name = "TEST USER!!!",
                 HasInvoice = false,
                 PaymentMethod = "CashOnDelivery",
@@ -299,9 +258,7 @@ namespace NutriBest.Server.Tests.Controllers.UserOrders
             };
 
             // Act
-            var orderResponse = await client.PostAsJsonAsync("/UsersOrders", orderModel);
-            orderResponse.EnsureSuccessStatusCode();
-
+            var orderResponse = await client.PostAsJsonAsync("/GuestsOrders", orderModel);
             var data = await orderResponse.Content.ReadAsStringAsync();
 
             // Assert
@@ -310,7 +267,7 @@ namespace NutriBest.Server.Tests.Controllers.UserOrders
             int id = root.GetProperty("id").GetInt32();
 
             Assert.Equal(1, id);
-            Assert.NotEmpty(db!.UsersOrders.Where(x => x.Id == 1));
+            Assert.NotEmpty(db!.GuestsOrders.Where(x => x.Id == 1));
             Assert.NotEmpty(db!.Orders.Where(x => x.Id == 1));
             Assert.NotEmpty(db!.OrdersDetails.Where(x => x.Id == 1));
 
@@ -322,14 +279,14 @@ namespace NutriBest.Server.Tests.Controllers.UserOrders
             .Include(x => x.Address)
                 .ThenInclude(address => address!.Country)
             .FirstAsync();
-            var userOrder = await db.UsersOrders
+            var userOrder = await db.GuestsOrders
                 .FirstAsync();
             var cart = await db.Carts
                 .Include(x => x.CartProducts)
                 .FirstAsync(x => x.Id == order.CartId);
 
-            Assert.Null(order.GuestOrderId);
-            Assert.Equal(1, order.UserOrderId);
+            Assert.Equal(1, order.GuestOrderId);
+            Assert.Null(order.UserOrderId);
 
             Assert.Equal("Karlovska", orderDetails.Address!.Street);
             Assert.Equal("900", orderDetails.Address!.StreetNumber);
@@ -338,8 +295,8 @@ namespace NutriBest.Server.Tests.Controllers.UserOrders
             Assert.Equal("Bulgaria", orderDetails.Address.Country.CountryName);
 
             Assert.Single(cart.CartProducts);
-            Assert.Equal(15.99m, cart.TotalProducts);
-            Assert.Equal(15.99m, cart.OriginalPrice);
+            Assert.Equal(54.95m, cart.TotalProducts);
+            Assert.Equal(54.95m, cart.OriginalPrice);
             Assert.Equal(10, cart.ShippingPrice);
 
             fixture.Factory.NotificationServiceMock!
@@ -347,39 +304,38 @@ namespace NutriBest.Server.Tests.Controllers.UserOrders
         }
 
         [Fact]
-        public async Task CreateUserOrder_ShouldReturnBadRequest_SinceCountryIsInvalid()
+        public async Task CreateGuestOrder_ShouldReturnBadRequest_SinceCountryIsInvalid()
         {
             // Arrange
-            var client = await clientHelper.GetOtherUserClientAsync();
+            var client = clientHelper.GetAnonymousClient();
 
             await SeedingHelper.SeedSevenProducts(clientHelper);
 
             var firstCartProductModel = new CartProductServiceModel
             {
-                Flavour = "Coconut",
-                Grams = 1000,
-                Count = 1,
-                Price = 15.99m,
-                ProductId = 1
+                Flavour = "Banana",
+                Grams = 1500,
+                Count = 5,
+                Price = 10.99m,
+                ProductId = 4
             };
 
             // First product addition
-            var firstResponse = await client.PostAsJsonAsync("/Cart/Add", firstCartProductModel);
+            var firstResponse = await client.PostAsJsonAsync("/Cart/Set", firstCartProductModel);
             var cookieHeader = firstResponse.Headers.GetValues("Set-Cookie").FirstOrDefault();
-
             if (cookieHeader != null)
             {
                 client.DefaultRequestHeaders.Add("Cookie", cookieHeader);
             }
 
-            var orderModel = new UserOrderServiceModel
+            var orderModel = new GuestOrderServiceModel
             {
-                Country = "Fake country",
+                Country = "Fake Country",
                 City = "Plovdiv",
                 Street = "Karlovska",
                 StreetNumber = "900",
                 PostalCode = "4000",
-                Email = "user@example.com",
+                Email = "TEST_EMAIL@example.com",
                 Name = "TEST USER!!!",
                 HasInvoice = false,
                 PaymentMethod = "CashOnDelivery",
@@ -387,7 +343,7 @@ namespace NutriBest.Server.Tests.Controllers.UserOrders
             };
 
             // Act
-            var orderResponse = await client.PostAsJsonAsync("/UsersOrders", orderModel);
+            var orderResponse = await client.PostAsJsonAsync("/GuestsOrders", orderModel);
             var data = await orderResponse.Content.ReadAsStringAsync();
 
             // Assert
@@ -401,39 +357,38 @@ namespace NutriBest.Server.Tests.Controllers.UserOrders
         }
 
         [Fact]
-        public async Task CreateUserOrder_ShouldReturnBadRequest_SinceCityIsInvalid()
+        public async Task CreateGuestOrder_ShouldReturnBadRequest_SinceCityIsInvalid()
         {
             // Arrange
-            var client = await clientHelper.GetOtherUserClientAsync();
+            var client = clientHelper.GetAnonymousClient();
 
             await SeedingHelper.SeedSevenProducts(clientHelper);
 
             var firstCartProductModel = new CartProductServiceModel
             {
-                Flavour = "Coconut",
-                Grams = 1000,
-                Count = 1,
-                Price = 15.99m,
-                ProductId = 1
+                Flavour = "Banana",
+                Grams = 1500,
+                Count = 5,
+                Price = 10.99m,
+                ProductId = 4
             };
 
             // First product addition
-            var firstResponse = await client.PostAsJsonAsync("/Cart/Add", firstCartProductModel);
+            var firstResponse = await client.PostAsJsonAsync("/Cart/Set", firstCartProductModel);
             var cookieHeader = firstResponse.Headers.GetValues("Set-Cookie").FirstOrDefault();
-
             if (cookieHeader != null)
             {
                 client.DefaultRequestHeaders.Add("Cookie", cookieHeader);
             }
 
-            var orderModel = new UserOrderServiceModel
+            var orderModel = new GuestOrderServiceModel
             {
-                Country = "Germany",
-                City = "Fake City",
+                Country = "Bulgaria",
+                City = "Fake city123",
                 Street = "Karlovska",
                 StreetNumber = "900",
                 PostalCode = "4000",
-                Email = "user@example.com",
+                Email = "TEST_EMAIL@example.com",
                 Name = "TEST USER!!!",
                 HasInvoice = false,
                 PaymentMethod = "CashOnDelivery",
@@ -441,7 +396,7 @@ namespace NutriBest.Server.Tests.Controllers.UserOrders
             };
 
             // Act
-            var orderResponse = await client.PostAsJsonAsync("/UsersOrders", orderModel);
+            var orderResponse = await client.PostAsJsonAsync("/GuestsOrders", orderModel);
             var data = await orderResponse.Content.ReadAsStringAsync();
 
             // Assert
@@ -455,39 +410,38 @@ namespace NutriBest.Server.Tests.Controllers.UserOrders
         }
 
         [Fact]
-        public async Task CreateUserOrder_ShouldReturnBadRequest_SinceCityAndCountryDoesNotMatchd()
+        public async Task CreateGuestOrder_ShouldReturnBadRequest_SinceCityAndCountryDoesNotMatch()
         {
             // Arrange
-            var client = await clientHelper.GetOtherUserClientAsync();
+            var client = clientHelper.GetAnonymousClient();
 
             await SeedingHelper.SeedSevenProducts(clientHelper);
 
             var firstCartProductModel = new CartProductServiceModel
             {
-                Flavour = "Coconut",
-                Grams = 1000,
-                Count = 1,
-                Price = 15.99m,
-                ProductId = 1
+                Flavour = "Banana",
+                Grams = 1500,
+                Count = 5,
+                Price = 10.99m,
+                ProductId = 4
             };
 
             // First product addition
-            var firstResponse = await client.PostAsJsonAsync("/Cart/Add", firstCartProductModel);
+            var firstResponse = await client.PostAsJsonAsync("/Cart/Set", firstCartProductModel);
             var cookieHeader = firstResponse.Headers.GetValues("Set-Cookie").FirstOrDefault();
-
             if (cookieHeader != null)
             {
                 client.DefaultRequestHeaders.Add("Cookie", cookieHeader);
             }
 
-            var orderModel = new UserOrderServiceModel
+            var orderModel = new GuestOrderServiceModel
             {
                 Country = "Germany",
                 City = "Plovdiv",
                 Street = "Karlovska",
                 StreetNumber = "900",
                 PostalCode = "4000",
-                Email = "user@example.com",
+                Email = "TEST_EMAIL@example.com",
                 Name = "TEST USER!!!",
                 HasInvoice = false,
                 PaymentMethod = "CashOnDelivery",
@@ -495,7 +449,7 @@ namespace NutriBest.Server.Tests.Controllers.UserOrders
             };
 
             // Act
-            var orderResponse = await client.PostAsJsonAsync("/UsersOrders", orderModel);
+            var orderResponse = await client.PostAsJsonAsync("/GuestsOrders", orderModel);
             var data = await orderResponse.Content.ReadAsStringAsync();
 
             // Assert
@@ -509,56 +463,38 @@ namespace NutriBest.Server.Tests.Controllers.UserOrders
         }
 
         [Fact]
-        public async Task CreateUserOrder_ShouldReturnBadRequest_WhenPaymentMethodIsInvalid()
+        public async Task CreateGuestOrder_ShouldReturnBadRequest_WhenPaymentMethodIsInvalid()
         {
             // Arrange
-            var client = await clientHelper.GetOtherUserClientAsync();
+            var client = clientHelper.GetAnonymousClient();
 
             await SeedingHelper.SeedSevenProducts(clientHelper);
 
             var firstCartProductModel = new CartProductServiceModel
             {
-                Flavour = "Coconut",
-                Grams = 1000,
-                Count = 1,
-                Price = 15.99m,
-                ProductId = 1
-            };
-
-            var secondCartProductModel = new CartProductServiceModel
-            {
-                Flavour = "Lemon Lime",
-                Grams = 500,
-                Count = 9,
-                Price = 50.99m,
-                ProductId = 3
+                Flavour = "Banana",
+                Grams = 1500,
+                Count = 5,
+                Price = 10.99m,
+                ProductId = 4
             };
 
             // First product addition
-            var firstResponse = await client.PostAsJsonAsync("/Cart/Add", firstCartProductModel);
+            var firstResponse = await client.PostAsJsonAsync("/Cart/Set", firstCartProductModel);
             var cookieHeader = firstResponse.Headers.GetValues("Set-Cookie").FirstOrDefault();
             if (cookieHeader != null)
             {
                 client.DefaultRequestHeaders.Add("Cookie", cookieHeader);
             }
 
-            // Second product addition
-            var secondResponse = await client.PostAsJsonAsync("/Cart/Add", secondCartProductModel);
-            var updatedCookieHeaderAfterSecond = secondResponse.Headers.GetValues("Set-Cookie").FirstOrDefault();
-            if (updatedCookieHeaderAfterSecond != null)
-            {
-                client.DefaultRequestHeaders.Remove("Cookie");
-                client.DefaultRequestHeaders.Add("Cookie", updatedCookieHeaderAfterSecond);
-            }
-
-            var orderModel = new UserOrderServiceModel
+            var orderModel = new GuestOrderServiceModel
             {
                 Country = "Bulgaria",
                 City = "Plovdiv",
                 Street = "Karlovska",
                 StreetNumber = "900",
                 PostalCode = "4000",
-                Email = "user@example.com",
+                Email = "TEST_EMAIL@example.com",
                 Name = "TEST USER!!!",
                 HasInvoice = false,
                 PaymentMethod = "InvalidPaymentMethod",
@@ -566,7 +502,7 @@ namespace NutriBest.Server.Tests.Controllers.UserOrders
             };
 
             // Act
-            var orderResponse = await client.PostAsJsonAsync("/UsersOrders", orderModel);
+            var orderResponse = await client.PostAsJsonAsync("/GuestsOrders", orderModel);
             var data = await orderResponse.Content.ReadAsStringAsync();
 
             // Assert
@@ -583,64 +519,46 @@ namespace NutriBest.Server.Tests.Controllers.UserOrders
         }
 
         [Fact]
-        public async Task CreateUserOrder_ShouldReturnBadRequest_WhenPostalCodeIsNaN()
+        public async Task CreateGuestOrder_ShouldReturnBadRequest_WhenPostalCodeIsNaN()
         {
             // Arrange
-            var client = await clientHelper.GetOtherUserClientAsync();
+            var client = clientHelper.GetAnonymousClient();
 
             await SeedingHelper.SeedSevenProducts(clientHelper);
 
             var firstCartProductModel = new CartProductServiceModel
             {
-                Flavour = "Coconut",
-                Grams = 1000,
-                Count = 1,
-                Price = 15.99m,
-                ProductId = 1
-            };
-
-            var secondCartProductModel = new CartProductServiceModel
-            {
-                Flavour = "Lemon Lime",
-                Grams = 500,
-                Count = 9,
-                Price = 50.99m,
-                ProductId = 3
+                Flavour = "Banana",
+                Grams = 1500,
+                Count = 5,
+                Price = 10.99m,
+                ProductId = 4
             };
 
             // First product addition
-            var firstResponse = await client.PostAsJsonAsync("/Cart/Add", firstCartProductModel);
+            var firstResponse = await client.PostAsJsonAsync("/Cart/Set", firstCartProductModel);
             var cookieHeader = firstResponse.Headers.GetValues("Set-Cookie").FirstOrDefault();
             if (cookieHeader != null)
             {
                 client.DefaultRequestHeaders.Add("Cookie", cookieHeader);
             }
 
-            // Second product addition
-            var secondResponse = await client.PostAsJsonAsync("/Cart/Add", secondCartProductModel);
-            var updatedCookieHeaderAfterSecond = secondResponse.Headers.GetValues("Set-Cookie").FirstOrDefault();
-            if (updatedCookieHeaderAfterSecond != null)
-            {
-                client.DefaultRequestHeaders.Remove("Cookie");
-                client.DefaultRequestHeaders.Add("Cookie", updatedCookieHeaderAfterSecond);
-            }
-
-            var orderModel = new UserOrderServiceModel
+            var orderModel = new GuestOrderServiceModel
             {
                 Country = "Bulgaria",
                 City = "Plovdiv",
                 Street = "Karlovska",
                 StreetNumber = "900",
                 PostalCode = "4000p",
-                Email = "user@example.com",
+                Email = "TEST_EMAIL@example.com",
                 Name = "TEST USER!!!",
                 HasInvoice = false,
-                PaymentMethod = "BankTransfer",
+                PaymentMethod = "CashOnDelivery",
                 PhoneNumber = "0884138832",
             };
 
             // Act
-            var orderResponse = await client.PostAsJsonAsync("/UsersOrders", orderModel);
+            var orderResponse = await client.PostAsJsonAsync("/GuestsOrders", orderModel);
             var data = await orderResponse.Content.ReadAsStringAsync();
 
             // Assert
@@ -660,16 +578,16 @@ namespace NutriBest.Server.Tests.Controllers.UserOrders
         public async Task CreateUserOrder_ShouldReturnBadRequest_WhenThereAreNoProductsInTheCart()
         {
             // Arrange
-            var client = await clientHelper.GetOtherUserClientAsync();
+            var client = clientHelper.GetAnonymousClient();
 
-            var orderModel = new UserOrderServiceModel
+            var orderModel = new GuestOrderServiceModel
             {
                 Country = "Bulgaria",
                 City = "Plovdiv",
                 Street = "Karlovska",
                 StreetNumber = "900",
                 PostalCode = "4000",
-                Email = "user@example.com",
+                Email = "TEST_EMAIL@example.com",
                 Name = "TEST USER!!!",
                 HasInvoice = false,
                 PaymentMethod = "CashOnDelivery",
@@ -677,7 +595,7 @@ namespace NutriBest.Server.Tests.Controllers.UserOrders
             };
 
             // Act
-            var orderResponse = await client.PostAsJsonAsync("/UsersOrders", orderModel);
+            var orderResponse = await client.PostAsJsonAsync("/GuestsOrders", orderModel);
             var data = await orderResponse.Content.ReadAsStringAsync();
 
             // Assert
@@ -693,86 +611,6 @@ namespace NutriBest.Server.Tests.Controllers.UserOrders
             Assert.Empty(db!.OrdersDetails.Where(x => x.Id == 1));
         }
 
-        [Fact]
-        public async Task CreateUserOrder_ShouldReturnUnauthorized_ForAnonymous()
-        {
-            // Arrange
-            var client = clientHelper.GetAnonymousClient();
-
-            var orderModel = new UserOrderServiceModel
-            {
-                Country = "Bulgaria",
-                City = "Plovdiv",
-                Street = "Karlovska",
-                StreetNumber = "900",
-                PostalCode = "4000",
-                Email = "user@example.com",
-                Name = "TEST USER!!!",
-                HasInvoice = false,
-                PaymentMethod = "CashOnDelivery",
-                PhoneNumber = "0884138832",
-            };
-
-            // Act
-            var orderResponse = await client.PostAsJsonAsync("/UsersOrders", orderModel);
-            
-            // Assert
-            Assert.Equal(HttpStatusCode.Unauthorized, orderResponse.StatusCode);
-        }
-
-        [Fact]
-        public async Task CreateUserOrder_ShouldReturnForbidden_ForEmployee()
-        {
-            // Arrange
-            var client = await clientHelper.GetEmployeeClientAsync();
-
-            var orderModel = new UserOrderServiceModel
-            {
-                Country = "Bulgaria",
-                City = "Plovdiv",
-                Street = "Karlovska",
-                StreetNumber = "900",
-                PostalCode = "4000",
-                Email = "user@example.com",
-                Name = "TEST USER!!!",
-                HasInvoice = false,
-                PaymentMethod = "CashOnDelivery",
-                PhoneNumber = "0884138832",
-            };
-
-            // Act
-            var orderResponse = await client.PostAsJsonAsync("/UsersOrders", orderModel);
-
-            // Assert
-            Assert.Equal(HttpStatusCode.Forbidden, orderResponse.StatusCode);
-        }
-
-        [Fact]
-        public async Task CreateUserOrder_ShouldReturnForbidden_ForAdministrator()
-        {
-            // Arrange
-            var client = await clientHelper.GetAdministratorClientAsync();
-
-            var orderModel = new UserOrderServiceModel
-            {
-                Country = "Bulgaria",
-                City = "Plovdiv",
-                Street = "Karlovska",
-                StreetNumber = "900",
-                PostalCode = "4000",
-                Email = "user@example.com",
-                Name = "TEST USER!!!",
-                HasInvoice = false,
-                PaymentMethod = "CashOnDelivery",
-                PhoneNumber = "0884138832",
-            };
-
-            // Act
-            var orderResponse = await client.PostAsJsonAsync("/UsersOrders", orderModel);
-
-            // Assert
-            Assert.Equal(HttpStatusCode.Forbidden, orderResponse.StatusCode);
-        }
 
         public async Task InitializeAsync()
         {
