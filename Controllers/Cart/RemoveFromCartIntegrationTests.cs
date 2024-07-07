@@ -176,6 +176,7 @@ namespace NutriBest.Server.Tests.Controllers.Cart
             // First product addition
             var firstResponse = await client.PostAsJsonAsync("/Cart/Add", firstCartProductModel);
             var cookieHeader = firstResponse.Headers.GetValues("Set-Cookie").FirstOrDefault();
+
             if (cookieHeader != null)
             {
                 client.DefaultRequestHeaders.Add("Cookie", cookieHeader);
@@ -187,6 +188,7 @@ namespace NutriBest.Server.Tests.Controllers.Cart
 
             string cartCookieValue = string.Empty;
             var updatedCookieHeaderAfterRemoving = removeResponse.Headers.GetValues("Set-Cookie").FirstOrDefault();
+
             if (updatedCookieHeaderAfterRemoving != null)
             {
                 cartCookieValue = updatedCookieHeaderAfterRemoving.Split(';').FirstOrDefault()!.Split('=').Last();

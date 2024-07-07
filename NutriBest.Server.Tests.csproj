@@ -29,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Controllers\Orders\" />
     <Folder Include="Mocks\" />
     <Folder Include="Services\" />
   </ItemGroup>

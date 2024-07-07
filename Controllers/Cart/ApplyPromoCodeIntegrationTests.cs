@@ -348,6 +348,7 @@ namespace NutriBest.Server.Tests.Controllers.Cart
                 .Headers
                 .GetValues("Set-Cookie")
                 .FirstOrDefault();
+
             if (cookieHeader != null)
             {
                 client.DefaultRequestHeaders.Add("Cookie", cookieHeader);
@@ -359,6 +360,7 @@ namespace NutriBest.Server.Tests.Controllers.Cart
                 .Headers
                 .GetValues("Set-Cookie")
                 .FirstOrDefault();
+
             if (updatedCookieHeaderAfterSecond != null)
             {
                 client.DefaultRequestHeaders.Remove("Cookie");
@@ -372,6 +374,7 @@ namespace NutriBest.Server.Tests.Controllers.Cart
                 .Headers
                 .GetValues("Set-Cookie")
                 .FirstOrDefault();
+
             if (updatedCookieHeaderAfterThird != null)
             {
                 client.DefaultRequestHeaders.Remove("Cookie");

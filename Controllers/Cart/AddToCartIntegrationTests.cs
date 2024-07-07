@@ -59,30 +59,6 @@ namespace NutriBest.Server.Tests.Controllers.Cart
         }
 
         [Fact]
-        public async Task AddToCart_ShouldBeExecuted_AndShouldAlsoHandleCurrentlyAppliedPromoCode()
-        {
-            //// Arrange
-            //var client = clientHelper.GetAnonymousClient();
-            //var cartProductModel = new CartProductServiceModel
-            //{
-            //    Flavour = "Coconut",
-            //    Grams = 1000,
-            //    Count = 10,
-            //    Price = 15.99m,
-            //    ProductId = 1
-            //};
-
-            //// Act
-            //var response = await client.PostAsJsonAsync("/Cart/Add", cartProductModel);
-            //var cookies = response.Headers.GetValues("Set-Cookie");
-            //var shoppingCartCookie = cookies.FirstOrDefault(cookie => cookie.StartsWith("ShoppingCart="));
-
-            //// Assert
-            //Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            //Assert.NotNull(shoppingCartCookie);
-        }
-
-        [Fact]
         public async Task AddToCart_ShouldBeExecuted_AndShouldAlsoMakeValidCalculations()
         {
             // Arrange
