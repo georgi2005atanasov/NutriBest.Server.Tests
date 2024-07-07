@@ -257,7 +257,6 @@ namespace NutriBest.Server.Tests.Controllers.Cart
             Assert.Equal(InvalidPromoCode, result.Message);
         }
 
-
         public async Task InitializeAsync()
         {
             await fixture.ResetDatabaseAsync();

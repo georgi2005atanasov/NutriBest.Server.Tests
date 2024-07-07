@@ -4,10 +4,13 @@
     using Microsoft.AspNetCore.Http;
     using Moq;
     using NutriBest.Server.Features.Brands.Models;
+    using NutriBest.Server.Features.Carts.Models;
+    using NutriBest.Server.Features.GuestsOrders.Models;
     using NutriBest.Server.Features.Products.Models;
     using NutriBest.Server.Features.PromoCodes.Models;
     using NutriBest.Server.Features.Promotions.Models;
     using NutriBest.Server.Features.ShippingDiscounts.Models;
+    using NutriBest.Server.Features.UsersOrders.Models;
 
     public static class SeedingHelper
     {
@@ -95,7 +98,7 @@
             string description,
             string discountPercentage,
             DateTime? endDate,
-            string minPrice
+            string? minPrice
             )
         {
             var client = await clientHelper.GetAdministratorClientAsync();
@@ -111,39 +114,6 @@
 
             var response = await client.PostAsJsonAsync("/ShippingDiscount", shippingModel);
             var data = await response.Content.ReadAsStringAsync();
-        }
-
-        public static async Task SeedThreeProducts(ClientHelper clientHelper)
-        {
-            await SeedingHelper.SeedProduct(clientHelper,
-                "product71",
-                            new List<string>
-                {
-                    "Creatines"
-                },
-                "15",
-                "Klean Athlete",
-                "[{ \"flavour\": \"Coconut\", \"grams\": 1000, \"quantity\": 100, \"price\": \"15.99\"}]");
-
-            await SeedingHelper.SeedProduct(clientHelper,
-                "product72",
-                new List<string>
-                {
-                    "Vitamins"
-                },
-                "100",
-                "Klean Athlete",
-                "[{ \"flavour\": \"Cookies and Cream\", \"grams\": 250, \"quantity\": 100, \"price\": \"99.99\"}]");
-
-            await SeedingHelper.SeedProduct(clientHelper,
-                "product73",
-                            new List<string>
-                {
-                    "Proteins"
-                },
-                "10",
-                "Nordic Naturals",
-                "[{ \"flavour\": \"Lemon Lime\", \"grams\": 500, \"quantity\": 100, \"price\": \"50.99\"}]");
         }
 
         public static async Task SeedPromoCode(ClientHelper clientHelper,
@@ -206,6 +176,139 @@
 
             var response = await client.PostAsync("/Newsletter", formData);
             var data = await response.Content.ReadAsStringAsync();
+        }
+
+        public static async Task SeedGuestOrder(ClientHelper clientHelper)
+        {
+            // Arrange
+            var client = clientHelper.GetAnonymousClient();
+
+            var firstCartProductModel = new CartProductServiceModel
+            {
+                Flavour = "Coconut",
+                Grams = 1000,
+                Count = 1,
+                Price = 15.99m,
+                ProductId = 1
+            };
+
+            // First product addition
+            var firstResponse = await client.PostAsJsonAsync("/Cart/Add", firstCartProductModel);
+            var cookieHeader = firstResponse.Headers.GetValues("Set-Cookie").FirstOrDefault();
+            if (cookieHeader != null)
+            {
+                client.DefaultRequestHeaders.Add("Cookie", cookieHeader);
+            }
+
+            var orderModel = new GuestOrderServiceModel
+            {
+                Country = "Bulgaria",
+                City = "Plovdiv",
+                Street = "Karlovska",
+                StreetNumber = "900",
+                PostalCode = "4000",
+                Email = "TEST_EMAIL@example.com",
+                Name = "TEST USER!!!",
+                HasInvoice = false,
+                PaymentMethod = "CashOnDelivery",
+                PhoneNumber = "0884138832",
+            };
+
+            // Act
+            var orderResponse = await client.PostAsJsonAsync("/GuestsOrders", orderModel);
+        }
+
+        public static async Task SeedUserOrder(ClientHelper clientHelper)
+        {
+            // Arrange
+            var client = await clientHelper.GetOtherUserClientAsync();
+
+            await SeedingHelper.SeedSevenProducts(clientHelper);
+
+            var firstCartProductModel = new CartProductServiceModel
+            {
+                Flavour = "Coconut",
+                Grams = 1000,
+                Count = 1,
+                Price = 15.99m,
+                ProductId = 1
+            };
+
+            var secondCartProductModel = new CartProductServiceModel
+            {
+                Flavour = "Lemon Lime",
+                Grams = 500,
+                Count = 9,
+                Price = 50.99m,
+                ProductId = 3
+            };
+
+            // Act
+            // First product addition
+            var firstResponse = await client.PostAsJsonAsync("/Cart/Add", firstCartProductModel);
+            var cookieHeader = firstResponse.Headers.GetValues("Set-Cookie").FirstOrDefault();
+            if (cookieHeader != null)
+            {
+                client.DefaultRequestHeaders.Add("Cookie", cookieHeader);
+            }
+
+            // Second product addition
+            var secondResponse = await client.PostAsJsonAsync("/Cart/Add", secondCartProductModel);
+            var updatedCookieHeaderAfterSecond = secondResponse.Headers.GetValues("Set-Cookie").FirstOrDefault();
+            if (updatedCookieHeaderAfterSecond != null)
+            {
+                client.DefaultRequestHeaders.Remove("Cookie");
+                client.DefaultRequestHeaders.Add("Cookie", updatedCookieHeaderAfterSecond);
+            }
+
+            var orderModel = new UserOrderServiceModel
+            {
+                Country = "Bulgaria",
+                City = "Plovdiv",
+                Street = "Karlovska",
+                StreetNumber = "900",
+                PostalCode = "4000",
+                Email = "user@example.com",
+                Name = "TEST USER!!!",
+                HasInvoice = false,
+                PaymentMethod = "CashOnDelivery",
+                PhoneNumber = "0884138832"
+            };
+
+            var orderResponse = await client.PostAsJsonAsync("/UsersOrders", orderModel);
+        }
+
+            public static async Task SeedThreeProducts(ClientHelper clientHelper)
+        {
+            await SeedingHelper.SeedProduct(clientHelper,
+                "product71",
+                            new List<string>
+                {
+                    "Creatines"
+                },
+                "15",
+                "Klean Athlete",
+                "[{ \"flavour\": \"Coconut\", \"grams\": 1000, \"quantity\": 100, \"price\": \"15.99\"}]");
+
+            await SeedingHelper.SeedProduct(clientHelper,
+                "product72",
+                new List<string>
+                {
+                    "Vitamins"
+                },
+                "100",
+                "Klean Athlete",
+                "[{ \"flavour\": \"Cookies and Cream\", \"grams\": 250, \"quantity\": 100, \"price\": \"99.99\"}]");
+
+            await SeedingHelper.SeedProduct(clientHelper,
+                "product73",
+                            new List<string>
+                {
+                    "Proteins"
+                },
+                "10",
+                "Nordic Naturals",
+                "[{ \"flavour\": \"Lemon Lime\", \"grams\": 500, \"quantity\": 100, \"price\": \"50.99\"}]");
         }
 
         public static async Task SeedSevenProducts(ClientHelper clientHelper)

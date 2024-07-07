@@ -9,13 +9,8 @@
     {
         private ClientHelper clientHelper;
 
-        private CustomWebApplicationFactoryFixture fixture;
-
-        public GetPaymentMethodsIntegrationTests(CustomWebApplicationFactoryFixture fixture)
-        {
-            clientHelper = new ClientHelper(fixture);
-            this.fixture = fixture;
-        }
+        public GetPaymentMethodsIntegrationTests(CustomWebApplicationFactoryFixture fixture) 
+            => clientHelper = new ClientHelper(fixture);
 
         [Fact]
         public async Task GetPaymentMethods_ShouldBeExecuted()
@@ -27,8 +22,8 @@
             var result = JsonSerializer.Deserialize<string[]>(data) ?? new string[2] { "", "" };
 
             Assert.Equal(2, result.Length);
-            Assert.Contains("CashОnDelivery", result.ToList());
-            Assert.Contains("BankTransfer", result.ToList());
+            Assert.Contains("CashOnDelivery", result);
+            Assert.Contains("BankTransfer", result);
         }
     }
 }
