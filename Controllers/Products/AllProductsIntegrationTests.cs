@@ -35,8 +35,11 @@
 
             Assert.Equal(3, db!.Products.Count());
 
+            // Act
             var response = await client.GetAsync("/Products?page=1");
             var data = await response.Content.ReadAsStringAsync();
+
+            // Assert
             var result = JsonSerializer.Deserialize<AllProductsServiceModel>(data, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true

@@ -6,14 +6,9 @@ namespace NutriBest.Server.Tests.Controllers.Orders
     using System.Text.Json;
     using System.Net.Http.Json;
     using Xunit;
-    using Moq;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
     using NutriBest.Server.Data;
-    using NutriBest.Server.Shared.Responses;
-    using NutriBest.Server.Features.Carts.Models;
-    using NutriBest.Server.Features.Invoices.Models;
-    using NutriBest.Server.Features.UsersOrders.Models;
     using Infrastructure.Extensions;
     using NutriBest.Server.Features.Orders.Models;
     using static SuccessMessages.NotificationService;
@@ -42,7 +37,7 @@ namespace NutriBest.Server.Tests.Controllers.Orders
             var client = await clientHelper.GetAdministratorClientAsync();
 
             await SeedingHelper.SeedSevenProducts(clientHelper);
-            await SeedingHelper.SeedUserOrder(clientHelper);
+            await SeedingHelper.SeedUserOrder(clientHelper, false);
 
             var statusesModel = new UpdateOrderServiceModel
             {
@@ -62,9 +57,12 @@ namespace NutriBest.Server.Tests.Controllers.Orders
             bool isSuccessful = root.GetProperty("successful").GetBoolean();
 
             Assert.True(isSuccessful);
+
             var order = await db!.Orders.FirstAsync();
+
             var orderDetails = await db!.OrdersDetails
                 .FirstAsync(x => x.Id == order.Id);
+
             Assert.True(order.IsConfirmed);
             Assert.True(orderDetails.IsPaid);
             Assert.True(orderDetails.IsShipped);
@@ -78,7 +76,7 @@ namespace NutriBest.Server.Tests.Controllers.Orders
             var client = await clientHelper.GetEmployeeClientAsync();
 
             await SeedingHelper.SeedSevenProducts(clientHelper);
-            await SeedingHelper.SeedUserOrder(clientHelper);
+            await SeedingHelper.SeedUserOrder(clientHelper, false);
 
             var statusesModel = new UpdateOrderServiceModel
             {
@@ -98,9 +96,12 @@ namespace NutriBest.Server.Tests.Controllers.Orders
             bool isSuccessful = root.GetProperty("successful").GetBoolean();
 
             Assert.True(isSuccessful);
+
             var order = await db!.Orders.FirstAsync();
+
             var orderDetails = await db!.OrdersDetails
                 .FirstAsync(x => x.Id == order.Id);
+
             Assert.True(order.IsConfirmed);
             Assert.True(orderDetails.IsPaid);
             Assert.True(orderDetails.IsShipped);
@@ -114,7 +115,7 @@ namespace NutriBest.Server.Tests.Controllers.Orders
             var client = await clientHelper.GetEmployeeClientAsync();
 
             await SeedingHelper.SeedSevenProducts(clientHelper);
-            await SeedingHelper.SeedUserOrder(clientHelper);
+            await SeedingHelper.SeedUserOrder(clientHelper, false);
 
             var statusesModel = new UpdateOrderServiceModel
             {
@@ -134,9 +135,12 @@ namespace NutriBest.Server.Tests.Controllers.Orders
             bool isSuccessful = root.GetProperty("successful").GetBoolean();
 
             Assert.True(isSuccessful);
+
             var order = await db!.Orders.FirstAsync();
+
             var orderDetails = await db!.OrdersDetails
                 .FirstAsync(x => x.Id == order.Id);
+
             Assert.True(order.IsConfirmed);
             Assert.True(orderDetails.IsPaid);
             Assert.True(orderDetails.IsShipped);
@@ -153,7 +157,7 @@ namespace NutriBest.Server.Tests.Controllers.Orders
             var client = await clientHelper.GetEmployeeClientAsync();
 
             await SeedingHelper.SeedSevenProducts(clientHelper);
-            await SeedingHelper.SeedUserOrder(clientHelper);
+            await SeedingHelper.SeedUserOrder(clientHelper, false);
 
             var statusesModel = new UpdateOrderServiceModel
             {
@@ -173,9 +177,12 @@ namespace NutriBest.Server.Tests.Controllers.Orders
             bool isSuccessful = root.GetProperty("successful").GetBoolean();
 
             Assert.False(isSuccessful);
+
             var order = await db!.Orders.FirstAsync();
+
             var orderDetails = await db!.OrdersDetails
                 .FirstAsync(x => x.Id == order.Id);
+
             Assert.False(order.IsConfirmed);
             Assert.False(orderDetails.IsPaid);
             Assert.False(orderDetails.IsShipped);
@@ -189,7 +196,7 @@ namespace NutriBest.Server.Tests.Controllers.Orders
             var client = clientHelper.GetAnonymousClient();
 
             await SeedingHelper.SeedSevenProducts(clientHelper);
-            await SeedingHelper.SeedUserOrder(clientHelper);
+            await SeedingHelper.SeedUserOrder(clientHelper, false);
 
             var statusesModel = new UpdateOrderServiceModel
             {
@@ -204,9 +211,12 @@ namespace NutriBest.Server.Tests.Controllers.Orders
 
             // Assert
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+
             var order = await db!.Orders.FirstAsync();
+
             var orderDetails = await db!.OrdersDetails
                 .FirstAsync(x => x.Id == order.Id);
+
             Assert.False(order.IsConfirmed);
             Assert.False(orderDetails.IsPaid);
             Assert.False(orderDetails.IsShipped);
@@ -220,7 +230,7 @@ namespace NutriBest.Server.Tests.Controllers.Orders
             var client = await clientHelper.GetOtherUserClientAsync();
 
             await SeedingHelper.SeedSevenProducts(clientHelper);
-            await SeedingHelper.SeedUserOrder(clientHelper);
+            await SeedingHelper.SeedUserOrder(clientHelper, false);
 
             var statusesModel = new UpdateOrderServiceModel
             {
@@ -235,9 +245,12 @@ namespace NutriBest.Server.Tests.Controllers.Orders
 
             // Assert
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+
             var order = await db!.Orders.FirstAsync();
+
             var orderDetails = await db!.OrdersDetails
                 .FirstAsync(x => x.Id == order.Id);
+
             Assert.False(order.IsConfirmed);
             Assert.False(orderDetails.IsPaid);
             Assert.False(orderDetails.IsShipped);

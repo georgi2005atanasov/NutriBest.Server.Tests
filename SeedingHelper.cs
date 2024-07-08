@@ -6,6 +6,7 @@
     using NutriBest.Server.Features.Brands.Models;
     using NutriBest.Server.Features.Carts.Models;
     using NutriBest.Server.Features.GuestsOrders.Models;
+    using NutriBest.Server.Features.Invoices.Models;
     using NutriBest.Server.Features.Products.Models;
     using NutriBest.Server.Features.PromoCodes.Models;
     using NutriBest.Server.Features.Promotions.Models;
@@ -183,6 +184,8 @@
             // Arrange
             var client = clientHelper.GetAnonymousClient();
 
+            await SeedingHelper.SeedSevenProducts(clientHelper);
+
             var firstCartProductModel = new CartProductServiceModel
             {
                 Flavour = "Coconut",
@@ -218,7 +221,7 @@
             var orderResponse = await client.PostAsJsonAsync("/GuestsOrders", orderModel);
         }
 
-        public static async Task SeedUserOrder(ClientHelper clientHelper)
+        public static async Task SeedUserOrder(ClientHelper clientHelper, bool hasInvoice)
         {
             // Arrange
             var client = await clientHelper.GetOtherUserClientAsync();
@@ -270,7 +273,18 @@
                 PostalCode = "4000",
                 Email = "user@example.com",
                 Name = "TEST USER!!!",
-                HasInvoice = false,
+                HasInvoice = hasInvoice,
+                Invoice = hasInvoice ?
+                          new InvoiceServiceModel
+                          {
+                              FirstName = "TEST",
+                              LastName = "INVOICE",
+                              Bullstat = "123456",
+                              CompanyName = "TEST COMPANY",
+                              PersonInCharge = "TEST PERSON IN CHARGE",
+                              PhoneNumber = "0884138850"
+                          } : 
+                          null,
                 PaymentMethod = "CashOnDelivery",
                 PhoneNumber = "0884138832"
             };
