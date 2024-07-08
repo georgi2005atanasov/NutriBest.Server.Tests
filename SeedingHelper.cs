@@ -193,7 +193,7 @@
             };
 
             // First product addition
-            var firstResponse = await client.PostAsJsonAsync("/Cart/Add", firstCartProductModel);
+            var firstResponse = await client.PostAsJsonAsync("/Cart/Set", firstCartProductModel);
             var cookieHeader = firstResponse.Headers.GetValues("Set-Cookie").FirstOrDefault();
             if (cookieHeader != null)
             {
@@ -245,7 +245,7 @@
 
             // Act
             // First product addition
-            var firstResponse = await client.PostAsJsonAsync("/Cart/Add", firstCartProductModel);
+            var firstResponse = await client.PostAsJsonAsync("/Cart/Set", firstCartProductModel);
             var cookieHeader = firstResponse.Headers.GetValues("Set-Cookie").FirstOrDefault();
             if (cookieHeader != null)
             {
@@ -253,7 +253,7 @@
             }
 
             // Second product addition
-            var secondResponse = await client.PostAsJsonAsync("/Cart/Add", secondCartProductModel);
+            var secondResponse = await client.PostAsJsonAsync("/Cart/Set", secondCartProductModel);
             var updatedCookieHeaderAfterSecond = secondResponse.Headers.GetValues("Set-Cookie").FirstOrDefault();
             if (updatedCookieHeaderAfterSecond != null)
             {
@@ -278,7 +278,68 @@
             var orderResponse = await client.PostAsJsonAsync("/UsersOrders", orderModel);
         }
 
-            public static async Task SeedThreeProducts(ClientHelper clientHelper)
+        public static async Task SeedUserOrderForSendingLowStockNotification(ClientHelper clientHelper,
+            int quantity)
+        {
+            // Arrange
+            var client = await clientHelper.GetOtherUserClientAsync();
+
+            await SeedingHelper.SeedSevenProducts(clientHelper);
+
+            var firstCartProductModel = new CartProductServiceModel
+            {
+                Flavour = "Coconut",
+                Grams = 1000,
+                Count = quantity,
+                Price = 15.99m,
+                ProductId = 1
+            };
+
+            var secondCartProductModel = new CartProductServiceModel
+            {
+                Flavour = "Lemon Lime",
+                Grams = 500,
+                Count = 9,
+                Price = 50.99m,
+                ProductId = 3
+            };
+
+            // Act
+            // First product addition
+            var firstResponse = await client.PostAsJsonAsync("/Cart/Set", firstCartProductModel);
+            var cookieHeader = firstResponse.Headers.GetValues("Set-Cookie").FirstOrDefault();
+            if (cookieHeader != null)
+            {
+                client.DefaultRequestHeaders.Add("Cookie", cookieHeader);
+            }
+
+            // Second product addition
+            var secondResponse = await client.PostAsJsonAsync("/Cart/Set", secondCartProductModel);
+            var updatedCookieHeaderAfterSecond = secondResponse.Headers.GetValues("Set-Cookie").FirstOrDefault();
+            if (updatedCookieHeaderAfterSecond != null)
+            {
+                client.DefaultRequestHeaders.Remove("Cookie");
+                client.DefaultRequestHeaders.Add("Cookie", updatedCookieHeaderAfterSecond);
+            }
+
+            var orderModel = new UserOrderServiceModel
+            {
+                Country = "Bulgaria",
+                City = "Plovdiv",
+                Street = "Karlovska",
+                StreetNumber = "900",
+                PostalCode = "4000",
+                Email = "user@example.com",
+                Name = "TEST USER!!!",
+                HasInvoice = false,
+                PaymentMethod = "CashOnDelivery",
+                PhoneNumber = "0884138832"
+            };
+
+            var orderResponse = await client.PostAsJsonAsync("/UsersOrders", orderModel);
+        }
+
+        public static async Task SeedThreeProducts(ClientHelper clientHelper)
         {
             await SeedingHelper.SeedProduct(clientHelper,
                 "product71",
