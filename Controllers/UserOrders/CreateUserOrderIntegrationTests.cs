@@ -121,6 +121,10 @@ namespace NutriBest.Server.Tests.Controllers.UserOrders
             var cart = await db.Carts
                 .Include(x => x.CartProducts)
                 .FirstAsync(x => x.Id == order.CartId);
+            var profile = await db.Profiles
+                .FirstAsync(x => x.UserId == userOrder.ProfileId);
+            var user = await db.Users
+               .FirstAsync(x => x.Id == userOrder.ProfileId);
 
             Assert.Null(order.GuestOrderId);
             Assert.Equal(1, order.UserOrderId);
@@ -136,6 +140,9 @@ namespace NutriBest.Server.Tests.Controllers.UserOrders
             Assert.Equal(474.90m, cart.TotalProducts);
             Assert.Equal(474.90m, cart.OriginalPrice);
             Assert.Equal(10, cart.ShippingPrice);
+
+            Assert.Equal("TEST USER!!!", profile.Name);
+            Assert.Equal("0884138832", user.PhoneNumber);
         }
 
         [Fact]

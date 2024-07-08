@@ -96,7 +96,7 @@ namespace NutriBest.Server.Tests.Controllers.GuestsOrders
             .Include(x => x.Address)
                 .ThenInclude(address => address!.Country)
             .FirstAsync();
-            var userOrder = await db.GuestsOrders
+            var guestOrder = await db.GuestsOrders
                 .FirstAsync();
             var cart = await db.Carts
                 .Include(x => x.CartProducts)
@@ -188,7 +188,7 @@ namespace NutriBest.Server.Tests.Controllers.GuestsOrders
             .Include(x => x.Address)
                 .ThenInclude(address => address!.Country)
             .FirstAsync();
-            var userOrder = await db.GuestsOrders
+            var guestOrder = await db.GuestsOrders
                 .FirstAsync();
             var invoice = await db.Invoices
                 .FirstAsync();
@@ -295,7 +295,7 @@ namespace NutriBest.Server.Tests.Controllers.GuestsOrders
             .Include(x => x.Address)
                 .ThenInclude(address => address!.Country)
             .FirstAsync();
-            var userOrder = await db.GuestsOrders
+            var guestOrder = await db.GuestsOrders
                 .FirstAsync();
             var invoice = await db.Invoices
                 .FirstAsync();
@@ -542,7 +542,7 @@ namespace NutriBest.Server.Tests.Controllers.GuestsOrders
             .Include(x => x.Address)
                 .ThenInclude(address => address!.Country)
             .FirstAsync();
-            var userOrder = await db.GuestsOrders
+            var guestOrder = await db.GuestsOrders
                 .FirstAsync();
             var cart = await db.Carts
                 .Include(x => x.CartProducts)
@@ -634,7 +634,7 @@ namespace NutriBest.Server.Tests.Controllers.GuestsOrders
             .Include(x => x.Address)
                 .ThenInclude(address => address!.Country)
             .FirstAsync();
-            var userOrder = await db.GuestsOrders
+            var guestOrder = await db.GuestsOrders
                 .FirstAsync();
             var cart = await db.Carts
                 .Include(x => x.CartProducts)
@@ -717,7 +717,7 @@ namespace NutriBest.Server.Tests.Controllers.GuestsOrders
             .Include(x => x.Address)
                 .ThenInclude(address => address!.Country)
             .FirstAsync();
-            var userOrder = await db.GuestsOrders
+            var guestOrder = await db.GuestsOrders
                 .FirstAsync();
             var cart = await db.Carts
                 .Include(x => x.CartProducts)

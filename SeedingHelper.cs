@@ -6,6 +6,7 @@
     using NutriBest.Server.Features.Brands.Models;
     using NutriBest.Server.Features.Carts.Models;
     using NutriBest.Server.Features.GuestsOrders.Models;
+    using NutriBest.Server.Features.Identity.Models;
     using NutriBest.Server.Features.Invoices.Models;
     using NutriBest.Server.Features.Products.Models;
     using NutriBest.Server.Features.PromoCodes.Models;
@@ -15,6 +16,25 @@
 
     public static class SeedingHelper
     {
+        public static async Task SeedUser(ClientHelper clientHelper,
+            string userName,
+            string email,
+            string password,
+            string confirmPassword)
+        {
+            var client = clientHelper.GetAnonymousClient();
+
+            var registerModel = new RegisterServiceModel
+            {
+                UserName = "pesho",
+                Email = "pesho@example.com",
+                Password = "Pesho12345",
+                ConfirmPassword = "Pesho12345"
+            };
+
+            await client.PostAsJsonAsync("/Identity/Register", registerModel);
+        }
+
         public static async Task SeedProduct(ClientHelper clientHelper,
             string productName,
             List<string> categories,
