@@ -6,6 +6,7 @@
     using NutriBest.Server.Features.UsersOrders.Models;
     using NutriBest.Server.Features.GuestsOrders.Models;
     using NutriBest.Server.Features.Orders.Models;
+    using NutriBest.Server.Features.Identity.Models;
 
     public static class LargeSeedingHelper
     {
@@ -156,6 +157,26 @@
             {
                 client.DefaultRequestHeaders.Remove("Cookie");
                 client.DefaultRequestHeaders.Add("Cookie", cookieHeader);
+            }
+        }
+
+        public static async Task SeedUsers(ClientHelper clientHelper,
+            int numberOfUsers)
+        {
+            var client = clientHelper.GetAnonymousClient();
+
+            for (int i = 0; i < numberOfUsers; i++)
+            {
+                // Arrange
+                var registerModel = new RegisterServiceModel
+                {
+                    UserName = $"{i}_UNIQUE_USER",
+                    Email = $"UNIQUE_USER_{i}@example.com",
+                    Password = "Pesho12345",
+                    ConfirmPassword = "Pesho12345"
+                };
+
+                await client.PostAsJsonAsync("/Identity/Register", registerModel);
             }
         }
     }

@@ -1,21 +1,16 @@
-﻿using NutriBest.Server.Utilities.Messages;
-
-namespace NutriBest.Server.Tests.Controllers.Orders
+﻿namespace NutriBest.Server.Tests.Controllers.Orders
 {
     using System.Net;
     using System.Text.Json;
-    using System.Net.Http.Json;
     using Xunit;
-    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
     using NutriBest.Server.Data;
     using NutriBest.Server.Features.Carts.Models;
     using NutriBest.Server.Features.Orders.Models;
     using NutriBest.Server.Features.UsersOrders.Models;
-    using Infrastructure.Extensions;
-    using static SuccessMessages.NotificationService;
     using NutriBest.Server.Features.GuestsOrders.Models;
     using NutriBest.Server.Tests.Controllers.Orders.Data;
+    using Infrastructure.Extensions;
 
     [Collection("Orders Controller Tests")]
     public class AllOrdersIntegrationTests : IAsyncLifetime
