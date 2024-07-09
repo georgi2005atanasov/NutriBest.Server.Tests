@@ -11,6 +11,7 @@ namespace NutriBest.Server.Tests.Controllers.Orders
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
     using NutriBest.Server.Data;
+    using NutriBest.Server.Data.Enums;
     using NutriBest.Server.Features.Notifications;
     using NutriBest.Server.Features.Notifications.Hubs;
     using Infrastructure.Extensions;
@@ -118,7 +119,7 @@ namespace NutriBest.Server.Tests.Controllers.Orders
 
             Assert.NotNull(notification);
             Assert.Equal(LowInStock, notification!.Title);
-            Assert.Equal(Data.Enums.Priority.Low, notification.Priority);
+            Assert.Equal(Priority.Low, notification.Priority);
             Assert.Equal("Be Aware That Product With Name 'product80' has Quantity of 19.", notification.Message);
         }
 
@@ -142,6 +143,7 @@ namespace NutriBest.Server.Tests.Controllers.Orders
 
             // Artificially make the notification service and seed the notification
             var mockClientProxy = new Mock<IClientProxy>();
+
             mockClientProxy
                 .Setup(x => x.SendCoreAsync(It.IsAny<string>(),
                 It.IsAny<object[]>(),
@@ -183,7 +185,7 @@ namespace NutriBest.Server.Tests.Controllers.Orders
 
             Assert.NotNull(notification);
             Assert.Equal(StockIsRunningLow, notification!.Title);
-            Assert.Equal(Data.Enums.Priority.Medium, notification.Priority);
+            Assert.Equal(Priority.Medium, notification.Priority);
             Assert.Equal("'product80' stock levels are critically low! (9 left)", notification.Message);
         }
 
@@ -248,7 +250,7 @@ namespace NutriBest.Server.Tests.Controllers.Orders
 
             Assert.NotNull(notification);
             Assert.Equal(OutOfStock, notification!.Title);
-            Assert.Equal(Data.Enums.Priority.High, notification.Priority);
+            Assert.Equal(Priority.High, notification.Priority);
             Assert.Equal("'product80' is Out of Stock! (0)", notification.Message);
         }
 

@@ -1,4 +1,4 @@
-﻿namespace NutriBest.Server.Tests.Controllers.Products
+﻿namespace NutriBest.Server.Tests.Controllers.Products.Data
 {
     public static class ProductFilterTestData
     {
@@ -12,7 +12,6 @@
             yield return new object[] { null!, null!, null!, null!, null!, null!, "1 5000", 7 };
             yield return new object[] { null!, null!, null!, null!, "pesho", null!, "1 5000", 0 };
             yield return new object[] { null!, null!, null!, null!, "product8", null!, "1 80", 2 };
-
         }
     }
 }

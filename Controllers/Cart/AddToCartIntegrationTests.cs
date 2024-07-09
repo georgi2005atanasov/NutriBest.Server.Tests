@@ -39,6 +39,7 @@ namespace NutriBest.Server.Tests.Controllers.Cart
         {
             // Arrange
             var client = clientHelper.GetAnonymousClient();
+
             var cartProductModel = new CartProductServiceModel
             {
                 Flavour = "Coconut",
@@ -50,8 +51,11 @@ namespace NutriBest.Server.Tests.Controllers.Cart
 
             // Act
             var response = await client.PostAsJsonAsync("/Cart/Add", cartProductModel);
-            var cookies = response.Headers.GetValues("Set-Cookie");
-            var shoppingCartCookie = cookies.FirstOrDefault(cookie => cookie.StartsWith("ShoppingCart="));
+            var cookies = response
+                .Headers
+                .GetValues("Set-Cookie");
+            var shoppingCartCookie = cookies
+                .FirstOrDefault(cookie => cookie.StartsWith("ShoppingCart="));
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -63,6 +67,7 @@ namespace NutriBest.Server.Tests.Controllers.Cart
         {
             // Arrange
             var client = clientHelper.GetAnonymousClient();
+
             var firstCartProductModel = new CartProductServiceModel
             {
                 Flavour = "Coconut",
@@ -93,15 +98,21 @@ namespace NutriBest.Server.Tests.Controllers.Cart
             // Act
             // First product addition
             var firstResponse = await client.PostAsJsonAsync("/Cart/Add", firstCartProductModel);
-            var cookieHeader = firstResponse.Headers.GetValues("Set-Cookie").FirstOrDefault();
+            var cookieHeader = firstResponse
+                .Headers
+                .GetValues("Set-Cookie")
+                .FirstOrDefault();
+
             if (cookieHeader != null)
-            {
                 client.DefaultRequestHeaders.Add("Cookie", cookieHeader);
-            }
 
             // Second product addition
             var secondResponse = await client.PostAsJsonAsync("/Cart/Add", secondCartProductModel);
-            var updatedCookieHeaderAfterSecond = secondResponse.Headers.GetValues("Set-Cookie").FirstOrDefault();
+            var updatedCookieHeaderAfterSecond = secondResponse
+                .Headers
+                .GetValues("Set-Cookie")
+                .FirstOrDefault();
+
             if (updatedCookieHeaderAfterSecond != null)
             {
                 client.DefaultRequestHeaders.Remove("Cookie");
@@ -112,10 +123,9 @@ namespace NutriBest.Server.Tests.Controllers.Cart
             var thirdResponse = await client.PostAsJsonAsync("/Cart/Add", thirdCartProductModel);
             var updatedCookieHeaderAfterThird = thirdResponse.Headers.GetValues("Set-Cookie").FirstOrDefault();
             string cartCookieValue = string.Empty;
+
             if (updatedCookieHeaderAfterThird != null)
-            {
                 cartCookieValue = updatedCookieHeaderAfterThird.Split(';').FirstOrDefault()!.Split('=').Last();
-            }
 
             var decodedCartCookieValue = HttpUtility.UrlDecode(cartCookieValue);
 
@@ -166,6 +176,7 @@ namespace NutriBest.Server.Tests.Controllers.Cart
         {
             // Arrange
             var client = clientHelper.GetAnonymousClient();
+
             var cartProductModel = new CartProductServiceModel
             {
                 Flavour = "CoconutPesho",
@@ -194,6 +205,7 @@ namespace NutriBest.Server.Tests.Controllers.Cart
         {
             // Arrange
             var client = clientHelper.GetAnonymousClient();
+
             var cartProductModel = new CartProductServiceModel
             {
                 Flavour = "Coconut",
@@ -252,10 +264,9 @@ namespace NutriBest.Server.Tests.Controllers.Cart
             firstResponse.EnsureSuccessStatusCode();
 
             var cookieHeader = firstResponse.Headers.GetValues("Set-Cookie").FirstOrDefault();
+
             if (cookieHeader != null)
-            {
                 client.DefaultRequestHeaders.Add("Cookie", cookieHeader);
-            }
 
             var secondResponse = await client.PostAsJsonAsync("/Cart/Add", secondCartProductModel);
             var data = await secondResponse.Content.ReadAsStringAsync();
