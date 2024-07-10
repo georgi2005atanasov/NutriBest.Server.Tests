@@ -117,6 +117,7 @@
             {
                 { new StringContent("user@example.com"), "email" },
             };
+
             await anonymous.PostAsync("/Newsletter", formData);
 
             await SeedingHelper.SeedUserOrder(clientHelper,

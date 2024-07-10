@@ -2,14 +2,14 @@
 
 namespace NutriBest.Server.Tests.Controllers.Email
 {
+    using System.Net;
+    using System.Text.Json;
+    using System.Net.Http.Json;
     using Microsoft.Extensions.DependencyInjection;
+    using Xunit;
     using Moq;
     using NutriBest.Server.Data;
     using NutriBest.Server.Features.Email.Models;
-    using System.Net;
-    using System.Net.Http.Json;
-    using System.Text.Json;
-    using Xunit;
     using static SuccessMessages.EmailController;
 
     [Collection("Email Controller Tests")]
@@ -44,7 +44,8 @@ namespace NutriBest.Server.Tests.Controllers.Email
             };
 
             // Act
-            var response = await client.PostAsJsonAsync("/Email/SendConfirmOrderEmail", model);
+            var response = await client
+                .PostAsJsonAsync("/Email/SendConfirmOrderEmail", model);
 
             // Assert
             fixture.Factory.EmailServiceMock!
@@ -67,7 +68,8 @@ namespace NutriBest.Server.Tests.Controllers.Email
             };
 
             // Act
-            var response = await client.PostAsJsonAsync("/Email/SendConfirmOrderEmail", model);
+            var response = await client
+                .PostAsJsonAsync("/Email/SendConfirmOrderEmail", model);
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -92,7 +94,8 @@ namespace NutriBest.Server.Tests.Controllers.Email
                 .Throws<Exception>();
 
             // Act
-            var response = await client.PostAsJsonAsync("/Email/SendConfirmOrderEmail", model);
+            var response = await client
+                .PostAsJsonAsync("/Email/SendConfirmOrderEmail", model);
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -111,7 +114,8 @@ namespace NutriBest.Server.Tests.Controllers.Email
             };
 
             // Act
-            var response = await client.PostAsJsonAsync("/Email/SendConfirmedOrderToAdmin", model);
+            var response = await client
+                .PostAsJsonAsync("/Email/SendConfirmedOrderToAdmin", model);
 
             // Assert
             fixture.Factory.EmailServiceMock!
@@ -135,7 +139,8 @@ namespace NutriBest.Server.Tests.Controllers.Email
                 .Throws<Exception>();
 
             // Act
-            var response = await client.PostAsJsonAsync("/Email/SendConfirmedOrderToAdmin", model);
+            var response = await client
+                .PostAsJsonAsync("/Email/SendConfirmedOrderToAdmin", model);
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -158,8 +163,10 @@ namespace NutriBest.Server.Tests.Controllers.Email
             };
 
             // Act
-            var response = await client.PostAsJsonAsync("/Email/SendOrderToAdmin", model);
+            var response = await client
+                .PostAsJsonAsync("/Email/SendOrderToAdmin", model);
             response.EnsureSuccessStatusCode();
+
             // Assert
             fixture.Factory.EmailServiceMock!
                 .Verify(x => x.SendNewOrderToAdmin(model));
@@ -187,7 +194,8 @@ namespace NutriBest.Server.Tests.Controllers.Email
                 .Throws<Exception>();
 
             // Act
-            var response = await client.PostAsJsonAsync("/Email/SendOrderToAdmin", model);
+            var response = await client
+                .PostAsJsonAsync("/Email/SendOrderToAdmin", model);
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -233,7 +241,8 @@ namespace NutriBest.Server.Tests.Controllers.Email
             };
 
             // Act
-            var response = await client.PostAsJsonAsync("/Email/ForgottenPassword", model);
+            var response = await client
+                .PostAsJsonAsync("/Email/ForgottenPassword", model);
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -250,7 +259,8 @@ namespace NutriBest.Server.Tests.Controllers.Email
                 Subject = "subject"
             };
 
-            var response = await client.PostAsJsonAsync("/Email/ForgottenPassword", model);
+            var response = await client
+                .PostAsJsonAsync("/Email/ForgottenPassword", model);
 
             var jsonString = await response.Content.ReadAsStringAsync();
             var jsonDoc = JsonDocument.Parse(jsonString);
@@ -283,7 +293,8 @@ namespace NutriBest.Server.Tests.Controllers.Email
                 .Setup(x => x.SendNewOrderToAdmin(model))
                 .Throws<Exception>();
 
-            var response = await client.PostAsJsonAsync("/Email/SendOrderToAdmin", model);
+            var response = await client
+                .PostAsJsonAsync("/Email/SendOrderToAdmin", model);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
@@ -301,7 +312,8 @@ namespace NutriBest.Server.Tests.Controllers.Email
             };
 
             // Act
-            var response = await client.PostAsJsonAsync("/Email/SendPromoCode", model);
+            var response = await client
+                .PostAsJsonAsync("/Email/SendPromoCode", model);
 
             // Assert
             fixture.Factory.EmailServiceMock!
@@ -325,7 +337,8 @@ namespace NutriBest.Server.Tests.Controllers.Email
             };
 
             // Act
-            var response = await client.PostAsJsonAsync("/Email/SendPromoCode", model);
+            var response = await client
+                .PostAsJsonAsync("/Email/SendPromoCode", model);
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -348,7 +361,8 @@ namespace NutriBest.Server.Tests.Controllers.Email
                 .Throws<Exception>();
 
             // Act
-            var response = await client.PostAsJsonAsync("/Email/SendPromoCode?groupType=all", model);
+            var response = await client
+                .PostAsJsonAsync("/Email/SendPromoCode?groupType=all", model);
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -404,7 +418,8 @@ namespace NutriBest.Server.Tests.Controllers.Email
             };
 
             // Act
-            var response = await client.PostAsJsonAsync("/Email/SendJoinedToNewsletter", model);
+            var response = await client
+                .PostAsJsonAsync("/Email/SendJoinedToNewsletter", model);
 
             // Assert
             fixture.Factory.EmailServiceMock!
@@ -424,7 +439,8 @@ namespace NutriBest.Server.Tests.Controllers.Email
             };
 
             // Act
-            var response = await client.PostAsJsonAsync("/Email/SendJoinedToNewsletter", model);
+            var response = await client
+                .PostAsJsonAsync("/Email/SendJoinedToNewsletter", model);
 
             // Assert
 
@@ -446,7 +462,8 @@ namespace NutriBest.Server.Tests.Controllers.Email
                 .Throws<Exception>();
 
             // Act
-            var response = await client.PostAsJsonAsync("/Email/SendJoinedToNewsletter", model);
+            var response = await client
+                .PostAsJsonAsync("/Email/SendJoinedToNewsletter", model);
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -487,7 +504,8 @@ namespace NutriBest.Server.Tests.Controllers.Email
                 .Throws<Exception>();
 
             // Act
-            var response = await client.PostAsJsonAsync("/Email/SendMessageToSubscribers?groupType=all", model);
+            var response = await client
+                .PostAsJsonAsync("/Email/SendMessageToSubscribers?groupType=all", model);
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -505,7 +523,8 @@ namespace NutriBest.Server.Tests.Controllers.Email
             };
 
             // Act
-            var response = await client.PostAsJsonAsync("/Email/SendMessageToSubscribers?groupType=all", model);
+            var response = await client
+                .PostAsJsonAsync("/Email/SendMessageToSubscribers?groupType=all", model);
 
             // Assert
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
@@ -523,7 +542,8 @@ namespace NutriBest.Server.Tests.Controllers.Email
             };
 
             // Act
-            var response = await client.PostAsJsonAsync("/Email/SendMessageToSubscribers?groupType=all", model);
+            var response = await client
+                .PostAsJsonAsync("/Email/SendMessageToSubscribers?groupType=all", model);
 
             // Assert
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
@@ -565,7 +585,8 @@ namespace NutriBest.Server.Tests.Controllers.Email
                 .Throws<Exception>();
 
             // Act
-            var response = await client.PostAsJsonAsync("/Email/SendPromoCodesToSubscribers?groupType=all", model);
+            var response = await client
+                .PostAsJsonAsync("/Email/SendPromoCodesToSubscribers?groupType=all", model);
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -583,7 +604,8 @@ namespace NutriBest.Server.Tests.Controllers.Email
             };
 
             // Act
-            var response = await client.PostAsJsonAsync("/Email/SendPromoCodesToSubscribers?groupType=all", model);
+            var response = await client
+                .PostAsJsonAsync("/Email/SendPromoCodesToSubscribers?groupType=all", model);
 
             // Assert
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
@@ -601,7 +623,8 @@ namespace NutriBest.Server.Tests.Controllers.Email
             };
 
             // Act
-            var response = await client.PostAsJsonAsync("/Email/SendPromoCodesToSubscribers?groupType=all", model);
+            var response = await client
+                .PostAsJsonAsync("/Email/SendPromoCodesToSubscribers?groupType=all", model);
 
             // Assert
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);

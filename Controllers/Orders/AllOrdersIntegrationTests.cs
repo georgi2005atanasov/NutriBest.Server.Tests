@@ -349,18 +349,6 @@
                 PropertyNameCaseInsensitive = true
             }) ?? new AllOrdersServiceModel();
 
-            var confirmed = result.Orders
-                .Where(x => x.IsConfirmed)
-                .Count();
-
-            var shippedFinished = result.Orders
-                .Where(x => x.IsShipped && x.IsFinished)
-                .Count();
-
-            var confirmedPaid = result.Orders
-                .Where(x => x.IsConfirmed && x.IsPaid)
-                .Count();
-
             Assert.Equal(expectedCount, result.Orders.Count);
         }
 
