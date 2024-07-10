@@ -9,9 +9,9 @@
     {
         public IConfiguration Configuration { get; private set; }
 
-        public IPromoCodeService PromoCodeService { get; private set; }
+        public IPromoCodeService? PromoCodeService { get; private set; }
 
-        public IEmailService EmailService { get; private set; }
+        public IEmailService? EmailService { get; private set; }
 
         public EmailFixture()
             : base()
@@ -25,8 +25,6 @@
             Configuration = builder.Build();
 
             InitializeServices();
-            PromoCodeService = new PromoCodeService(DbContext!);
-            EmailService = new EmailService(DbContext!, Configuration, PromoCodeService, NotificationServiceMock!.Object);
         }
 
         public override void InitializeServices()

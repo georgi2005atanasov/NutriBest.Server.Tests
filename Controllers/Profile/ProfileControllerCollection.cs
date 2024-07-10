@@ -3,7 +3,7 @@
     using Xunit;
 
     [CollectionDefinition("Profile Controller Tests")]
-    public class ProfileCollection : ICollectionFixture<CustomWebApplicationFactoryFixture>
+    public class ProfileControllerCollection : ICollectionFixture<CustomWebApplicationFactoryFixture>
     {
     }
 }
