@@ -83,7 +83,24 @@
         {
             // Arrange
             await LargeSeedingHelper.SeedUsers(clientHelper, 20);
-            await SeedingHelper.SeedUserOrder(clientHelper, false);
+
+            await SeedingHelper.SeedUserOrder(clientHelper, 
+                false,
+                "user@example.com",
+                "user",
+                "TEST USER!!!");
+
+            await SeedingHelper.SeedUserOrder(clientHelper,
+                false,
+                "UNIQUE_USER_3@example.com",
+                "3_UNIQUE_USER",
+                "Some name");
+
+            await SeedingHelper.SeedUserOrder(clientHelper,
+                false,
+                "UNIQUE_USER_4@example.com",
+                "4_UNIQUE_USER",
+                "Some name");
 
             var client = await clientHelper.GetAdministratorClientAsync();
 

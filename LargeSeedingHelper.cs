@@ -167,16 +167,55 @@
 
             for (int i = 0; i < numberOfUsers; i++)
             {
-                // Arrange
                 var registerModel = new RegisterServiceModel
                 {
                     UserName = $"{i}_UNIQUE_USER",
                     Email = $"UNIQUE_USER_{i}@example.com",
-                    Password = "Pesho12345",
-                    ConfirmPassword = "Pesho12345"
+                    Password = "Password123!",
+                    ConfirmPassword = "Password123!"
                 };
 
                 await client.PostAsJsonAsync("/Identity/Register", registerModel);
+            }
+        }
+
+        public static async Task SeedUsersAsSubscribers(ClientHelper clientHelper,
+            bool isAnonymous,
+            int numberOfSubscribers)
+        {
+            var client = clientHelper.GetAnonymousClient();
+
+            for (int i = 0; i < numberOfSubscribers; i++)
+            {
+                if (!isAnonymous)
+                {
+                    var registerModel = new RegisterServiceModel
+                    {
+                        UserName = $"{i}_UNIQUE_USER",
+                        Email = $"UNIQUE_USER_{i}@example.com",
+                        Password = "Password123!",
+                        ConfirmPassword = "Password123!"
+                    };
+
+                    await client.PostAsJsonAsync("/Identity/Register", registerModel);
+
+                    var formData = new MultipartFormDataContent
+                    {
+                        { new StringContent($"UNIQUE_USER_{i}@example.com"), "email" },
+                    };
+
+                    await client.PostAsync("/Newsletter", formData);
+                }
+                else
+                {
+                    var formData = new MultipartFormDataContent
+                    {
+                        { new StringContent($"GUEST_USER_{i}@example.com"), "email" },
+                    };
+
+                    await client.PostAsync("/Newsletter", formData);
+                }
+
             }
         }
     }

@@ -37,7 +37,11 @@ namespace NutriBest.Server.Tests.Controllers.Orders
             var client = await clientHelper.GetAdministratorClientAsync();
 
             await SeedingHelper.SeedSevenProducts(clientHelper);
-            await SeedingHelper.SeedUserOrder(clientHelper, false);
+            await SeedingHelper.SeedUserOrder(clientHelper, 
+                false,
+                "user@example.com",
+                "user",
+                "TEST USER!!!");
 
             var statusesModel = new UpdateOrderServiceModel
             {
@@ -76,7 +80,11 @@ namespace NutriBest.Server.Tests.Controllers.Orders
             var client = await clientHelper.GetEmployeeClientAsync();
 
             await SeedingHelper.SeedSevenProducts(clientHelper);
-            await SeedingHelper.SeedUserOrder(clientHelper, false);
+            await SeedingHelper.SeedUserOrder(clientHelper, 
+                false,
+                "user@example.com",
+                "user",
+                "TEST USER!!!");
 
             var statusesModel = new UpdateOrderServiceModel
             {
@@ -115,7 +123,11 @@ namespace NutriBest.Server.Tests.Controllers.Orders
             var client = await clientHelper.GetEmployeeClientAsync();
 
             await SeedingHelper.SeedSevenProducts(clientHelper);
-            await SeedingHelper.SeedUserOrder(clientHelper, false);
+            await SeedingHelper.SeedUserOrder(clientHelper,
+                false,
+                "user@example.com",
+                "user",
+                "TEST USER!!!");
 
             var statusesModel = new UpdateOrderServiceModel
             {
@@ -157,7 +169,11 @@ namespace NutriBest.Server.Tests.Controllers.Orders
             var client = await clientHelper.GetEmployeeClientAsync();
 
             await SeedingHelper.SeedSevenProducts(clientHelper);
-            await SeedingHelper.SeedUserOrder(clientHelper, false);
+            await SeedingHelper.SeedUserOrder(clientHelper, 
+                false,
+                "user@example.com",
+                "user",
+                "TEST USER!!!");
 
             var statusesModel = new UpdateOrderServiceModel
             {
@@ -196,7 +212,11 @@ namespace NutriBest.Server.Tests.Controllers.Orders
             var client = clientHelper.GetAnonymousClient();
 
             await SeedingHelper.SeedSevenProducts(clientHelper);
-            await SeedingHelper.SeedUserOrder(clientHelper, false);
+            await SeedingHelper.SeedUserOrder(clientHelper,
+                false,
+                "user@example.com",
+                "user",
+                "TEST USER!!!");
 
             var statusesModel = new UpdateOrderServiceModel
             {
@@ -230,7 +250,11 @@ namespace NutriBest.Server.Tests.Controllers.Orders
             var client = await clientHelper.GetOtherUserClientAsync();
 
             await SeedingHelper.SeedSevenProducts(clientHelper);
-            await SeedingHelper.SeedUserOrder(clientHelper, false);
+            await SeedingHelper.SeedUserOrder(clientHelper, 
+                false,
+                "user@example.com",
+                "user",
+                "TEST USER!!!");
 
             var statusesModel = new UpdateOrderServiceModel
             {

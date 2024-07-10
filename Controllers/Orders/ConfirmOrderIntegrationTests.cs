@@ -41,7 +41,11 @@ namespace NutriBest.Server.Tests.Controllers.Orders
             var client = clientHelper.GetAnonymousClient();
 
             await SeedingHelper.SeedSevenProducts(clientHelper);
-            await SeedingHelper.SeedUserOrder(clientHelper, false);
+            await SeedingHelper.SeedUserOrder(clientHelper, 
+                false,
+                "user@example.com",
+                "user",
+                "TEST USER!!!");
 
             // Act
             var response = await client.PostAsync("/Orders/Confirm?orderId=1", null);
@@ -290,7 +294,11 @@ namespace NutriBest.Server.Tests.Controllers.Orders
             var client = clientHelper.GetAnonymousClient();
 
             await SeedingHelper.SeedSevenProducts(clientHelper);
-            await SeedingHelper.SeedUserOrder(clientHelper, false);
+            await SeedingHelper.SeedUserOrder(clientHelper, 
+                false,
+                "user@example.com",
+                "user",
+                "TEST USER!!!");
 
             // Act
             await client.PostAsync("/Orders/Confirm?orderId=1", null);

@@ -13,9 +13,9 @@
     using Moq;
     using NutriBest.Server.Data;
     using NutriBest.Server.Data.Models;
-    using NutriBest.Server.Features.Notifications;
     using NutriBest.Server.Features.Email;
-    using Microsoft.Extensions.Caching.Memory;
+    using NutriBest.Server.Features.Notifications;
+    using NutriBest.Server.Features.Notifications.Mappings;
 
     public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
     {
@@ -59,6 +59,8 @@
                 {
                     options.UseInMemoryDatabase("InMemoryDb");
                 });
+
+                services.AddAutoMapper(typeof(NotificationsProfile).Assembly);
 
                 var serviceProvider = services.BuildServiceProvider();
 
@@ -114,7 +116,7 @@
                 {
                     UserName = "user",
                     NormalizedUserName = "USER",
-                    Email = "user@example.com",
+                    Email = "user@example.com"
                 };
 
                 CreateUserWithRole(userManager, adminUser, "Password123!", "Administrator").GetAwaiter().GetResult();

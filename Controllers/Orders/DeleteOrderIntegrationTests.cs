@@ -35,8 +35,11 @@ namespace NutriBest.Server.Tests.Controllers.Orders
         {
             // Arrange
             var client = await clientHelper.GetAdministratorClientAsync();
-            await SeedingHelper.SeedUserOrder(clientHelper, false);
-
+            await SeedingHelper.SeedUserOrder(clientHelper,
+                false,
+                "user@example.com",
+                "user",
+                "TEST USER!!!");
             var statusesModel = new UpdateOrderServiceModel
             {
                 IsConfirmed = true,
@@ -62,8 +65,11 @@ namespace NutriBest.Server.Tests.Controllers.Orders
         {
             // Arrange
             var client = await clientHelper.GetEmployeeClientAsync();
-            await SeedingHelper.SeedUserOrder(clientHelper, false);
-
+            await SeedingHelper.SeedUserOrder(clientHelper,
+                false,
+                "user@example.com",
+                "user",
+                "TEST USER!!!");
             var statusesModel = new UpdateOrderServiceModel
             {
                 IsConfirmed = true,
@@ -145,7 +151,11 @@ namespace NutriBest.Server.Tests.Controllers.Orders
         {
             // Arrange
             var client = await clientHelper.GetAdministratorClientAsync();
-            await SeedingHelper.SeedUserOrder(clientHelper, true);
+            await SeedingHelper.SeedUserOrder(clientHelper, 
+                true,
+                "user@example.com",
+                "user",
+                "TEST USER!!!");
 
             var statusesModel = new UpdateOrderServiceModel
             {
@@ -174,7 +184,11 @@ namespace NutriBest.Server.Tests.Controllers.Orders
         {
             // Arrange
             var client = await clientHelper.GetEmployeeClientAsync();
-            await SeedingHelper.SeedUserOrder(clientHelper, false);
+            await SeedingHelper.SeedUserOrder(clientHelper, 
+                false,
+                "user@example.com",
+                "user",
+                "TEST USER!!!");
 
             var statusesModel = new UpdateOrderServiceModel
             {
@@ -204,7 +218,11 @@ namespace NutriBest.Server.Tests.Controllers.Orders
         {
             // Arrange
             var client = await clientHelper.GetEmployeeClientAsync();
-            await SeedingHelper.SeedUserOrder(clientHelper, false);
+            await SeedingHelper.SeedUserOrder(clientHelper, 
+                false,
+                "user@example.com",
+                "user",
+                "TEST USER!!!");
 
             // Act
             var response = await client.DeleteAsync("/Orders/Admin/1");
@@ -226,7 +244,11 @@ namespace NutriBest.Server.Tests.Controllers.Orders
         {
             // Arrange
             var client = clientHelper.GetAnonymousClient();
-            await SeedingHelper.SeedUserOrder(clientHelper, false);
+            await SeedingHelper.SeedUserOrder(clientHelper, 
+                false,
+                "user@example.com",
+                "user",
+                "TEST USER!!!");
 
             var statusesModel = new UpdateOrderServiceModel
             {
@@ -252,7 +274,11 @@ namespace NutriBest.Server.Tests.Controllers.Orders
         {
             // Arrange
             var client = await clientHelper.GetOtherUserClientAsync();
-            await SeedingHelper.SeedUserOrder(clientHelper, false);
+            await SeedingHelper.SeedUserOrder(clientHelper, 
+                false,
+                "user@example.com",
+                "user",
+                "TEST USER!!!");
 
             var statusesModel = new UpdateOrderServiceModel
             {

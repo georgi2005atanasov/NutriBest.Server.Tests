@@ -217,7 +217,6 @@ namespace NutriBest.Server.Tests.Controllers.Profile
             Assert.True(db.Newsletter.Any(x => x.Name == "Georgi Atanasov"));
         }
 
-
         [Theory]
         [InlineData(0)]
         [InlineData(101)]
@@ -642,7 +641,6 @@ namespace NutriBest.Server.Tests.Controllers.Profile
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("", data);
         }
-
 
         public async Task InitializeAsync()
         {

@@ -31,7 +31,11 @@
             // Arrange 
             var client = await clientHelper.GetAdministratorClientAsync();
 
-            await SeedingHelper.SeedUserOrder(clientHelper, true);
+            await SeedingHelper.SeedUserOrder(clientHelper, 
+                true,
+                "user@example.com",
+                "user",
+                "TEST USER!!!");
 
             // Act
             var response = await client.GetAsync("/Orders/Admin/1");
@@ -66,7 +70,11 @@
             // Arrange 
             var client = await clientHelper.GetEmployeeClientAsync();
 
-            await SeedingHelper.SeedUserOrder(clientHelper, true);
+            await SeedingHelper.SeedUserOrder(clientHelper, 
+                true,
+                "user@example.com",
+                "user",
+                "TEST USER!!!");
 
             // Act
             var response = await client.GetAsync("/Orders/Admin/2");
@@ -83,7 +91,11 @@
             // Arrange 
             var client = await clientHelper.GetEmployeeClientAsync();
 
-            await SeedingHelper.SeedUserOrder(clientHelper, true);
+            await SeedingHelper.SeedUserOrder(clientHelper, 
+                true,
+                "user@example.com",
+                "user",
+                "TEST USER!!!");
 
             // Act
             var response = await client.GetAsync("/Orders/Admin/1");
@@ -118,7 +130,11 @@
             // Arrange 
             var client = clientHelper.GetAnonymousClient();
 
-            await SeedingHelper.SeedUserOrder(clientHelper, true);
+            await SeedingHelper.SeedUserOrder(clientHelper, 
+                true,
+                "user@example.com",
+                "user",
+                "TEST USER!!!");
 
             // Act
             var response = await client.GetAsync("/Orders/Admin/1");
@@ -135,7 +151,11 @@
             // Arrange 
             var client = await clientHelper.GetOtherUserClientAsync();
 
-            await SeedingHelper.SeedUserOrder(clientHelper, true);
+            await SeedingHelper.SeedUserOrder(clientHelper, 
+                true,
+                "user@example.com",
+                "user",
+                "TEST USER!!!");
 
             // Act
             var response = await client.GetAsync("/Orders/Admin/1");
@@ -225,7 +245,11 @@
             // Arrange 
             var client = clientHelper.GetAnonymousClient();
 
-            await SeedingHelper.SeedUserOrder(clientHelper, true);
+            await SeedingHelper.SeedUserOrder(clientHelper, 
+                true,
+                "user@example.com",
+                "user",
+                "TEST USER!!!");
 
             // Act
             var response = await client.GetAsync("/Orders/Admin/1");
@@ -242,7 +266,11 @@
             // Arrange 
             var client = await clientHelper.GetOtherUserClientAsync();
 
-            await SeedingHelper.SeedUserOrder(clientHelper, true);
+            await SeedingHelper.SeedUserOrder(clientHelper, 
+                true,
+                "user@example.com",
+                "user",
+                "TEST USER!!!");
 
             // Act
             var response = await client.GetAsync("/Orders/Admin/1");

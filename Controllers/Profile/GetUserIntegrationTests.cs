@@ -38,7 +38,10 @@ namespace NutriBest.Server.Tests.Controllers.Profile
             var admin = await clientHelper.GetAdministratorClientAsync();
 
             await SeedingHelper.SeedUserOrder(clientHelper,
-                true); 
+                true,
+                "user@example.com",
+                "user",
+                "TEST USER!!!"); 
 
             var userToGet = await db!.Users
                 .FirstAsync(x => x.UserName == "user");
@@ -75,7 +78,10 @@ namespace NutriBest.Server.Tests.Controllers.Profile
             var admin = await clientHelper.GetEmployeeClientAsync();
 
             await SeedingHelper.SeedUserOrder(clientHelper,
-                true);
+                true,
+                "user@example.com",
+                "user",
+                "TEST USER!!!");
 
             var userToGet = await db!.Users
                 .FirstAsync(x => x.UserName == "user");
@@ -110,7 +116,10 @@ namespace NutriBest.Server.Tests.Controllers.Profile
             var admin = await clientHelper.GetAdministratorClientAsync();
 
             await SeedingHelper.SeedUserOrder(clientHelper,
-                true);
+                true,
+                "user@example.com",
+                "user",
+                "TEST USER!!!");
 
             // Act
             var response = await admin.GetAsync($"/Profile/invalidId");
@@ -135,7 +144,10 @@ namespace NutriBest.Server.Tests.Controllers.Profile
             var anonymous = clientHelper.GetAnonymousClient();
 
             await SeedingHelper.SeedUserOrder(clientHelper,
-                true);
+                true,
+                "user@example.com",
+                "user",
+                "TEST USER!!!");
 
             var userToGet = await db!.Users
                 .FirstAsync(x => x.UserName == "user");
@@ -165,7 +177,10 @@ namespace NutriBest.Server.Tests.Controllers.Profile
                 .GetAuthenticatedClientAsync("Pesho", "Pesho12345");
 
             await SeedingHelper.SeedUserOrder(clientHelper,
-                true);
+                true,
+                "user@example.com",
+                "user",
+                "TEST USER!!!");
 
             var userToGet = await db!.Users
                 .FirstAsync(x => x.UserName == "user");

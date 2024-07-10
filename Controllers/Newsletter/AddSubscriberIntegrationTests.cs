@@ -47,6 +47,37 @@
             Assert.NotEmpty(db!.Newsletter);
         }
 
+
+        [Fact]
+        public async Task AddSubscriber_ShouldRecoverPreviousSubscription_AfterTheDeletionOfIt()
+        {
+            // Arrange
+            var client = clientHelper.GetAnonymousClient();
+
+            var formData = new MultipartFormDataContent
+            {
+                { new StringContent("gogida9876@abv.bg"), "email" },
+            };
+
+            await client.PostAsync("/Newsletter", formData);
+
+            await client
+                .DeleteAsync($"/Newsletter/Unsubscribe?email={db!.Newsletter.First().Email}&token={db!.Newsletter.First().VerificationToken!}");
+
+            Assert.NotEmpty(db.Newsletter.Where(x => x.IsDeleted));
+
+            // Act
+            var response = await client.PostAsync("/Newsletter", formData);
+            var data = await response.Content.ReadAsStringAsync();
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("1", data);
+            Assert.NotEmpty(db!.Newsletter);
+            Assert.Empty(db.Newsletter.Where(x => x.IsDeleted));
+        }
+
+
         [Fact]
         public async Task AddSubscriber_ShouldReturnBadRequest_ForAlreadyExistingSubscriber()
         {

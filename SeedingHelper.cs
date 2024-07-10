@@ -9,6 +9,7 @@
     using NutriBest.Server.Features.Identity.Models;
     using NutriBest.Server.Features.Invoices.Models;
     using NutriBest.Server.Features.Products.Models;
+    using NutriBest.Server.Features.Profile.Models;
     using NutriBest.Server.Features.PromoCodes.Models;
     using NutriBest.Server.Features.Promotions.Models;
     using NutriBest.Server.Features.ShippingDiscounts.Models;
@@ -241,10 +242,14 @@
             var orderResponse = await client.PostAsJsonAsync("/GuestsOrders", orderModel);
         }
 
-        public static async Task SeedUserOrder(ClientHelper clientHelper, bool hasInvoice)
+        public static async Task SeedUserOrder(ClientHelper clientHelper,
+            bool hasInvoice,
+            string email,
+            string userName,
+            string name)
         {
             // Arrange
-            var client = await clientHelper.GetOtherUserClientAsync();
+            var client = await clientHelper.GetAuthenticatedClientAsync(userName, "Password123!");
 
             await SeedingHelper.SeedSevenProducts(clientHelper);
 
@@ -291,8 +296,8 @@
                 Street = "Karlovska",
                 StreetNumber = "900",
                 PostalCode = "4000",
-                Email = "user@example.com",
-                Name = "TEST USER!!!",
+                Email = email,
+                Name = name,
                 HasInvoice = hasInvoice,
                 Invoice = hasInvoice ?
                           new InvoiceServiceModel
@@ -303,7 +308,7 @@
                               CompanyName = "TEST COMPANY",
                               PersonInCharge = "TEST PERSON IN CHARGE",
                               PhoneNumber = "0884138850"
-                          } : 
+                          } :
                           null,
                 PaymentMethod = "CashOnDelivery",
                 PhoneNumber = "0884138832"
