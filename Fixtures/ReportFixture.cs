@@ -1,10 +1,19 @@
 ﻿namespace NutriBest.Server.Tests.Fixtures
 {
+    using System.Reflection;
     using Microsoft.Extensions.Configuration;
     using Moq;
-    using NutriBest.Server.Tests.Fixtures.Base;
-    using NutriBest.Server.Features.Brands;
+    using AutoMapper;
+    using NutriBest.Server.Data;
+    using NutriBest.Server.Features.Admin;
     using NutriBest.Server.Features.Export;
+    using NutriBest.Server.Features.Brands;
+    using NutriBest.Server.Features.Reports;
+    using NutriBest.Server.Features.Products;
+    using NutriBest.Server.Features.Identity;
+    using NutriBest.Server.Features.Promotions;
+    using NutriBest.Server.Tests.Fixtures.Base;
+    using NutriBest.Server.Infrastructure.Services;
     using NutriBest.Server.Features.Images;
     using NutriBest.Server.Tests.Fixtures;
     using NutriBest.Server.Features.Newsletter;
@@ -12,18 +21,10 @@
     using NutriBest.Server.Features.Categories;
     using NutriBest.Server.Features.Orders;
     using NutriBest.Server.Features.Packages;
-    using NutriBest.Server.Features.Products;
-    using NutriBest.Server.Features.Admin;
     using NutriBest.Server.Features.PromoCodes;
-    using NutriBest.Server.Features.Promotions;
-    using NutriBest.Server.Features.Reports;
     using NutriBest.Server.Features.ShippingDiscounts;
-    using AutoMapper;
-    using System.Reflection;
-    using NutriBest.Server.Data;
-    using NutriBest.Server.Features.Identity;
 
-    public class ExportFixture : BaseFixture
+    public class ReportFixture : BaseFixture
     {
         public IConfiguration Configuration { get; private set; }
 
@@ -51,7 +52,7 @@
 
         public IShippingDiscountService? ShippingDiscountService { get; private set; }
 
-        public ExportFixture()
+        public ReportFixture()
             : base()
         {
             var builder = new ConfigurationBuilder()

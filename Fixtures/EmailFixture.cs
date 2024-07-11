@@ -31,7 +31,10 @@
         {
             base.InitializeServices();
             PromoCodeService = new PromoCodeService(DbContext!);
-            EmailService = new EmailService(DbContext!, Configuration, PromoCodeService, NotificationServiceMock!.Object);
+            EmailService = new EmailService(DbContext!,
+                Configuration,
+                PromoCodeService,
+                NotificationServiceMock!.Object);
         }
     }
 }

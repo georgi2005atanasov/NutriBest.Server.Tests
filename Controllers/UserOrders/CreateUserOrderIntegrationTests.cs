@@ -416,7 +416,22 @@ namespace NutriBest.Server.Tests.Controllers.UserOrders
             await admin.PostAsync("/Promotions", formDataPercentDiscount);
             await admin.PutAsync("/Promotions/Status/1", null);
 
-            // Act
+            db!.PromoCodes.Add(new Data.Models.PromoCode
+            {
+                Description = "20% OFF",
+                Code = "AAAAAAA",
+                IsValid = true,
+                DiscountPercentage = 20,
+                IsSent = false
+            });
+
+            await db.SaveChangesAsync();
+
+            var promoCodeModel = new ApplyPromoCodeServiceModel
+            {
+                Code = "AAAAAAA"
+            };
+
             // First product addition
             var firstResponse = await client.PostAsJsonAsync("/Cart/Set", firstCartProductModel);
             var cookieHeader = firstResponse.Headers.GetValues("Set-Cookie").FirstOrDefault();
@@ -440,6 +455,14 @@ namespace NutriBest.Server.Tests.Controllers.UserOrders
             {
                 client.DefaultRequestHeaders.Remove("Cookie");
                 client.DefaultRequestHeaders.Add("Cookie", updatedCookieHeaderAfterThird);
+            }
+
+            var resAfterPromoCode = await client.PostAsJsonAsync("/Cart/ApplyPromoCode", promoCodeModel);
+            var updatedCookieHeaderAfterPromoCode = resAfterPromoCode.Headers.GetValues("Set-Cookie").FirstOrDefault();
+            if (updatedCookieHeaderAfterPromoCode != null)
+            {
+                client.DefaultRequestHeaders.Remove("Cookie");
+                client.DefaultRequestHeaders.Add("Cookie", updatedCookieHeaderAfterPromoCode);
             }
 
             var orderModel = new UserOrderServiceModel
@@ -514,10 +537,14 @@ namespace NutriBest.Server.Tests.Controllers.UserOrders
             Assert.Equal("0884138850", invoice.PhoneNumber);
 
             Assert.Equal(3, cart.CartProducts.Count);
-            Assert.Equal(4977.1275m, cart.TotalProducts);
+            Assert.Equal(3981.70200m, cart.TotalProducts);
             Assert.Equal(4977.1275m, cart.OriginalPrice);
-            Assert.Equal(1500.7425m, cart.TotalSaved);
+            Assert.Equal(2496.1680m, cart.TotalSaved);
             Assert.Equal(10, cart.ShippingPrice);
+
+            // Assert promo code is not valid anymore
+            Assert.Empty(db.PromoCodes
+                .Where(x => !x.IsValid && x.Code == "AAAAAAA"));
         }
 
         [Fact]

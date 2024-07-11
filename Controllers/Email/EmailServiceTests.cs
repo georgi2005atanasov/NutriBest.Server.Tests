@@ -25,8 +25,8 @@
         {
             this.fixture = fixture;
             this.db = fixture.DbContext!;
-            this.emailService = fixture.EmailService;
-            this.promoCodeService = fixture.PromoCodeService;
+            this.emailService = fixture.EmailService!;
+            this.promoCodeService = fixture.PromoCodeService!;
             this.notificationServiceMock = fixture.NotificationServiceMock!;
             this.identityService = fixture.IdentityService!;
             this.newsletterService = fixture.NewsletterService!;
@@ -42,8 +42,8 @@
         {
             fixture.InitializeServices();
             this.db = fixture.DbContext!;
-            this.emailService = fixture.EmailService;
-            this.promoCodeService = fixture.PromoCodeService;
+            this.emailService = fixture.EmailService!;
+            this.promoCodeService = fixture.PromoCodeService!;
             this.notificationServiceMock = fixture.NotificationServiceMock!;
             this.identityService = fixture.IdentityService!;
             this.newsletterService = fixture.NewsletterService!;

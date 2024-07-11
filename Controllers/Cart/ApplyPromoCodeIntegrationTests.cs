@@ -273,6 +273,96 @@ namespace NutriBest.Server.Tests.Controllers.Cart
         }
 
         [Fact]
+        public async Task ApplyPromoCode_ShouldReturnBadRequest_WhenCodeIsNotValid()
+        {
+            // Arrange
+            var client = clientHelper.GetAnonymousClient();
+            var firstCartProductModel = new CartProductServiceModel
+            {
+                Flavour = "Coconut",
+                Grams = 1000,
+                Count = 1,
+                Price = 15.99m,
+                ProductId = 1
+            };
+
+            var secondCartProductModel = new CartProductServiceModel
+            {
+                Flavour = "Lemon Lime",
+                Grams = 500,
+                Count = 9,
+                Price = 50.99m,
+                ProductId = 3
+            };
+
+            var thirdCartProductModel = new CartProductServiceModel
+            {
+                Flavour = "Chocolate",
+                Grams = 500,
+                Count = 3,
+                Price = 500.99m,
+                ProductId = 6
+            };
+
+            // Act
+            // First product addition
+            var firstResponse = await client.PostAsJsonAsync("/Cart/Add", firstCartProductModel);
+            var cookieHeader = firstResponse
+                .Headers
+                .GetValues("Set-Cookie")
+                .FirstOrDefault();
+            if (cookieHeader != null)
+            {
+                client.DefaultRequestHeaders.Add("Cookie", cookieHeader);
+            }
+
+            // Second product addition
+            var secondResponse = await client.PostAsJsonAsync("/Cart/Set", secondCartProductModel);
+            var updatedCookieHeaderAfterSecond = secondResponse
+                .Headers
+                .GetValues("Set-Cookie")
+                .FirstOrDefault();
+            if (updatedCookieHeaderAfterSecond != null)
+            {
+                client.DefaultRequestHeaders.Remove("Cookie");
+                client.DefaultRequestHeaders
+                    .Add("Cookie", updatedCookieHeaderAfterSecond);
+            }
+
+            // Third product addition
+            var thirdResponse = await client.PostAsJsonAsync("/Cart/Set", thirdCartProductModel);
+            var updatedCookieHeaderAfterThird = thirdResponse
+                .Headers
+                .GetValues("Set-Cookie")
+                .FirstOrDefault();
+            if (updatedCookieHeaderAfterThird != null)
+            {
+                client.DefaultRequestHeaders.Remove("Cookie");
+                client.DefaultRequestHeaders
+                    .Add("Cookie", updatedCookieHeaderAfterThird);
+            }
+
+            await SeedingHelper.SeedPromoCode(clientHelper,
+                "20% OFF!",
+                "1",
+                "20");
+
+            var promoCode = db!.PromoCodes.First();
+            promoCode.IsValid = false;
+            await db.SaveChangesAsync();
+
+            var promoCodeModel = new ApplyPromoCodeServiceModel
+            {
+                Code = promoCode.Code
+            };
+
+            var responseAfterPromoCode = await client.PostAsJsonAsync("/Cart/ApplyPromoCode", promoCodeModel);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, responseAfterPromoCode.StatusCode);
+        }
+
+        [Fact]
         public async Task ApplyPromoCode_ShouldBeExecuted_AndShouldAlsoBeValidAfterRemovingProduct()
         {
             // Arrange
