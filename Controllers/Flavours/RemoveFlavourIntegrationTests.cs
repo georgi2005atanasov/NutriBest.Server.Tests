@@ -9,7 +9,7 @@ namespace NutriBest.Server.Tests.Controllers.Flavours
     using NutriBest.Server.Data;
     using NutriBest.Server.Shared.Responses;
     using NutriBest.Server.Features.Flavours.Models;
-    using Infrastructure.Extensions;
+    using NutriBest.Server.Infrastructure.Extensions;
     using static ErrorMessages.FlavoursController;
 
     [Collection("Flavours Controller Tests")]

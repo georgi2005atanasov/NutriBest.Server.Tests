@@ -7,7 +7,7 @@
     using NutriBest.Server.Data;
     using NutriBest.Server.Features.Profile.Models;
     using NutriBest.Server.Tests.Controllers.Profile.Data;
-    using Infrastructure.Extensions;
+    using NutriBest.Server.Infrastructure.Extensions;
 
     [Collection("Profile Controller Tests")]
     public class AllProfilesIntegrationTests : IAsyncLifetime

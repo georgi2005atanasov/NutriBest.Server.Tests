@@ -11,7 +11,7 @@ namespace NutriBest.Server.Tests.Controllers.NutritionFacts
     using NutriBest.Server.Data;
     using NutriBest.Server.Shared.Responses;
     using NutriBest.Server.Features.NutritionsFacts.Models;
-    using Infrastructure.Extensions;
+    using NutriBest.Server.Infrastructure.Extensions;
     using static ErrorMessages.NutritionFactsController;
 
     [Collection("Nutrition Facts Controller Tests")]

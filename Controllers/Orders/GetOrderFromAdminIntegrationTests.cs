@@ -5,7 +5,7 @@
     using Microsoft.Extensions.DependencyInjection;
     using NutriBest.Server.Data;
     using NutriBest.Server.Features.Orders.Models;
-    using Infrastructure.Extensions;
+    using NutriBest.Server.Infrastructure.Extensions;
     using System.Net;
 
     [Collection("Orders Controller Tests")]

@@ -11,7 +11,7 @@ namespace NutriBest.Server.Tests.Controllers.Products
     using NutriBest.Server.Shared.Responses;
     using NutriBest.Server.Features.Products.Models;
     using NutriBest.Server.Features.Categories.Models;
-    using Infrastructure.Extensions;
+    using NutriBest.Server.Infrastructure.Extensions;
     using static ErrorMessages.ProductsController;
     using static ErrorMessages.PromotionsController;
 

@@ -14,7 +14,7 @@ namespace NutriBest.Server.Tests.Controllers.Cart
     using NutriBest.Server.Data;
     using NutriBest.Server.Features.Carts.Models;
     using NutriBest.Server.Shared.Responses;
-    using Infrastructure.Extensions;
+    using NutriBest.Server.Infrastructure.Extensions;
     using static ErrorMessages.CartController;
     using static ErrorMessages.PromoCodeController;
 

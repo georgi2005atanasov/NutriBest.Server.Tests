@@ -9,7 +9,7 @@ namespace NutriBest.Server.Tests.Controllers.Promotions
     using NutriBest.Server.Data;
     using NutriBest.Server.Shared.Responses;
     using NutriBest.Server.Features.Promotions.Models;
-    using Infrastructure.Extensions;
+    using NutriBest.Server.Infrastructure.Extensions;
     using static ErrorMessages.PromotionsController;
     using static ErrorMessages.BrandsController;
     using Microsoft.EntityFrameworkCore;

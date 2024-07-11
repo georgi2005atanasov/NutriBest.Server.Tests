@@ -5,7 +5,7 @@
     using Microsoft.Extensions.DependencyInjection;
     using NutriBest.Server.Data;
     using NutriBest.Server.Features.Brands.Models;
-    using Infrastructure.Extensions;
+    using NutriBest.Server.Infrastructure.Extensions;
     using NutriBest.Server.Features.Flavours.Models;
 
     [Collection("Brands Controller Tests")]

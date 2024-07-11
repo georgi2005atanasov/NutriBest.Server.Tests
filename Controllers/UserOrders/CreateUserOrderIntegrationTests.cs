@@ -13,8 +13,8 @@ namespace NutriBest.Server.Tests.Controllers.UserOrders
     using NutriBest.Server.Shared.Responses;
     using NutriBest.Server.Features.Carts.Models;
     using NutriBest.Server.Features.Invoices.Models;
+    using NutriBest.Server.Infrastructure.Extensions;
     using NutriBest.Server.Features.UsersOrders.Models;
-    using Infrastructure.Extensions;
     using static ErrorMessages.UsersOrdersController;
     using static ErrorMessages.OrderDetailsService;
 

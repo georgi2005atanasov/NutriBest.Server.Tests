@@ -3,7 +3,7 @@
     using Xunit;
     using Microsoft.Extensions.DependencyInjection;
     using NutriBest.Server.Data;
-    using Infrastructure.Extensions;
+    using NutriBest.Server.Infrastructure.Extensions;
     using NutriBest.Server.Features.Flavours.Models;
     using System.Text.Json;
 

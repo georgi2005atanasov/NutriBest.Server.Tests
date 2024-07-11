@@ -2,13 +2,13 @@
 
 namespace NutriBest.Server.Tests.Controllers.Brands
 {
+    using System.Net;
+    using System.Text.Json;
     using Xunit;
     using Microsoft.Extensions.DependencyInjection;
     using NutriBest.Server.Data;
     using NutriBest.Server.Features.Brands.Models;
-    using Infrastructure.Extensions;
-    using System.Net;
-    using System.Text.Json;
+    using NutriBest.Server.Infrastructure.Extensions;
     using NutriBest.Server.Shared.Responses;
     using static ErrorMessages.BrandsController;
 

@@ -7,7 +7,7 @@
     using Microsoft.Extensions.DependencyInjection;
     using NutriBest.Server.Data;
     using NutriBest.Server.Features.Images.Models;
-    using Infrastructure.Extensions;
+    using NutriBest.Server.Infrastructure.Extensions;
 
     [Collection("Images Controller Tests")]
     public class ImagesControllerIntegrationTests : IAsyncLifetime

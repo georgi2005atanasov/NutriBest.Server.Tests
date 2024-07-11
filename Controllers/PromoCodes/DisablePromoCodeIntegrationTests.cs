@@ -6,7 +6,7 @@
     using NutriBest.Server.Data;
     using NutriBest.Server.Tests.Extensions;
     using NutriBest.Server.Features.PromoCodes.Models;
-    using Infrastructure.Extensions;
+    using NutriBest.Server.Infrastructure.Extensions;
 
     [Collection("Promo Codes Controller Tests")]
     public class DisablePromoCodeIntegrationTests : IAsyncLifetime

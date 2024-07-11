@@ -18,6 +18,7 @@
     using NutriBest.Server.Features.Notifications.Mappings;
     using NutriBest.Server.Features.Brands;
     using NutriBest.Server.Features.Export;
+    using NutriBest.Server.Infrastructure.Services;
 
     public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
     {
@@ -55,6 +56,12 @@
                 services.AddSingleton(Configuration);
                 services.AddTransient(_ => NotificationServiceMock.Object);
                 services.AddTransient(_ => EmailServiceMock.Object);
+
+                services
+                .AddHostedService<PromoCodeCleanupService>()
+                .AddHostedService<PromotionCleanupService>()
+                .AddHostedService<PromotionActivationService>()
+                .AddHostedService<ShippingDiscountCleanupService>();
 
                 services.RemoveAll<DbContextOptions<NutriBestDbContext>>();
                 services.AddDbContext<NutriBestDbContext>(options =>

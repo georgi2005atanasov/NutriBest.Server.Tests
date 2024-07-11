@@ -7,7 +7,7 @@
     using NutriBest.Server.Data;
     using NutriBest.Server.Shared.Responses;
     using NutriBest.Server.Features.Categories.Models;
-    using Infrastructure.Extensions;
+    using NutriBest.Server.Infrastructure.Extensions;
 
     [Collection("Categories Controller Tests")]
     public class CreateCategoryIntegrationTests : IAsyncLifetime

@@ -10,7 +10,7 @@ namespace NutriBest.Server.Tests.Controllers.Profile
     using NutriBest.Server.Data;
     using NutriBest.Server.Shared.Responses;
     using NutriBest.Server.Features.Profile.Models;
-    using Infrastructure.Extensions;
+    using NutriBest.Server.Infrastructure.Extensions;
     using static ErrorMessages.ProfileController;
 
     [Collection("Profile Controller Tests")]

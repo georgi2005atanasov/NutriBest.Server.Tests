@@ -9,7 +9,7 @@ namespace NutriBest.Server.Tests.Controllers.Orders
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
     using NutriBest.Server.Data;
-    using Infrastructure.Extensions;
+    using NutriBest.Server.Infrastructure.Extensions;
     using NutriBest.Server.Features.Orders.Models;
     using static SuccessMessages.NotificationService;
 

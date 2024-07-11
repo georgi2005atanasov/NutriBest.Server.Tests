@@ -5,7 +5,7 @@
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
     using NutriBest.Server.Data;
-    using Infrastructure.Extensions;
+    using NutriBest.Server.Infrastructure.Extensions;
 
     [Collection("Products Controller Tests")]
     public class DeleteProductIntegrationTests : IAsyncLifetime

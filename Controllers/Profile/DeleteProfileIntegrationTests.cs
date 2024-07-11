@@ -12,7 +12,7 @@
     using NutriBest.Server.Features.GuestsOrders.Models;
     using NutriBest.Server.Tests.Controllers.Orders.Data;
     using NutriBest.Server.Tests.Controllers.Profile.Data;
-    using Infrastructure.Extensions;
+    using NutriBest.Server.Infrastructure.Extensions;
 
     [Collection("Profile Controller Tests")]
     public class DeleteProfileIntegrationTests : IAsyncLifetime

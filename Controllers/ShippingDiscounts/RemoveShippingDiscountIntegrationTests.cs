@@ -7,7 +7,7 @@
     using NutriBest.Server.Data;
     using NutriBest.Server.Tests.Extensions;
     using NutriBest.Server.Features.ShippingDiscounts.Models;
-    using Infrastructure.Extensions;
+    using NutriBest.Server.Infrastructure.Extensions;
 
     [Collection("Shipping Discounts Controller Tests")]
     public class RemoveShippingDiscountIntegrationTests : IAsyncLifetime

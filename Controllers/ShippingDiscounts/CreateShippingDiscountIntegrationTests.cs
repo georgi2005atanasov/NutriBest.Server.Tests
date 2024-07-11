@@ -10,7 +10,7 @@ namespace NutriBest.Server.Tests.Controllers.ShippingDiscounts
     using NutriBest.Server.Data;
     using NutriBest.Server.Features.ShippingDiscounts.Models;
     using NutriBest.Server.Shared.Responses;
-    using Infrastructure.Extensions;
+    using NutriBest.Server.Infrastructure.Extensions;
     using static ErrorMessages.ShippingDiscountController;
 
     [Collection("Shipping Discounts Controller Tests")]

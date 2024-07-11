@@ -5,7 +5,7 @@
     using Microsoft.Extensions.DependencyInjection;
     using NutriBest.Server.Data;
     using NutriBest.Server.Features.Brands.Models;
-    using Infrastructure.Extensions;
+    using NutriBest.Server.Infrastructure.Extensions;
 
     [Collection("Brands Controller Tests")]
     public class AllBrandsIntegrationTests : IAsyncLifetime

@@ -6,7 +6,7 @@ namespace NutriBest.Server.Tests.Controllers.Orders
     using Microsoft.Extensions.DependencyInjection;
     using NutriBest.Server.Data;
     using NutriBest.Server.Features.Orders.Models;
-    using Infrastructure.Extensions;
+    using NutriBest.Server.Infrastructure.Extensions;
     using static ErrorMessages.OrdersController;
     using System.Net.Http.Json;
     using System.Net;

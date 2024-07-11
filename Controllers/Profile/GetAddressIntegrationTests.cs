@@ -7,7 +7,7 @@
     using Microsoft.Extensions.DependencyInjection;
     using NutriBest.Server.Data;
     using NutriBest.Server.Features.Profile.Models;
-    using Infrastructure.Extensions;
+    using NutriBest.Server.Infrastructure.Extensions;
 
     [Collection("Profile Controller Tests")]
     public class GetAddressIntegrationTests : IAsyncLifetime

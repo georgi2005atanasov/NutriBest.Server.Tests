@@ -1,13 +1,13 @@
 ﻿namespace NutriBest.Server.Tests.Controllers.PromoCodes
 {
+    using System.Net;
     using System.Text.Json;
     using System.Net.Http.Json;
     using Xunit;
     using Microsoft.Extensions.DependencyInjection;
     using NutriBest.Server.Data;
     using NutriBest.Server.Features.PromoCodes.Models;
-    using Infrastructure.Extensions;
-    using System.Net;
+    using NutriBest.Server.Infrastructure.Extensions;
 
     [Collection("Promo Codes Controller Tests")]
     public class CreatePromoCodesIntegrationTests : IAsyncLifetime

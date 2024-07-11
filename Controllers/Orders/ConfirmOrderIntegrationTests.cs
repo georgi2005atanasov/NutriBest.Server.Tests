@@ -14,7 +14,7 @@ namespace NutriBest.Server.Tests.Controllers.Orders
     using NutriBest.Server.Data.Enums;
     using NutriBest.Server.Features.Notifications;
     using NutriBest.Server.Features.Notifications.Hubs;
-    using Infrastructure.Extensions;
+    using NutriBest.Server.Infrastructure.Extensions;
     using static ErrorMessages.NotificationService;
 
     [Collection("Orders Controller Tests")]

@@ -6,7 +6,7 @@
     using Microsoft.Extensions.DependencyInjection;
     using NutriBest.Server.Data;
     using NutriBest.Server.Features.Products.Models;
-    using Infrastructure.Extensions;
+    using NutriBest.Server.Infrastructure.Extensions;
     using NutriBest.Server.Tests.Controllers.Products.Data;
 
     [Collection("Products Controller Tests")]

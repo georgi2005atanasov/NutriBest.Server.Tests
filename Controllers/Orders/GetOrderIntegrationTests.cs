@@ -1,20 +1,17 @@
 ﻿namespace NutriBest.Server.Tests.Controllers.Orders
 {
+    using System.Net;
     using System.Text.Json;
+    using System.Net.Http.Json;
     using Xunit;
     using Microsoft.Extensions.DependencyInjection;
     using NutriBest.Server.Data;
     using NutriBest.Server.Features.Orders.Models;
-    using Infrastructure.Extensions;
-    using System.Net;
-    using System.Net.Http.Json;
+    using NutriBest.Server.Infrastructure.Extensions;
     using NutriBest.Server.Features.Carts.Models;
-    using NutriBest.Server.Features.GuestsOrders.Models;
-    using System.Web;
-    using NutriBest.Server.Features.UsersOrders.Models;
     using NutriBest.Server.Features.Invoices.Models;
-    using Moq;
-    using NutriBest.Server.Features.Identity.Models;
+    using NutriBest.Server.Features.UsersOrders.Models;
+    using NutriBest.Server.Features.GuestsOrders.Models;
 
     [Collection("Orders Controller Tests")]
     public class GetOrderIntegrationTests : IAsyncLifetime

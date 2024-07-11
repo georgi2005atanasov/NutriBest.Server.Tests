@@ -7,7 +7,7 @@ namespace NutriBest.Server.Tests.Controllers.Flavours
     using Xunit;
     using Microsoft.Extensions.DependencyInjection;
     using NutriBest.Server.Data;
-    using Infrastructure.Extensions;
+    using NutriBest.Server.Infrastructure.Extensions;
     using NutriBest.Server.Shared.Responses;
     using NutriBest.Server.Features.Flavours.Models;
     using static ErrorMessages.FlavoursController;

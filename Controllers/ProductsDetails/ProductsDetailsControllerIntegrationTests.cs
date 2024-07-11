@@ -9,7 +9,7 @@ namespace NutriBest.Server.Tests.Controllers.ProductsDetails
     using NutriBest.Server.Data;
     using NutriBest.Server.Shared.Responses;
     using NutriBest.Server.Features.ProductsDetails.Models;
-    using Infrastructure.Extensions;
+    using NutriBest.Server.Infrastructure.Extensions;
     using static ErrorMessages.ProductsController;
 
     [Collection("Products Details Controller Tests")]

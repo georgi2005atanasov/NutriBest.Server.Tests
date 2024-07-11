@@ -9,7 +9,7 @@ namespace NutriBest.Server.Tests.Controllers.Profile
     using Microsoft.Extensions.DependencyInjection;
     using NutriBest.Server.Data;
     using NutriBest.Server.Features.Profile.Models;
-    using Infrastructure.Extensions;
+    using NutriBest.Server.Infrastructure.Extensions;
     using static ErrorMessages.ProfileController;
 
     [Collection("Profile Controller Tests")]

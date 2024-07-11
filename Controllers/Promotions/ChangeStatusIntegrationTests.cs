@@ -8,7 +8,7 @@ namespace NutriBest.Server.Tests.Controllers.Promotions
     using Microsoft.Extensions.DependencyInjection;
     using NutriBest.Server.Data;
     using NutriBest.Server.Shared.Responses;
-    using Infrastructure.Extensions;
+    using NutriBest.Server.Infrastructure.Extensions;
     using static ErrorMessages.PromotionsController;
 
     [Collection("Promotions Controller Tests")]
