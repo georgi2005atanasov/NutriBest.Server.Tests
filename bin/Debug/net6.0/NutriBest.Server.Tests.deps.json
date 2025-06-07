@@ -2343,7 +2343,10 @@
           "Swashbuckle.AspNetCore": "6.5.0"
         },
         "runtime": {
-          "NutriBest.Server.dll": {}
+          "NutriBest.Server.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
         },
         "compile": {
           "NutriBest.Server.dll": {}

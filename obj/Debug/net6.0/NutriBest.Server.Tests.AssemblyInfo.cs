@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("NutriBest.Server.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fc81db34e3991e8c89aba832add35a5a76abeb10")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e5d880f64b369d8bd09b540b4dabf1687a6c706b")]
 [assembly: System.Reflection.AssemblyProductAttribute("NutriBest.Server.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("NutriBest.Server.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
