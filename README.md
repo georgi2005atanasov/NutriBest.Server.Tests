@@ -20,7 +20,6 @@
   <h2>🛠️ Tools & Stack</h2>
   <ul>
     <li>xUnit</li>
-    <li>FluentAssertions</li>
     <li>In-memory database</li>
     <li>Mock services</li>
   </ul>
