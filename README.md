@@ -22,7 +22,7 @@
     <li>xUnit</li>
     <li>FluentAssertions</li>
     <li>In-memory database</li>
-    <li>Mock services (e.g., Email, SignalR)</li>
+    <li>Mock services</li>
   </ul>
 </body>
 </html>
